@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { createUserSchema } from "@/lib/validators/user";
@@ -27,37 +28,40 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         case "POST":
             const result = createUserSchema.safeParse(req.body);
+
             if (!result.success) {
                 return res.status(400).json({
                     errors: result.error.flatten().fieldErrors,
                 });
             }
 
+            const body = result.data;
+
+            if (body.password !== body.password_confirmation) {
+                return res.status(400).json({ error: "Password confirmation does not match" });
+            }
+
             try {
-                let { fullName, username, address, email, dateOfBirth, password, age, roleId } = req.body;
+                const { password_confirmation, age, dateOfBirth, ...userData } = body;
 
-                const userRoleId = roleId || 1;
-
-                const hashedPassword = await bcrypt.hash(password, 10);
+                const hashedPassword = await bcrypt.hash(userData.password, 10);
 
                 const newUser = await prisma.user.create({
                     data: {
-                        fullName,
-                        username,
-                        email,
+                        ...userData,
                         password: hashedPassword,
-                        address,
-                        dateOfBirth,
-                        age,
-                        roleId: userRoleId,
+                        dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null,
+                        age: age !== undefined ? Number(age) : null,
+                        roleId: userData.roleId || 1,
                     },
                 });
 
                 res.status(201).json(newUser);
-            } catch (error) {
+            } catch (error: any) {
                 console.error(error);
-                res.status(500).json({ error: "Failed to create user" });
+                res.status(500).json({ error: error.message || "Failed to create user" });
             }
+
             break;
 
         default:
