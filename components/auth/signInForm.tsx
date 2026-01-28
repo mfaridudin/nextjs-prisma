@@ -14,12 +14,13 @@ export default function SignInForm() {
     // const [username, setUserName] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
-    const [error, setError] = useState<string | null>(null);
+    const [formError, setFormError] = useState<string | null>(null);
     const router = useRouter()
 
 
     async function handleLogin(e: React.FormEvent) {
         e.preventDefault()
+        setFormError(null)
 
         const res = await signIn("credentials", {
             email,
@@ -28,8 +29,14 @@ export default function SignInForm() {
         });
 
         if (res?.error) {
-            setError("Incorrect email or password");
-            return;
+            let message = "Email or password is incorrect"
+
+            if (res.error === "email-not-verified") {
+                message = "Email not verified. Please check your inbox."
+            }
+
+            setFormError(message)
+            return
         }
 
         router.push("/");
@@ -65,7 +72,7 @@ export default function SignInForm() {
 
                         <form onSubmit={handleLogin} className="space-y-5">
 
-                            {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+                            {formError && <p className="text-red-500 text-sm text-center">{formError}</p>}
 
                             <Input label="Email"
                                 required
@@ -112,7 +119,7 @@ export default function SignInForm() {
                                 </span>
                             </p>
 
-                            <Button variant="primary" size="md" fullWidth>
+                            <Button variant="primary" size="md" type="submit" fullWidth>
                                 Create Account
                             </Button>
                         </form>

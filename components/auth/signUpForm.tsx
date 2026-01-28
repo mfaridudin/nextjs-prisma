@@ -18,12 +18,14 @@ export default function SignUpForm() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [password_confirmation, setPasswordConfirmation] = useState("")
+    const [loading, setLoading] = useState(false)
 
     const [validation, setValidation] = useState<any>({});
 
     const router = useRouter()
     async function handleRegister(e: React.FormEvent) {
         e.preventDefault();
+        setLoading(true)
 
         const payload = {
             fullName,
@@ -48,6 +50,7 @@ export default function SignUpForm() {
             console.log(data.errors || { error: data.error })
             return;
         }
+        setLoading(false)
 
         router.push("/auth/verify-pending");
     }
@@ -57,14 +60,14 @@ export default function SignUpForm() {
             <div className="flex min-h-screen w-full items-center justify-center bg-gray-50 dark:bg-gray-950">
                 <div className="flex w-full max-w-5xl overflow-hidden rounded-2xl bg-white shadow-lg dark:bg-gray-900">
 
-                    <div className="hidden w-1/2 bg-brand-500 p-10 text-white lg:flex flex-col justify-between">
+                    <div className="hidden w-1/2 bg-brand-500 p-10 text-gray-800 dark:text-white  lg:flex flex-col justify-between">
                         <div>
                             <h2 className="text-3xl font-bold">Welcome 👋</h2>
-                            <p className="mt-2 text-white/80">
+                            <p className="mt-2 text-gray-800/80 dark:text-white/80">
                                 Create an account and start your journey with us
                             </p>
                         </div>
-                        <p className="text-sm text-white/70">
+                        <p className="text-sm  text-gray-800/70 dark:text-white/70">
                             © 2026 Your Company
                         </p>
                     </div>
@@ -72,7 +75,7 @@ export default function SignUpForm() {
                     <div className="flex w-full flex-col justify-center px-6 py-10 lg:w-1/2 sm:px-10">
 
                         <div className="mb-8">
-                            <h1 className="text-2xl font-semibold text-gray-800 dark:text-white">
+                            <h1 className="text-2xl font-semibold  dark:text-white">
                                 Sign Up
                             </h1>
                             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
@@ -198,8 +201,32 @@ export default function SignUpForm() {
                                 </span>
                             </p>
 
-                            <Button variant="primary" size="md" fullWidth>
-                                Create Account
+                            <Button variant="primary" size="md" fullWidth disabled={loading}
+                                className="flex items-center justify-center gap-2"
+                            >
+                                {loading && (
+                                    <svg
+                                        className="h-5 w-5 animate-spin text-white"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <circle
+                                            className="opacity-25"
+                                            cx="12"
+                                            cy="12"
+                                            r="10"
+                                            stroke="currentColor"
+                                            strokeWidth="4"
+                                        ></circle>
+                                        <path
+                                            className="opacity-75"
+                                            fill="currentColor"
+                                            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                                        ></path>
+                                    </svg>
+                                )}
+                                {loading ? "Send..." : "Create Account"}
                             </Button>
                         </form>
 

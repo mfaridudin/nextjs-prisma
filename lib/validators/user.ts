@@ -2,13 +2,13 @@ import { z } from "zod";
 
 
 export const createUserSchema = z.object({
-    fullName: z.string().min(1),
-    email: z.string().email(),
-    username: z.string().min(1),
-    password: z.string().min(8),
-    password_confirmation: z.string().min(8),
-    address: z.string().min(1),
-    dateOfBirth: z.string().min(1),
+    fullName: z.string().nonempty("Full Name is required"),
+    email: z.string().nonempty("Email is required").email(),
+    username: z.string().nonempty("Username is required"),
+    password: z.string().nonempty("Password is required"),
+    password_confirmation: z.string().nonempty("Confirm password is required"),
+    address: z.string().nonempty("Address is required"),
+    dateOfBirth: z.string().nonempty("Date of birth is required"),
     age: z.number().min(1),
     roleId: z.number().optional(),
 });
