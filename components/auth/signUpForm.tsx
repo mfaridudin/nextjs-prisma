@@ -22,7 +22,6 @@ export default function SignUpForm() {
     const [validation, setValidation] = useState<any>({});
 
     const router = useRouter()
-
     async function handleRegister(e: React.FormEvent) {
         e.preventDefault();
 
@@ -50,7 +49,7 @@ export default function SignUpForm() {
             return;
         }
 
-        router.push("/");
+        router.push("/auth/verify-pending");
     }
 
     return (
