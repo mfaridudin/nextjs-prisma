@@ -1,67 +1,65 @@
-import { access } from "fs";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
+import { prisma } from "@/lib/prisma";
 
 const handler = NextAuth({
     debug: true,
-    session: { strategy: "jwt" },
+
     providers: [
         CredentialsProvider({
             name: "Credentials",
             credentials: {
-                email: { type: "email" },
-                password: { type: "password" },
-                accessToken: { type: "text" },
+                email: { label: "Email", type: "email" },
+                password: { label: "Password", type: "password" },
             },
 
             async authorize(credentials) {
-
-                if (credentials?.accessToken) {
-                    return {
-                        id: "google-user",
-                        name: "Google User",
-                        email: "google@user",
-                        accessToken: credentials.accessToken,
-                    }
+                if (!credentials?.email || !credentials.password) {
+                    return null;
                 }
 
-                if (!credentials?.email || !credentials?.password) return null
+                const user = await prisma.user.findUnique({
+                    where: { email: credentials.email },
+                });
 
-                const formData = new FormData()
-                formData.append("email", credentials.email)
-                formData.append("password", credentials.password)
+                if (!user) return null;
 
-                const res = await fetch("http://127.0.0.1:8000/api/login", {
-                    method: "POST",
-                    body: formData,
-                })
+                const isValid = await bcrypt.compare(
+                    credentials.password,
+                    user.password
+                );
 
-                const data = await res.json()
-                if (!res.ok || !data.token) return null
+                if (!isValid) return null;
 
                 return {
-                    id: credentials.email,
-                    email: credentials.email,
-                    name: credentials.email,
-                    accessToken: data.token,
-                }
+                    id: String(user.id),
+                    email: user.email,
+                    name: user.fullName,
+                    roleId: user.roleId,
+                };
             },
-        })
-
+        }),
     ],
+
+    session: {
+        strategy: "jwt",
+    },
+
     callbacks: {
         async jwt({ token, user }) {
             if (user) {
-                token.user = user;
-                token.accessToken = (user as any).accessToken;
+                token.id = user.id;
+                token.roleId = (user as any).roleId;
             }
             return token;
         },
+
         async session({ session, token }) {
-            if (token.user) {
-                session.user = token.user as any;
+            if (session.user) {
+                session.user.id = token.id as string;
+                (session.user as any).roleId = token.roleId;
             }
-            (session as any).accessToken = token.accessToken;
             return session;
         },
     },
