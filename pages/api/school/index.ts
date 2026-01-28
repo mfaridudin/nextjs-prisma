@@ -2,10 +2,34 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { createSchoolSchema } from "@/lib/validators/school";
+import jwt from "jsonwebtoken";
+
 
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { method } = req;
+
+    let token: string | undefined;
+
+    if (method === "GET") {
+        token = req.query.token as string | undefined;
+    } else if (method === "POST") {
+        token = req.body.token as string | undefined;
+    }
+
+    if (!token) {
+        return res.status(400).json({ error: "Token missing" });
+    }
+
+    let payload: any;
+
+    try {
+        payload = jwt.verify(token, process.env.JWT_SECRET!);
+    } catch (err) {
+        return res.status(401).json({ error: "Invalid or expired token" });
+    }
+
+    const userId = payload.userId;
 
     switch (method) {
         case "GET":
@@ -32,7 +56,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
             break;
 
-
         case "POST":
             const result = createSchoolSchema.safeParse(req.body);
 
@@ -54,6 +77,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         slug,
                         educationLevel,
                     },
+                });
+
+                await prisma.user.update({
+                    where: { id: userId },
+                    data: { schoolId: newSchool.id },
                 });
 
                 res.status(201).json(newSchool);
