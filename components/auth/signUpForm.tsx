@@ -46,6 +46,7 @@ export default function SignUpForm() {
         if (!response.ok) {
             const data = await response.json();
             setValidation(data.errors || { error: data.error });
+            console.log(data.errors || { error: data.error })
             return;
         }
 
@@ -80,12 +81,9 @@ export default function SignUpForm() {
                     </div>
 
                     <form onSubmit={handleRegister} className="space-y-5">
-
-
-
                         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                             <Input label="Full Name"
-                                required
+                                // required
                                 placeholder="Your Name"
                                 value={fullName}
                                 onChange={(e) => setFullName(e.target.value)}
@@ -93,7 +91,7 @@ export default function SignUpForm() {
                             />
 
                             <Input label="Username"
-                                required
+                                // required
                                 placeholder="Input your username"
                                 value={username}
                                 onChange={(e) => setUserName(e.target.value)}
@@ -102,7 +100,7 @@ export default function SignUpForm() {
                         </div>
 
                         <Input label="Email"
-                            required
+                            // required
                             type="email"
                             placeholder="example@gmail.com"
                             value={email}
@@ -111,7 +109,7 @@ export default function SignUpForm() {
                         />
 
                         <Input label="Address"
-                            required
+                            // required
                             placeholder="Your Address"
                             value={address}
                             onChange={(e) => setAddress(e.target.value)}
@@ -121,14 +119,14 @@ export default function SignUpForm() {
                         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                             <Input label="Date of Birth"
                                 type="date"
-                                required
+                                // required
                                 value={dateOfBirth}
                                 onChange={(e) => setDateOfBirth(e.target.value)}
                                 error={validation?.dateOfBirth?.[0]}
                             />
 
                             <Input label="Age"
-                                required
+                                // required
                                 placeholder="Your Age"
                                 type="number"
                                 value={age}
@@ -160,6 +158,7 @@ export default function SignUpForm() {
 
                                 </span>
                             </div>
+                            {validation && (validation?.age?.[0])}
                         </div>
 
                         <div>
@@ -204,7 +203,7 @@ export default function SignUpForm() {
                         </Button>
                     </form>
 
-                    {/* f ooter */}
+                    {/* footer */}
                     <p className="mt-6 text-sm text-gray-600 dark:text-gray-400">
                         Already have an account?
                         <Link

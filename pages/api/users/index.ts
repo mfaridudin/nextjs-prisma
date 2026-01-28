@@ -38,7 +38,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const body = result.data;
 
             if (body.password !== body.password_confirmation) {
-                return res.status(400).json({ error: "Password confirmation does not match" });
+                return Response.json({
+                    errors: {
+                        password_confirmation: ["Password confirmation does not match"]
+                    }
+                }, { status: 400 })
             }
 
             try {
