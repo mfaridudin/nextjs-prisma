@@ -37,6 +37,7 @@ export async function GET(req: Request) {
         where: { id: tokenData.userId },
         data: { emailVerified: true },
     })
+    
 
     await prisma.emailVerificationToken.delete({ where: { id: tokenData.id } })
 

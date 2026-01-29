@@ -6,6 +6,6 @@ export const metadata: Metadata = {
     description: "Verify-Pending Page  for My App",
 };
 
-export default function page() {
+export default function VerifyPending() {
     return <PendingVerify />
 }

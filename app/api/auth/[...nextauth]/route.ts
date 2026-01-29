@@ -12,9 +12,29 @@ const handler = NextAuth({
             credentials: {
                 email: { label: "Email", type: "email" },
                 password: { label: "Password", type: "password" },
+                magicToken: { label: "Magic Token", type: "hidden" },
             },
 
             async authorize(credentials) {
+                if (credentials?.magicToken) {
+                    const token = await prisma.magicLoginToken.findUnique({
+                        where: { token: credentials.magicToken },
+                        include: { user: true },
+                    });
+
+                    if (!token || token.expiresAt < new Date()) return null;
+
+                    await prisma.magicLoginToken.delete({
+                        where: { token: credentials.magicToken },
+                    });
+
+                    return {
+                        id: String(token.user.id),
+                        email: token.user.email,
+                        roleId: token.user.roleId,
+                    };
+                }
+
                 if (!credentials?.email || !credentials.password) {
                     return null;
                 }
@@ -42,7 +62,7 @@ const handler = NextAuth({
                     name: user.fullName,
                     roleId: user.roleId,
                 };
-            },
+            }
         }),
     ],
 

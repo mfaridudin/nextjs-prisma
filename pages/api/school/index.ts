@@ -84,8 +84,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     data: { schoolId: newSchool.id },
                 });
 
-                res.status(201).json(newSchool);
-                return;
+                const magicToken = crypto.randomUUID();
+
+                await prisma.magicLoginToken.create({
+                    data: {
+                        token: magicToken,
+                        userId,
+                        expiresAt: new Date(Date.now() + 1000 * 60 * 5),
+                    },
+                });
+
+                return res.status(201).json({
+                    school: newSchool,
+                    magicToken,
+                });
             } catch (error: any) {
                 console.error(error);
                 res.status(500).json({ error: error.message || "Failed to create user" });

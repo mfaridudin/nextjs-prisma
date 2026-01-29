@@ -5,6 +5,7 @@ import Input from "@/components/ui/input"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import slugify from "slugify"
+import { signIn } from "next-auth/react"
 
 export default function AddSchool() {
     const [loading, setLoading] = useState(false)
@@ -53,6 +54,13 @@ export default function AddSchool() {
             return;
         }
         setLoading(false)
+
+        const { magicToken } = await response.json();
+
+        await signIn("credentials", {
+            magicToken,
+            redirect: false,
+        });
 
         router.push("/");
     }
