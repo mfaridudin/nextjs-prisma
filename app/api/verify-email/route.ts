@@ -30,7 +30,6 @@ export async function GET(req: Request) {
     // }
 
     if (!tokenData || tokenData.expiresAt < new Date()) {
-        // redirect ke halaman error jika token invalid atau expired
         return Response.redirect("http://localhost:3000/auth/verify-pending?error=invalid", 302);
     }
 

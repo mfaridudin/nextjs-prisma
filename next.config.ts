@@ -8,6 +8,18 @@ const nextConfig = {
       'http://localhost:3000'
     ] as any,
   },
+
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/dashboard',
+        permanent: true,
+      },
+    ]
+  },
 }
+
+
 
 export default nextConfig;
