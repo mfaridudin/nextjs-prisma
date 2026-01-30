@@ -5,7 +5,7 @@ import { useEffect } from "react"
 import Input from "../ui/input"
 import Link from "next/link"
 
-export default function Students() {
+export default function Teacher() {
     const [showPassword, setShowPassword] = useState(false)
     const [form, setForm] = useState({
         fullName: "",
@@ -33,7 +33,7 @@ export default function Students() {
     const [validation, setValidation] = useState<any>({});
     const [studentId, setStudentId] = useState("")
     useEffect(() => {
-        fetch('/api/student')
+        fetch('/api/teacher')
             .then((res) => res.json())
             .then((data) => setStudents(data));
     }, []);
@@ -46,13 +46,13 @@ export default function Students() {
             ...form,
             dateOfBirth: form.dateOfBirth ? new Date(form.dateOfBirth).toISOString() : undefined,
             age: form.age ? Number(form.age) : undefined,
-            roleId: 3,
+            roleId: 2,
             emailVerified: true,
         };
 
         console.log(payload)
 
-        const response = await fetch("/api/student", {
+        const response = await fetch("/api/teacher", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
@@ -64,8 +64,8 @@ export default function Students() {
             console.log(data.errors || { error: data.error })
             return;
         }
-        setLoading(false)
         setModalAdd(false)
+        setLoading(false)
     }
 
     async function hadleEditStudent(e: React.FormEvent) {
@@ -76,7 +76,7 @@ export default function Students() {
             ...editForm,
             dateOfBirth: form.dateOfBirth ? new Date(form.dateOfBirth).toISOString() : undefined,
             age: form.age ? Number(form.age) : undefined,
-            roleId: 3,
+            roleId: 2,
             emailVerified: true,
         };
 
@@ -112,11 +112,12 @@ export default function Students() {
     return (
         <>
             <div className="flex items-center justify-between mb-6">
+                
                 <h1 className="text-3xl font-bold text-white">
-                    Students Management
+                    Teachers Management
                 </h1>
                 <button onClick={() => setModalAdd(true)} className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200">
-                    Add Student
+                    Add Teacher
                 </button>
             </div>
 
@@ -150,7 +151,19 @@ export default function Students() {
                                 </td>
                                 <td className="py-4 px-6 text-sm">
                                     <div className="flex space-x-2">
-                                        <Link href={`/dashboard/students/${item.id}/detail`}
+                                        <Link href={`/dashboard/teachers/${item.id}/detail`}
+                                            // onClick={() => {
+                                            //     setStudentId(item.id);
+                                            //     setEditForm({
+                                            //         fullName: item.fullName,
+                                            //         username: item.username,
+                                            //         address: item.address,
+                                            //         dateOfBirth: item.dateOfBirth ? new Date(item.dateOfBirth).toISOString().slice(0, 10) : "",
+                                            //         age: item.age ? item.age.toString() : "",
+                                            //         email: item.email
+                                            //     });
+
+                                            // }}
                                             className="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-1 px-3 rounded-md transition duration-200"
                                         >
                                             View

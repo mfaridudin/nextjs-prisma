@@ -16,7 +16,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     where: { id: Number(id) },
                     include: { role: true },
                 });
+
                 if (!teacher) return res.status(404).json({ error: "Teacher not found" });
+
+                if (teacher?.roleId !== 2) {
+                    return res.status(404).json({
+                        error: "Teacher not found"
+                    })
+                }
+
+
                 res.status(200).json(teacher);
             } catch (error) {
                 console.error(error);
