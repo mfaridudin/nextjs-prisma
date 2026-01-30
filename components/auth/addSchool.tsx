@@ -62,6 +62,10 @@ export default function AddSchool() {
             redirect: false,
         });
 
+        const channel = new BroadcastChannel("auth-status")
+        channel.postMessage("login-succes")
+        channel.close
+
         router.push("/");
     }
 

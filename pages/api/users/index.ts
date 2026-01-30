@@ -56,7 +56,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 const newUser = await prisma.user.create({
                     data: {
                         ...userData,
-                        emailVerified: false,
+                        emailVerified: userData.emailVerified ?? false,
                         password: hashedPassword,
                         dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null,
                         age: age !== undefined ? Number(age) : null,

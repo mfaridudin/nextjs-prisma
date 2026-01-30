@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Button from "../ui/button"
 import Input from "../ui/input"
 
@@ -23,6 +23,15 @@ export default function VerifyPending() {
     }
 
     // nanti state di sini?
+    useEffect(() => {
+        const channel = new BroadcastChannel("auth-status")
+        channel.onmessage = (event) => {
+            if (event.data === "login-succes") {
+                window.location.href = "/dashboard"
+            }
+        }
+        return () => channel.close()
+    }, [])
 
     return (
         <>

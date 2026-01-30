@@ -1,94 +1,84 @@
-import NextAuth from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
-import { prisma } from "@/lib/prisma";
+// import NextAuth from "next-auth";
+// import CredentialsProvider from "next-auth/providers/credentials";
+// import bcrypt from "bcryptjs";
+// import { prisma } from "@/lib/prisma";
+// import { number } from "zod";
 
-const handler = NextAuth({
-    debug: true,
+// const handler = NextAuth({
+//     debug: true, providers: [CredentialsProvider({
+//         name: "Credentials",
+//         credentials: {
+//             email: { label: "Email", type: "email" },
+//             password: { label: "Password", type: "password" },
+//             magicToken: { label: "Magic Token", type: "hidden" },
+//         },
 
-    providers: [
-        CredentialsProvider({
-            name: "Credentials",
-            credentials: {
-                email: { label: "Email", type: "email" },
-                password: { label: "Password", type: "password" },
-                magicToken: { label: "Magic Token", type: "hidden" },
-            },
+//         async authorize(credentials) {
+//             if (!credentials) return null;
 
-            async authorize(credentials) {
-                if (credentials?.magicToken) {
-                    const token = await prisma.magicLoginToken.findUnique({
-                        where: { token: credentials.magicToken },
-                        include: { user: true },
-                    });
+//             if (credentials.magicToken) {
+//                 const token = await prisma.magicLoginToken.findUnique({
+//                     where: { token: credentials.magicToken },
+//                     include: { user: true },
+//                 });
 
-                    if (!token || token.expiresAt < new Date()) return null;
+//                 if (!token || token.expiresAt < new Date()) return null;
 
-                    await prisma.magicLoginToken.delete({
-                        where: { token: credentials.magicToken },
-                    });
+//                 await prisma.magicLoginToken.delete({ where: { token: credentials.magicToken } });
 
-                    return {
-                        id: String(token.user.id),
-                        email: token.user.email,
-                        roleId: token.user.roleId,
-                    };
-                }
+//                 return {
+//                     id: Number(token.user.id),
+//                     email: token.user.email,
+//                     roleId: token.user.roleId,
+//                     schoolId: token.user.schoolId ?? null,
+//                 }
+//             }
 
-                if (!credentials?.email || !credentials.password) {
-                    return null;
-                }
+//             if (!credentials.email || !credentials.password) return null;
 
-                const user = await prisma.user.findUnique({
-                    where: { email: credentials.email },
-                });
+//             const user = await prisma.user.findUnique({ where: { email: credentials.email } });
+//             if (!user || !user.emailVerified) return null;
 
-                if (!user) return null;
+//             const valid = await bcrypt.compare(credentials.password, user.password);
+//             if (!valid) return null;
 
-                if (!user.emailVerified) {
-                    return null;
-                }
+//             return {
+//                 id: Number(user.id),
+//                 email: user.email,
+//                 roleId: user.roleId,
+//                 schoolId: user.schoolId ?? null,
+//             }
+//         }
+//     }),],
 
-                const isValid = await bcrypt.compare(
-                    credentials.password,
-                    user.password
-                );
+//     session: { strategy: "jwt", },
 
-                if (!isValid) return null;
+//     callbacks: {
+//         async jwt({ token, user }) {
+//             if (user) {
+//                 token.id = Number(user.id);
+//                 token.roleId = user.roleId;
+//                 token.schoolId = user.schoolId ?? null;
+//             }
+//             return token;
+//         },
 
-                return {
-                    id: String(user.id),
-                    email: user.email,
-                    name: user.fullName,
-                    roleId: user.roleId,
-                };
-            }
-        }),
-    ],
+//         async session({ session, token }) {
+//             if (session.user) {
+//                 session.user.id = Number(token.id);
+//                 session.user.roleId = token.roleId;
+//                 session.user.schoolId = token.schoolId ?? null;
+//             }
+//             return session;
+//         },
+//     },
 
-    session: {
-        strategy: "jwt",
-    },
+//     secret: process.env.NEXTAUTH_SECRET,
+// }); export { handler as GET, handler as POST };
 
-    callbacks: {
-        async jwt({ token, user }) {
-            if (user) {
-                token.id = user.id;
-                token.roleId = (user as any).roleId;
-            }
-            return token;
-        },
+import NextAuth from "next-auth"
+import { authOptions } from "@/lib/auth"
 
-        async session({ session, token }) {
-            if (session.user) {
-                session.user.id = token.id as string;
-                (session.user as any).roleId = token.roleId;
-            }
-            return session;
-        },
-    },
+const handler = NextAuth(authOptions)
 
-    secret: process.env.NEXTAUTH_SECRET,
-});
-
-export { handler as GET, handler as POST };
+export { handler as GET, handler as POST }
