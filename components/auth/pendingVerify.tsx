@@ -22,7 +22,6 @@ export default function VerifyPending() {
         setLoading(false)
     }
 
-    // nanti state di sini?
     useEffect(() => {
         const channel = new BroadcastChannel("auth-status")
         channel.onmessage = (event) => {

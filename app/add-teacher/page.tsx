@@ -31,12 +31,13 @@ export default function Dashboard() {
     const [studentId, setStudentId] = useState("")
     const [editFullName, setEditFullName] = useState("")
 
-    const router = useRouter()
+
 
     useEffect(() => {
-        fetch('/api/student')
+        fetch('/api/teacher')
             .then((res) => res.json())
             .then((data) => setStudents(data));
+
     }, []);
 
     async function handleAddStudent(e: React.FormEvent) {
@@ -47,13 +48,13 @@ export default function Dashboard() {
             ...form,
             dateOfBirth: form.dateOfBirth ? new Date(form.dateOfBirth).toISOString() : undefined,
             age: form.age ? Number(form.age) : undefined,
-            roleId: 3,
+            roleId: 2,
             emailVerified: true,
         };
 
         console.log(payload)
 
-        const response = await fetch("/api/student", {
+        const response = await fetch("/api/teacher", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
@@ -76,11 +77,11 @@ export default function Dashboard() {
             ...editForm,
             dateOfBirth: form.dateOfBirth ? new Date(form.dateOfBirth).toISOString() : undefined,
             age: form.age ? Number(form.age) : undefined,
-            roleId: 3,
+            roleId: 2,
             emailVerified: true,
         };
 
-        const response = await fetch(`/api/student/${studentId}`, {
+        const response = await fetch(`/api/teacher/${studentId}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
@@ -95,7 +96,7 @@ export default function Dashboard() {
     }
 
     async function handleDelete(id: string | number) {
-        const response = await fetch(`/api/student/${id}`, {
+        const response = await fetch(`/api/teacher/${id}`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
         });

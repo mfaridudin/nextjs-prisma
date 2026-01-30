@@ -12,7 +12,7 @@ export default async function handler(
     const session = await getServerSession(req, res, authOptions)
 
     if (!session || !session.user) {
-        return res.status(401).json({ message: "Student Unauthorized" })
+        return res.status(401).json({ message: "Unauthorized" })
     }
 
     const idSchool = session.user.schoolId
@@ -21,16 +21,16 @@ export default async function handler(
     switch (req.method) {
         case "GET":
             try {
-                const students = await prisma.user.findMany({
+                const teachers = await prisma.user.findMany({
                     where: {
                         schoolId: idSchoolNumber,
-                        roleId: 3
+                        roleId: 2
                     },
                 })
-                return res.status(200).json(students)
+                return res.status(200).json(teachers)
             } catch (error) {
                 console.error(error)
-                return res.status(500).json({ error: "Failed to fetch students" })
+                return res.status(500).json({ error: "Failed to fetch teachers" })
             }
 
         case "POST":
@@ -57,24 +57,24 @@ export default async function handler(
 
                 const hashedPassword = await bcrypt.hash(userData.password, 10)
 
-                const newStudents = await prisma.user.create({
+                const newTeachers = await prisma.user.create({
                     data: {
                         ...userData,
                         password: hashedPassword,
                         emailVerified: userData.emailVerified ?? false,
                         dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null,
                         age: age !== undefined ? Number(age) : null,
-                        roleId: userData.roleId || 3,
+                        roleId: userData.roleId || 2,
                         schoolId: idSchoolNumber,
                     },
                 })
 
-                return res.status(201).json(newStudents)
+                return res.status(201).json(newTeachers)
             } catch (error: any) {
                 console.error(error)
                 return res
                     .status(500)
-                    .json({ error: error.message || "Failed to create new students" })
+                    .json({ error: error.message || "Failed to create new teachers" })
             }
 
         default:

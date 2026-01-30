@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/lib/prisma";
-import bcrypt from "bcryptjs";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { method } = req;
@@ -13,15 +12,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     switch (method) {
         case "GET":
             try {
-                const student = await prisma.user.findUnique({
+                const teacher = await prisma.user.findUnique({
                     where: { id: Number(id) },
                     include: { role: true },
                 });
-                if (!student) return res.status(404).json({ error: "Student not found" });
-                res.status(200).json(student);
+                if (!teacher) return res.status(404).json({ error: "Teacher not found" });
+                res.status(200).json(teacher);
             } catch (error) {
                 console.error(error);
-                res.status(500).json({ error: "Failed to fetch student" });
+                res.status(500).json({ error: "Failed to fetch teacher" });
             }
             break;
 
@@ -29,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             try {
                 const { fullName, username, email, address, dateOfBirth, age } = req.body;
 
-                const updatedStudent = await prisma.user.update({
+                const updatedTeacher = await prisma.user.update({
                     where: { id: Number(id) },
                     data: {
                         fullName,
@@ -41,10 +40,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     },
                 });
 
-                res.status(200).json(updatedStudent);
+                res.status(200).json(updatedTeacher);
             } catch (error) {
                 console.error(error);
-                res.status(500).json({ error: "Failed to updated student" });
+                res.status(500).json({ error: "Failed to updated teacher" });
             }
             break;
 
@@ -53,10 +52,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 await prisma.user.delete({
                     where: { id: Number(id) },
                 });
-                res.status(200).json({ message: "Student has been successfully deleted" });
+                res.status(200).json({ message: "Teacher has been successfully deleted" });
             } catch (error) {
                 console.error(error);
-                res.status(500).json({ error: "Failed to delete student" });
+                res.status(500).json({ error: "Failed to delete teacher" });
             }
             break;
 
