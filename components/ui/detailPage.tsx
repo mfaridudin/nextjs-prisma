@@ -1,5 +1,6 @@
 "use client"
 import { UserDetail } from "@/types/user"
+import Button from "./button"
 
 interface DetailUserProps {
     data: UserDetail
@@ -116,9 +117,9 @@ export default function DetailPage({
                     </div>
                     {button && (
                         <div className="mt-8 flex space-x">
-                            <button onClick={onEdit} className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
+                            <Button onClick={onEdit} className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
                                 {editLabel}
-                            </button>
+                            </Button>
                         </div>
                     )}
                 </div>

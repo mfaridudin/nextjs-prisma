@@ -3,8 +3,11 @@ import { useState } from "react";
 import Input from "../ui/input";
 import Button from "../ui/button";
 import DetailPage from "../ui/detailPage";
-
+import Modal from "../ui/modal";
+import { useOpenModal } from "@/store/useOpenModal";
 export default function DetailStudent({ item, title }: any) {
+
+    const { open, mode, selectedId, openEditModal, closeModal } = useOpenModal()
 
     const [loading, setLoading] = useState(false)
     const [studentId, setStudentId] = useState("")
@@ -43,7 +46,7 @@ export default function DetailStudent({ item, title }: any) {
             emailVerified: true,
         };
 
-        const response = await fetch(`/api/student/${studentId}`, {
+        const response = await fetch(`/api/student/${selectedId}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
@@ -56,7 +59,7 @@ export default function DetailStudent({ item, title }: any) {
             return;
         }
         fetchStudents()
-        setModalEdit(false)
+        closeModal()
     }
 
 
@@ -66,100 +69,78 @@ export default function DetailStudent({ item, title }: any) {
                 title={title}
                 data={item}
                 editLabel="Edit Student"
-                onEdit={() => {
-                    setModalEdit(true)
-                    setStudentId(item.id)
-                }} />
+                onEdit={() => openEditModal(item.id)} />
 
-            {modalEdit && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-xl transform transition-all duration-300 scale-100">
-                        {/* header */}
-                        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-                            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Add Student</h2>
-                            <button
-                                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition duration-200"
-                                onClick={() => { setModalEdit(false) }}
-                            >
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
+            <Modal title="Edit Student" open={open} onClose={() => closeModal()} maxWidth="max-w-xl">
+                <form onSubmit={hadleEditStudent} className="p-6 space-y-4">
 
-                        {/* form */}
-                        <form onSubmit={hadleEditStudent} className="p-6 space-y-4">
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <Input
-                                    value={formEdit.fullName}
-                                    onChange={(e) => setFormEdit({ ...formEdit, fullName: e.target.value, })}
-                                    label="Full Name"
-                                    type="text"
-                                    placeholder="Enter full name"
-                                />
-                                <Input
-                                    value={formEdit.username}
-                                    onChange={(e) => setFormEdit({ ...formEdit, username: e.target.value, })}
-                                    label="Username"
-                                    type="text"
-                                    placeholder="Enter username"
-                                />
-                            </div>
-
-                            <Input
-                                value={formEdit.email}
-                                onChange={(e) => setFormEdit({ ...formEdit, email: e.target.value })}
-                                label="Email"
-                                type="email"
-                                placeholder="Enter email"
-                            />
-
-                            <Input
-                                value={formEdit.address}
-                                onChange={(e) => setFormEdit({ ...formEdit, address: e.target.value })}
-                                label="Address"
-                                type="text"
-                                placeholder="Enter address"
-                            />
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <Input
-                                    value={formEdit.dateOfBirth}
-                                    onChange={(e) => setFormEdit({ ...formEdit, dateOfBirth: e.target.value })}
-                                    label="Date of Birth"
-                                    type="date"
-                                    placeholder="Enter age"
-                                />
-                                <Input
-                                    value={formEdit.age}
-                                    onChange={(e) => setFormEdit({ ...formEdit, age: e.target.value })}
-                                    label="Age"
-                                    type="number"
-                                    placeholder="Enter age"
-                                />
-                            </div>
-
-                            {/* Footer */}
-                            <div className="flex items-center justify-end space-x-3 p-6 border-t border-gray-200 dark:border-gray-700">
-                                <Button
-                                    type="button"
-                                    className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition duration-200"
-                                    onClick={() => { setModalEdit(false) }}
-                                >
-                                    Cancel
-                                </Button>
-                                <button
-                                    type="submit"
-                                    className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 transition duration-200"
-                                >
-                                    Submit
-                                </button>
-                            </div>
-                        </form>
+                    <div className="grid grid-cols-2 gap-4">
+                        <Input
+                            value={formEdit.fullName}
+                            onChange={(e) => setFormEdit({ ...formEdit, fullName: e.target.value, })}
+                            label="Full Name"
+                            type="text"
+                            placeholder="Enter full name"
+                        />
+                        <Input
+                            value={formEdit.username}
+                            onChange={(e) => setFormEdit({ ...formEdit, username: e.target.value, })}
+                            label="Username"
+                            type="text"
+                            placeholder="Enter username"
+                        />
                     </div>
-                </div>
-            )}
+
+                    <Input
+                        value={formEdit.email}
+                        onChange={(e) => setFormEdit({ ...formEdit, email: e.target.value })}
+                        label="Email"
+                        type="email"
+                        placeholder="Enter email"
+                    />
+
+                    <Input
+                        value={formEdit.address}
+                        onChange={(e) => setFormEdit({ ...formEdit, address: e.target.value })}
+                        label="Address"
+                        type="text"
+                        placeholder="Enter address"
+                    />
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <Input
+                            value={formEdit.dateOfBirth}
+                            onChange={(e) => setFormEdit({ ...formEdit, dateOfBirth: e.target.value })}
+                            label="Date of Birth"
+                            type="date"
+                            placeholder="Enter age"
+                        />
+                        <Input
+                            value={formEdit.age}
+                            onChange={(e) => setFormEdit({ ...formEdit, age: e.target.value })}
+                            label="Age"
+                            type="number"
+                            placeholder="Enter age"
+                        />
+                    </div>
+
+                    {/* Footer */}
+                    <div className="flex items-center justify-end space-x-3 p-6 border-t border-gray-200 dark:border-gray-700">
+                        <Button
+                            type="button"
+                            variant="cancel"
+                            onClick={() => closeModal()}
+                        >
+                            Cancelled
+                        </Button>
+                        <Button
+                            type="submit"
+                        >
+                            Submit
+                        </Button>
+                    </div>
+                </form>
+            </Modal>
         </>
     )
 }

@@ -4,10 +4,16 @@ import Button from "@/components/ui/button"
 import { useEffect } from "react"
 import Input from "../ui/input"
 import Link from "next/link"
+import Modal from "../ui/modal"
+// import { useDeleteModal } from "@/store/useDeleteModal"
+import { useOpenModal } from "@/store/useOpenModal"
 
 export default function Teacher({ url, role }: any) {
     const [showPassword, setShowPassword] = useState(false)
     const urls = url
+
+    const { open, mode, selectedId, openAddModal, openDeleteModal, closeModal } = useOpenModal()
+
 
     const initialForm = {
         fullName: "",
@@ -28,10 +34,8 @@ export default function Teacher({ url, role }: any) {
 
     const [loading, setLoading] = useState(false)
     const [teacher, setTeacher] = useState([])
-    const [modalAdd, setModalAdd] = useState(false)
+
     const [validation, setValidation] = useState<any>({});
-    const [teacherId, setTeacherId] = useState("")
-    const [modalDelete, setModalDelete] = useState(false)
 
     async function fetchTeacher() {
         try {
@@ -76,7 +80,7 @@ export default function Teacher({ url, role }: any) {
 
         await fetchTeacher()
         setForm(initialForm)
-        setModalAdd(false)
+        closeModal()
         setLoading(false)
     }
 
@@ -93,7 +97,8 @@ export default function Teacher({ url, role }: any) {
             return;
         }
         await fetchTeacher()
-        setModalDelete(false)
+        // 
+        closeModal()
     }
 
 
@@ -113,7 +118,7 @@ export default function Teacher({ url, role }: any) {
                     </h1>)}
 
                 {button && (
-                    <button onClick={() => setModalAdd(true)} className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200">
+                    <button onClick={() => openAddModal()} className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200">
                         Add Teacher
                     </button>
                 )}
@@ -157,10 +162,7 @@ export default function Teacher({ url, role }: any) {
 
                                         {button && (
                                             <button
-                                                onClick={() => {
-                                                    setTeacherId(item.id)
-                                                    setModalDelete(true)
-                                                }}
+                                                onClick={() => openDeleteModal(item.id)}
                                                 className="bg-red-500 hover:bg-red-600 text-white font-medium py-1 px-3 rounded-md transition duration-200"
                                             >
                                                 Delete
@@ -186,173 +188,152 @@ export default function Teacher({ url, role }: any) {
                 </table>
             </div>
 
-            {modalAdd && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-xl transform transition-all duration-300 scale-100">
-                        {/* header */}
-                        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-                            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Add Teachers</h2>
-                            <button
-                                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition duration-200"
-                                onClick={() => { setModalAdd(false) }}
+            <Modal open={open && mode === "add"}
+                onClose={() => closeModal}
+                title="Add Teacher"
+                maxWidth="max-w-xl"
+            >
+                <form onSubmit={handleAddTeacher} className="p-6 space-y-4">
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <Input
+                            value={form.fullName}
+                            onChange={(e) => setForm({ ...form, fullName: e.target.value, })}
+                            label="Full Name"
+                            type="text"
+                            placeholder="Enter full name"
+                        />
+                        <Input
+                            value={form.username}
+                            onChange={(e) => setForm({ ...form, username: e.target.value, })}
+                            label="Username"
+                            type="text"
+                            placeholder="Enter username"
+                        />
+                    </div>
+
+                    <Input
+                        value={form.email}
+                        onChange={(e) => setForm({ ...form, email: e.target.value })}
+                        label="Email"
+                        type="email"
+                        placeholder="Enter email"
+                    />
+
+                    <Input
+                        value={form.address}
+                        onChange={(e) => setForm({ ...form, address: e.target.value })}
+                        label="Address"
+                        type="text"
+                        placeholder="Enter address"
+                    />
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <Input
+                            value={form.dateOfBirth}
+                            onChange={(e) => setForm({ ...form, dateOfBirth: e.target.value })}
+                            label="Date of Birth"
+                            type="date"
+                            placeholder="Enter age"
+                        />
+                        <Input
+                            value={form.age}
+                            onChange={(e) => setForm({ ...form, age: e.target.value })}
+                            label="Age"
+                            type="number"
+                            placeholder="Enter age"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+                        <div className="relative">
+                            <input
+                                value={form.password}
+                                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                                type={showPassword ? "text" : "password"}
+                                placeholder="••••••••"
+                                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm
+                                                        text-gray-800 placeholder-gray-400
+                                                        focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20
+                                                    dark:border-gray-700 dark:bg-gray-900 dark:text-white
+                                                    dark:placeholder-gray-500"
+                            />
+                            <span
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400 hover:text-gray-600"
                             >
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                 </svg>
-                            </button>
+
+                            </span>
                         </div>
+                        {validation && (validation?.age?.[0])}
+                    </div>
 
-                        {/* form */}
-                        <form onSubmit={handleAddTeacher} className="p-6 space-y-4">
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <Input
-                                    value={form.fullName}
-                                    onChange={(e) => setForm({ ...form, fullName: e.target.value, })}
-                                    label="Full Name"
-                                    type="text"
-                                    placeholder="Enter full name"
-                                />
-                                <Input
-                                    value={form.username}
-                                    onChange={(e) => setForm({ ...form, username: e.target.value, })}
-                                    label="Username"
-                                    type="text"
-                                    placeholder="Enter username"
-                                />
-                            </div>
-
-                            <Input
-                                value={form.email}
-                                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                                label="Email"
-                                type="email"
-                                placeholder="Enter email"
-                            />
-
-                            <Input
-                                value={form.address}
-                                onChange={(e) => setForm({ ...form, address: e.target.value })}
-                                label="Address"
-                                type="text"
-                                placeholder="Enter address"
-                            />
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <Input
-                                    value={form.dateOfBirth}
-                                    onChange={(e) => setForm({ ...form, dateOfBirth: e.target.value })}
-                                    label="Date of Birth"
-                                    type="date"
-                                    placeholder="Enter age"
-                                />
-                                <Input
-                                    value={form.age}
-                                    onChange={(e) => setForm({ ...form, age: e.target.value })}
-                                    label="Age"
-                                    type="number"
-                                    placeholder="Enter age"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
-                                <div className="relative">
-                                    <input
-                                        value={form.password}
-                                        onChange={(e) => setForm({ ...form, password: e.target.value })}
-                                        type={showPassword ? "text" : "password"}
-                                        placeholder="••••••••"
-                                        className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm
+                    <div>
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Confirm Password</label>
+                        <div className="relative">
+                            <input
+                                value={form.password_confirmation}
+                                onChange={(e) => setForm({ ...form, password_confirmation: e.target.value })}
+                                type={showPassword ? "text" : "password"}
+                                placeholder="••••••••"
+                                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm
                                                         text-gray-800 placeholder-gray-400
                                                         focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20
                                                     dark:border-gray-700 dark:bg-gray-900 dark:text-white
                                                     dark:placeholder-gray-500"
-                                    />
-                                    <span
-                                        onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400 hover:text-gray-600"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                        </svg>
-
-                                    </span>
-                                </div>
-                                {validation && (validation?.age?.[0])}
-                            </div>
-
-                            <div>
-                                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Confirm Password</label>
-                                <div className="relative">
-                                    <input
-                                        value={form.password_confirmation}
-                                        onChange={(e) => setForm({ ...form, password_confirmation: e.target.value })}
-                                        type={showPassword ? "text" : "password"}
-                                        placeholder="••••••••"
-                                        className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm
-                                                        text-gray-800 placeholder-gray-400
-                                                        focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20
-                                                    dark:border-gray-700 dark:bg-gray-900 dark:text-white
-                                                    dark:placeholder-gray-500"
-                                    />
-                                    <span
-                                        onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400 hover:text-gray-600"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                        </svg>
-
-                                    </span>
-                                </div>
-                            </div>
-
-                            {/* Footer */}
-                            <div className="flex items-center justify-end space-x-3 p-6 border-t border-gray-200 dark:border-gray-700">
-                                <Button
-                                    type="button"
-                                    className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition duration-200"
-                                    onClick={() => { setModalAdd(false) }}
-                                >
-                                    Cancel
-                                </Button>
-                                <button
-                                    type="submit"
-                                    className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 transition duration-200"
-                                >
-                                    Sumbit
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
-
-            {modalDelete && (
-                <div className="fixed inset-0 bg-black/20 dark:bg-black/50 flex items-center justify-center z-50 transition-opacity duration-300">
-                    <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-md mx-4 border border-gray-200 dark:border-gray-700">
-                        <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Hapus Data</h2>
-                        <p className="mb-6 text-gray-700 dark:text-gray-300">Yakin ingin menghapus data ini?</p>
-                        <div className="flex justify-end gap-3">
-                            <button
-                                onClick={() => setModalDelete(false)}
-                                className="bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 px-5 py-2 rounded-lg font-medium transition-colors duration-200"
+                            />
+                            <span
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400 hover:text-gray-600"
                             >
-                                Batal
-                            </button>
-                            <button
-                                onClick={() => handleDelete(teacherId)}
-                                className="bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white px-5 py-2 rounded-lg font-medium transition-colors duration-200"
-                            >
-                                Ya, Hapus
-                            </button>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                </svg>
+
+                            </span>
                         </div>
                     </div>
+
+                    {/* Footer */}
+                    <div className="flex items-center justify-end space-x-3 p-6 border-t border-gray-200 dark:border-gray-700">
+                        <Button
+                            type="button"
+                            variant="cancel"
+                            onClick={() => closeModal()}
+                        >
+                            Cancelled
+                        </Button>
+                        <Button
+                            type="submit"
+                        >
+                            Sumbit
+                        </Button>
+                    </div>
+                </form>
+            </Modal>
+
+            <Modal open={open && mode === "delete"}
+                onClose={closeModal}
+                title="Delete Data"
+                maxWidth="max-w-md">
+                <div className="p-6">
+                    <p className="mb-6 text-gray-700 dark:text-gray-300">Are you sure you want to delete this data?</p>
+                    <div className="flex justify-end gap-3">
+                        <Button onClick={() => closeModal()} variant="cancel" >
+                            Cancelled
+                        </Button>
+                        <Button onClick={() => selectedId && handleDelete(selectedId)} variant="danger">
+                            Yes, Delete
+                        </Button>
+                    </div>
                 </div>
-            )}
+            </Modal>
 
         </>
     )
