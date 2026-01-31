@@ -5,9 +5,11 @@ import { useEffect } from "react"
 import Input from "../ui/input"
 import Link from "next/link"
 
-export default function Teacher() {
+export default function Teacher({ url, role }: any) {
     const [showPassword, setShowPassword] = useState(false)
-    const [form, setForm] = useState({
+    const urls = url
+
+    const initialForm = {
         fullName: "",
         username: "",
         address: "",
@@ -15,30 +17,37 @@ export default function Teacher() {
         age: "",
         email: "",
         password: "",
-        password_confirmation: ""
-    });
+        password_confirmation: "",
+    }
 
-    const [editForm, setEditForm] = useState({
-        fullName: "",
-        username: "",
-        address: "",
-        dateOfBirth: "",
-        age: "",
-        email: "",
-    });
+    const button = role !== "STUDENT"
+    const title = role !== "STUDENT"
+    const titleStudent = role === "STUDENT"
+
+    const [form, setForm] = useState(initialForm)
 
     const [loading, setLoading] = useState(false)
-    const [students, setStudents] = useState([])
+    const [teacher, setTeacher] = useState([])
     const [modalAdd, setModalAdd] = useState(false)
     const [validation, setValidation] = useState<any>({});
-    const [studentId, setStudentId] = useState("")
+    const [teacherId, setTeacherId] = useState("")
+    const [modalDelete, setModalDelete] = useState(false)
+
+    async function fetchTeacher() {
+        try {
+            const res = await fetch('/api/teacher')
+            const data = await res.json()
+            setTeacher(data)
+        } catch (err) {
+            console.error(err)
+        }
+    }
+
     useEffect(() => {
-        fetch('/api/teacher')
-            .then((res) => res.json())
-            .then((data) => setStudents(data));
+        fetchTeacher()
     }, []);
 
-    async function handleAddStudent(e: React.FormEvent) {
+    async function handleAddTeacher(e: React.FormEvent) {
         e.preventDefault();
         setLoading(true)
 
@@ -64,38 +73,15 @@ export default function Teacher() {
             console.log(data.errors || { error: data.error })
             return;
         }
+
+        await fetchTeacher()
+        setForm(initialForm)
         setModalAdd(false)
         setLoading(false)
     }
 
-    async function hadleEditStudent(e: React.FormEvent) {
-        e.preventDefault();
-        setLoading(true)
-
-        const payload = {
-            ...editForm,
-            dateOfBirth: form.dateOfBirth ? new Date(form.dateOfBirth).toISOString() : undefined,
-            age: form.age ? Number(form.age) : undefined,
-            roleId: 2,
-            emailVerified: true,
-        };
-
-        const response = await fetch(`/api/student/${studentId}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-        });
-
-        if (!response.ok) {
-            const data = await response.json();
-            setValidation(data.errors || { error: data.error });
-            console.log(data.errors || { error: data.error })
-            return;
-        }
-    }
-
     async function handleDelete(id: string | number) {
-        const response = await fetch(`/api/student/${id}`, {
+        const response = await fetch(`/api/teacher/${id}`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
         });
@@ -106,19 +92,31 @@ export default function Teacher() {
             console.log(data.errors || { error: data.error });
             return;
         }
+        await fetchTeacher()
+        setModalDelete(false)
     }
 
 
     return (
         <>
             <div className="flex items-center justify-between mb-6">
-                
-                <h1 className="text-3xl font-bold text-white">
-                    Teachers Management
-                </h1>
-                <button onClick={() => setModalAdd(true)} className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200">
-                    Add Teacher
-                </button>
+
+                {title && (
+                    <h1 className="text-3xl font-bold text-white">
+                        Teachers Management
+                    </h1>
+                )}
+
+                {titleStudent && (
+                    <h1 className="text-3xl font-bold text-white">
+                        All Teachers
+                    </h1>)}
+
+                {button && (
+                    <button onClick={() => setModalAdd(true)} className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200">
+                        Add Teacher
+                    </button>
+                )}
             </div>
 
             <div className="overflow-x-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg">
@@ -135,7 +133,7 @@ export default function Teacher() {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                        {students.map((item: any, index: number) => (
+                        {teacher.map((item: any, index: number) => (
                             <tr key={item.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150">
                                 <td className="py-4 px-6 text-sm text-gray-900 dark:text-gray-100">{index + 1}</td>
                                 <td className="py-4 px-6 text-sm text-gray-900 dark:text-gray-100">{item.fullName}</td>
@@ -151,34 +149,28 @@ export default function Teacher() {
                                 </td>
                                 <td className="py-4 px-6 text-sm">
                                     <div className="flex space-x-2">
-                                        <Link href={`/dashboard/teachers/${item.id}/detail`}
-                                            // onClick={() => {
-                                            //     setStudentId(item.id);
-                                            //     setEditForm({
-                                            //         fullName: item.fullName,
-                                            //         username: item.username,
-                                            //         address: item.address,
-                                            //         dateOfBirth: item.dateOfBirth ? new Date(item.dateOfBirth).toISOString().slice(0, 10) : "",
-                                            //         age: item.age ? item.age.toString() : "",
-                                            //         email: item.email
-                                            //     });
-
-                                            // }}
+                                        <Link href={`${urls}/${item.id}/detail`}
                                             className="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-1 px-3 rounded-md transition duration-200"
                                         >
                                             View
                                         </Link>
-                                        <button
-                                            onClick={() => handleDelete(item.id)}
-                                            className="bg-red-500 hover:bg-red-600 text-white font-medium py-1 px-3 rounded-md transition duration-200"
-                                        >
-                                            Delete
-                                        </button>
+
+                                        {button && (
+                                            <button
+                                                onClick={() => {
+                                                    setTeacherId(item.id)
+                                                    setModalDelete(true)
+                                                }}
+                                                className="bg-red-500 hover:bg-red-600 text-white font-medium py-1 px-3 rounded-md transition duration-200"
+                                            >
+                                                Delete
+                                            </button>
+                                        )}
                                     </div>
                                 </td>
                             </tr>
                         ))}
-                        {students.length === 0 && (
+                        {teacher.length === 0 && (
                             <tr>
                                 <td colSpan={7} className="py-8 px-6 text-center text-gray-500 dark:text-gray-400">
                                     <div className="flex flex-col items-center">
@@ -199,7 +191,7 @@ export default function Teacher() {
                     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-xl transform transition-all duration-300 scale-100">
                         {/* header */}
                         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-                            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Add Student</h2>
+                            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Add Teachers</h2>
                             <button
                                 className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition duration-200"
                                 onClick={() => { setModalAdd(false) }}
@@ -211,7 +203,7 @@ export default function Teacher() {
                         </div>
 
                         {/* form */}
-                        <form onSubmit={handleAddStudent} className="p-6 space-y-4">
+                        <form onSubmit={handleAddTeacher} className="p-6 space-y-4">
 
                             <div className="grid grid-cols-2 gap-4">
                                 <Input
@@ -318,7 +310,6 @@ export default function Teacher() {
                                 </div>
                             </div>
 
-
                             {/* Footer */}
                             <div className="flex items-center justify-end space-x-3 p-6 border-t border-gray-200 dark:border-gray-700">
                                 <Button
@@ -332,10 +323,33 @@ export default function Teacher() {
                                     type="submit"
                                     className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 transition duration-200"
                                 >
-                                    Add Student
+                                    Sumbit
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+
+            {modalDelete && (
+                <div className="fixed inset-0 bg-black/20 dark:bg-black/50 flex items-center justify-center z-50 transition-opacity duration-300">
+                    <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-md mx-4 border border-gray-200 dark:border-gray-700">
+                        <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Hapus Data</h2>
+                        <p className="mb-6 text-gray-700 dark:text-gray-300">Yakin ingin menghapus data ini?</p>
+                        <div className="flex justify-end gap-3">
+                            <button
+                                onClick={() => setModalDelete(false)}
+                                className="bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 px-5 py-2 rounded-lg font-medium transition-colors duration-200"
+                            >
+                                Batal
+                            </button>
+                            <button
+                                onClick={() => handleDelete(teacherId)}
+                                className="bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white px-5 py-2 rounded-lg font-medium transition-colors duration-200"
+                            >
+                                Ya, Hapus
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

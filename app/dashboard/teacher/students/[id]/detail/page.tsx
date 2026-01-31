@@ -1,7 +1,8 @@
+import Teacher from '@/components/dashboard/teacher';
 import { notFound } from 'next/navigation';
 import UserNotFound from '@/components/ui/userNotFound';
 import { Metadata } from 'next';
-import DetailStudent from '@/components/dashboard/detailStudent';
+import DetaiStudent from '@/components/dashboard/detailStudent';
 
 
 export const metadata: Metadata = {
@@ -17,7 +18,6 @@ export default async function Detail({ params }: { params: Promise<{ id: string 
     const data = await fetch(`http://127.0.0.1:3000/api/student/${id}`, {
         cache: "no-store",
     })
-
     const student = await data.json()
 
     const roleStudent = student.roleId
@@ -28,5 +28,5 @@ export default async function Detail({ params }: { params: Promise<{ id: string 
 
     console.log("Role ID:", roleStudent)
 
-    return <DetailStudent item={student} title="Student Detail" />
+    return <DetaiStudent item={student} title="Student Detail" />
 }

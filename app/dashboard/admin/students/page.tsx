@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default async function page() {
     return (
         <div>
-            <Students />
+            <Students url={"/dashboard/admin/students"} />
         </div>
     )
 }

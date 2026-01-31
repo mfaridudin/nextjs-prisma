@@ -34,6 +34,12 @@ export default withAuth(
             );
         }
 
+        if (pathname.startsWith("/dashboard/admin") && role !== 1) {
+            return NextResponse.redirect(
+                new URL("/dashboard", req.url)
+            );
+        }
+
         if (pathname.startsWith("/dashboard/teacher") && role !== 2) {
             return NextResponse.redirect(
                 new URL("/dashboard/admin", req.url)

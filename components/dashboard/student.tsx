@@ -1,13 +1,15 @@
 "use client"
-import { useState } from "react"
+import { use, useState } from "react"
 import Button from "@/components/ui/button"
 import { useEffect } from "react"
 import Input from "../ui/input"
 import Link from "next/link"
 
-export default function Students() {
+export default function Students({ url }: any) {
+    const urls = url
     const [showPassword, setShowPassword] = useState(false)
-    const [form, setForm] = useState({
+
+    const initialForm = {
         fullName: "",
         username: "",
         address: "",
@@ -15,27 +17,31 @@ export default function Students() {
         age: "",
         email: "",
         password: "",
-        password_confirmation: ""
-    });
+        password_confirmation: "",
+    }
 
-    const [editForm, setEditForm] = useState({
-        fullName: "",
-        username: "",
-        address: "",
-        dateOfBirth: "",
-        age: "",
-        email: "",
-    });
+    const [form, setForm] = useState(initialForm);
 
     const [loading, setLoading] = useState(false)
     const [students, setStudents] = useState([])
     const [modalAdd, setModalAdd] = useState(false)
     const [validation, setValidation] = useState<any>({});
     const [studentId, setStudentId] = useState("")
+    const [modalDelete, setModalDelete] = useState(false)
+
+
+    async function fetchStudent() {
+        try {
+            const res = await fetch('/api/student')
+            const data = await res.json()
+            setStudents(data)
+        } catch (err) {
+            console.error(err)
+        }
+    }
+
     useEffect(() => {
-        fetch('/api/student')
-            .then((res) => res.json())
-            .then((data) => setStudents(data));
+        fetchStudent()
     }, []);
 
     async function handleAddStudent(e: React.FormEvent) {
@@ -64,34 +70,10 @@ export default function Students() {
             console.log(data.errors || { error: data.error })
             return;
         }
+        fetchStudent()
         setLoading(false)
+        setForm(initialForm)
         setModalAdd(false)
-    }
-
-    async function hadleEditStudent(e: React.FormEvent) {
-        e.preventDefault();
-        setLoading(true)
-
-        const payload = {
-            ...editForm,
-            dateOfBirth: form.dateOfBirth ? new Date(form.dateOfBirth).toISOString() : undefined,
-            age: form.age ? Number(form.age) : undefined,
-            roleId: 3,
-            emailVerified: true,
-        };
-
-        const response = await fetch(`/api/student/${studentId}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-        });
-
-        if (!response.ok) {
-            const data = await response.json();
-            setValidation(data.errors || { error: data.error });
-            console.log(data.errors || { error: data.error })
-            return;
-        }
     }
 
     async function handleDelete(id: string | number) {
@@ -106,11 +88,13 @@ export default function Students() {
             console.log(data.errors || { error: data.error });
             return;
         }
+        fetchStudent()
+        setModalDelete(false)
     }
-
 
     return (
         <>
+
             <div className="flex items-center justify-between mb-6">
                 <h1 className="text-3xl font-bold text-white">
                     Students Management
@@ -150,13 +134,16 @@ export default function Students() {
                                 </td>
                                 <td className="py-4 px-6 text-sm">
                                     <div className="flex space-x-2">
-                                        <Link href={`/dashboard/students/${item.id}/detail`}
+                                        <Link href={`${urls}/${item.id}/detail`}
                                             className="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-1 px-3 rounded-md transition duration-200"
                                         >
                                             View
                                         </Link>
                                         <button
-                                            onClick={() => handleDelete(item.id)}
+                                            onClick={() => {
+                                                setStudentId(item.id)
+                                                setModalDelete(true)
+                                            }}
                                             className="bg-red-500 hover:bg-red-600 text-white font-medium py-1 px-3 rounded-md transition duration-200"
                                         >
                                             Delete
@@ -323,6 +310,29 @@ export default function Students() {
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+
+            {modalDelete && (
+                <div className="fixed inset-0 bg-black/20 dark:bg-black/50 flex items-center justify-center z-50 transition-opacity duration-300">
+                    <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-md mx-4 border border-gray-200 dark:border-gray-700">
+                        <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Hapus Data</h2>
+                        <p className="mb-6 text-gray-700 dark:text-gray-300">Yakin ingin menghapus data ini?</p>
+                        <div className="flex justify-end gap-3">
+                            <button
+                                onClick={() => setModalDelete(false)}
+                                className="bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 px-5 py-2 rounded-lg font-medium transition-colors duration-200"
+                            >
+                                Batal
+                            </button>
+                            <button
+                                onClick={() => handleDelete(studentId)}
+                                className="bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white px-5 py-2 rounded-lg font-medium transition-colors duration-200"
+                            >
+                                Ya, Hapus
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

@@ -8,6 +8,6 @@ export const metadata: Metadata = {
 
 export default function Teachers() {
     return (
-        <Teacher url={"/dashboard/admin/teachers"} />
+        <Teacher role="STUDENT" url={"/dashboard/student/teachers"} />
     )
 }

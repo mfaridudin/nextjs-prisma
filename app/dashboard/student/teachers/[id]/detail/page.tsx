@@ -27,5 +27,5 @@ export default async function Detail({ params }: { params: Promise<{ id: string 
 
     console.log("Role ID:", roleTeacher)
 
-    return <DetailTeacher item={teacher} title="Teachers Detail" />
+    return <DetailTeacher role="STUDENT" item={teacher} title="Teachers Detail" />
 }
