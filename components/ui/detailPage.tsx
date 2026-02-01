@@ -1,13 +1,13 @@
 "use client"
 import { UserDetail } from "@/types/user"
 import Button from "./button"
+import { useUserStore } from "@/store/useUserStore"
 
 interface DetailUserProps {
     data: UserDetail
     title: string
     onEdit?: () => void
     editLabel?: string
-    role?: string
 }
 
 export default function DetailPage({
@@ -15,11 +15,14 @@ export default function DetailPage({
     data,
     onEdit,
     editLabel = "Edit",
-    role
 }: DetailUserProps) {
 
+    const { user } = useUserStore()
+    const role = user?.role?.name
 
-    const button = role !== "STUDENT"
+    console.log("role dari detail :", role)
+
+    const button = role !== "Student"
 
     return (
         <>

@@ -6,8 +6,12 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import slugify from "slugify"
 import { signIn } from "next-auth/react"
+import { useUserStore } from "@/store/useUserStore"
 
 export default function AddSchool() {
+    
+    const { setUser } = useUserStore()
+    
     const [loading, setLoading] = useState(false)
     const [name, setName] = useState("")
     const [address, setAddress] = useState("")
@@ -61,6 +65,13 @@ export default function AddSchool() {
             magicToken,
             redirect: false,
         });
+
+        const meRes = await fetch("/api/me")
+
+        if (meRes.ok) {
+            const userData = await meRes.json()
+            setUser(userData) 
+        }
 
         const channel = new BroadcastChannel("auth-status")
         channel.postMessage("login-succes")

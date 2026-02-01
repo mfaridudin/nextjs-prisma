@@ -5,10 +5,12 @@ import { useRouter } from "next/navigation"
 import Button from "../ui/button"
 import Input from "../ui/input"
 import { signIn } from "next-auth/react"
-
 import { useState } from "react"
+import { useUserStore } from "@/store/useUserStore"
 
 export default function SignInForm() {
+
+    const { setUser } = useUserStore()
 
     const [showPassword, setShowPassword] = useState(false)
     // const [username, setUserName] = useState("")
@@ -38,6 +40,22 @@ export default function SignInForm() {
             setFormError(message)
             return
         }
+
+        const meRes = await fetch("/api/me")
+
+        if (meRes.ok) {
+            const userData = await meRes.json()
+            setUser(userData)
+        }
+
+        if (!meRes.ok) {
+            setFormError("Failed to load user data")
+            return
+        }
+
+        const channel = new BroadcastChannel("auth-status")
+        channel.postMessage("login-succes")
+        channel.close()
 
         router.push("/");
     }

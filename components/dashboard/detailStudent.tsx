@@ -5,6 +5,7 @@ import Button from "../ui/button";
 import DetailPage from "../ui/detailPage";
 import Modal from "../ui/modal";
 import { useOpenModal } from "@/store/useOpenModal";
+
 export default function DetailStudent({ item, title }: any) {
 
     const { open, mode, selectedId, openEditModal, closeModal } = useOpenModal()

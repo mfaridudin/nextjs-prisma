@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation";
-
+import { useUserStore } from "@/store/useUserStore"
 
 const menuAdmin = [
     {
@@ -82,9 +82,15 @@ const menusByRole: Record<number, any[]> = {
     3: menuStudent,
 };
 
-export default function Sidebar({ role }: any) {
+export default function Sidebar() {
     const pathname = usePathname() ?? "";
-    const menus = menusByRole[role] || [];
+    // const menus = menusByRole[role] || [];
+
+    const { user } = useUserStore()
+
+    const role = user?.roleId
+
+    const menus = menusByRole[role ?? 0] || []
 
     return (
         <aside className="w-64 bg-white/90 dark:bg-gray-800/90 backdrop-blur-md shadow-xl fixed h-screen p-4 border-r">

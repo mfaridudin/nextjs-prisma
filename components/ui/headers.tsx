@@ -1,4 +1,14 @@
+"use client"
+
+import { useUserStore } from "@/store/useUserStore"
+
 export default function Headers() {
+
+    const { user } = useUserStore()
+    const school = user?.school?.name
+
+    // console.log(school)
+
     return (
         <>
             <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow-lg sticky top-0 z-10 p-4 flex justify-between items-center border-b border-gray-200/50 dark:border-gray-700/50">
@@ -8,7 +18,7 @@ export default function Headers() {
                     </svg>
 
                     <h1 className="text-2xl font-bold bg-linear-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                        School Management Dashboard
+                        {school} Dashboard
                     </h1>
                 </div>
 

@@ -6,9 +6,7 @@ import DetailPage from "../ui/detailPage";
 import Modal from "../ui/modal";
 import { useOpenModal } from "@/store/useOpenModal";
 
-export default function DetailTeacher({ item, title, role }: any) {
-
-    const roles = role
+export default function DetailTeacher({ item, title }: any) {
 
     const { open, mode, selectedId, openEditModal, closeModal } = useOpenModal()
 
@@ -69,7 +67,6 @@ export default function DetailTeacher({ item, title, role }: any) {
                 title={title}
                 data={item}
                 editLabel="Edit Teacher"
-                role={roles}
                 onEdit={() =>
                     openEditModal(item.id)
                 } />

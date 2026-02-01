@@ -5,15 +5,17 @@ import { useEffect } from "react"
 import Input from "../ui/input"
 import Link from "next/link"
 import Modal from "../ui/modal"
-// import { useDeleteModal } from "@/store/useDeleteModal"
 import { useOpenModal } from "@/store/useOpenModal"
+import { useUserStore } from "@/store/useUserStore"
 
-export default function Teacher({ url, role }: any) {
+export default function Teacher({ url }: any) {
     const [showPassword, setShowPassword] = useState(false)
     const urls = url
 
     const { open, mode, selectedId, openAddModal, openDeleteModal, closeModal } = useOpenModal()
+    const { user } = useUserStore()
 
+    const role = user?.role?.name
 
     const initialForm = {
         fullName: "",
@@ -26,9 +28,9 @@ export default function Teacher({ url, role }: any) {
         password_confirmation: "",
     }
 
-    const button = role !== "STUDENT"
-    const title = role !== "STUDENT"
-    const titleStudent = role === "STUDENT"
+    const button = role !== "Student"
+    const title = role !== "Student"
+    const titleStudent = role === "Student"
 
     const [form, setForm] = useState(initialForm)
 
