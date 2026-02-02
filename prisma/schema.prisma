@@ -14,18 +14,29 @@ model Role {
 }
 
 model User {
-  id                      Int                      @id @default(autoincrement())
-  fullName                String?
-  username                String?                  @unique
-  email                   String                   @unique
-  password                String
-  address                 String?
-  dateOfBirth             DateTime?
-  age                     Int?
-  roleId                  Int                      @default(1)
-  role                    Role                     @relation(fields: [roleId], references: [id])
-  schoolId                Int?
-  school                  School?                  @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  id          Int       @id @default(autoincrement())
+  fullName    String?
+  username    String?   @unique
+  email       String    @unique
+  password    String
+  address     String?
+  dateOfBirth DateTime?
+  age         Int?
+
+  roleId Int  @default(1)
+  role   Role @relation(fields: [roleId], references: [id])
+
+  schoolId Int?
+  school   School? @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  teachingClass Classroom? @relation("ClassTeacher")
+
+  classroomId Int?
+  classroom   Classroom? @relation("ClassStudents", fields: [classroomId], references: [id])
+
+  course   Course? @relation(fields: [courseId], references: [id])
+  courseId Int?
+
   emailVerified           Boolean                  @default(false)
   emailVerificationTokens EmailVerificationToken[]
   createdAt               DateTime                 @default(now())
@@ -54,6 +65,7 @@ model School {
   slug           String
   address        String
   user           User[]
+  classroom      Classroom[]
   educationLevel EducationLevel
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
@@ -70,4 +82,27 @@ model magicLoginToken {
 
   @@unique([userId])
   @@index([userId])
+}
+
+model Classroom {
+  id       Int    @id @default(autoincrement())
+  name     String
+  slug     String
+  schoolId Int
+
+  teacherId Int  @unique
+  teacher   User @relation("ClassTeacher", fields: [teacherId], references: [id], onDelete: Cascade)
+
+  students User[] @relation("ClassStudents")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  school    School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+}
+
+model Course {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  teachers User[]
 }

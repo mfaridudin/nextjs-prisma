@@ -23,8 +23,7 @@ export default function DetailStudent({ item, title }: any) {
             ? new Date(item.dateOfBirth).toISOString().split("T")[0]
             : "",
     });
-    const [modalEdit, setModalEdit] = useState(false)
-
+    
     async function fetchStudents() {
         try {
             const res = await fetch('/api/student')

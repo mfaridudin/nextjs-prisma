@@ -191,7 +191,7 @@ export default function Teacher({ url }: any) {
             </div>
 
             <Modal open={open && mode === "add"}
-                onClose={() => closeModal}
+                onClose={closeModal}
                 title="Add Teacher"
                 maxWidth="max-w-xl"
             >
