@@ -1,13 +1,27 @@
 import Course from "@/components/dashboard/course"
+import { prisma } from "@/lib/prisma"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
 
 export default async function page() {
-  // const { user } = useUserStore()
-  const res = await fetch('http://localhost:3000/api/course', {
-    cache: 'no-store'
-  });
+  const session = await getServerSession(authOptions)
 
-  const data = await res.json();
-  console.log("USER TEACHER PAGE:", data)
-  return <Course courses={data} />
+  if (!session) {
+    return <div className="text-white">Unauthorized</div>
+  }
 
+  const user = session.user
+
+  const courses =
+    Number(user.roleId) === 1
+      ? await prisma.course.findMany()
+      : await prisma.course.findMany({
+          where: {
+            teachers: {
+              some: { id: Number(user.id) },
+            },
+          },
+        })
+
+  return <Course courses={courses} />
 }

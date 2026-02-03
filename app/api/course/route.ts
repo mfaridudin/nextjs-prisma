@@ -4,32 +4,34 @@ import { authOptions } from "@/lib/auth"
 import { NextResponse } from "next/server"
 
 export async function GET() {
-    // const session = await getServerSession(authOptions)
-
-    // if (!session || !session.user) {
-    //     return new Response(
-    //         JSON.stringify({ message: "Unauthorized" }),
-    //         { status: 401 }
-    //     )
-    // }
-
-    const course = await prisma.course.findMany({
-        select: {
-            id: true,
-            name: true,
-            createdAt: true,
-        },
-    })
-
-    if (!course) {
-        return new Response(
-            JSON.stringify({ message: "Course not found" }),
-            { status: 404 }
-        )
+    const session = await getServerSession(authOptions)
+    if (!session) {
+        return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
-    return NextResponse.json(course)
+    const user = session.user
+
+    if (Number(user.roleId) === 1) {
+        const courses = await prisma.course.findMany()
+        return NextResponse.json(courses)
+    }
+
+    if (Number(user.roleId) === 2) {
+        const courses = await prisma.course.findMany({
+            where: {
+                teachers: {
+                    some: {
+                        id: Number(user.id),
+                    },
+                },
+            },
+        })
+        return NextResponse.json(courses)
+    }
+
+    return NextResponse.json({ message: "Forbidden" }, { status: 403 })
 }
+
 
 export async function POST(request: Request) {
     // const session = await getServerSession(authOptions)
@@ -59,4 +61,25 @@ export async function POST(request: Request) {
 
 
     return NextResponse.json({ course: newCourse, }, { status: 201 })
+}
+
+export async function DELETE(request: Request) {
+    // const session = await getServerSession(authOptions)
+
+    // if (!session || !session.user) {
+    //     return new Response(
+    //         JSON.stringify({ message: "Unauthorized" }),
+    //         { status: 401 }
+    //     )
+    // }
+
+    const body = await request.json()
+
+    const deletedCourse = await prisma.course.delete({
+        where: {
+            id: body.id,
+        }
+    })
+
+    return NextResponse.json(deletedCourse, { status: 201 })
 }

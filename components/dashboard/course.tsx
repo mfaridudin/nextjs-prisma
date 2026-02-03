@@ -55,28 +55,22 @@ export default function Course({ courses }: any) {
         router.refresh()
     }
 
-    const handleDelete = async (id: number, e?: React.FormEvent) => {
-        e?.preventDefault()
-
+    async function handleDelete(id: string | number) {
         const response = await fetch(`/api/course/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ id }),
-        })
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+        });
 
-        if (response.ok) {
-            closeModal()
-        } else {
-            console.error('Failed to delete course')
+        if (!response.ok) {
+            const data = await response.json();
+            console.log(data.errors || { error: data.error });
+            return;
         }
         router.refresh()
+        closeModal()
     }
-
     return (
         <>
-
             <div className="flex items-center justify-between mb-6">
                 <h1 className="text-3xl font-bold text-white">
                     Courses Management
@@ -120,11 +114,13 @@ export default function Course({ courses }: any) {
                                         >
                                             View
                                         </Link>
-                                        <button onClick={() => handleDelete(item.id)}
-                                            className="bg-red-500 hover:bg-red-600 text-white font-medium py-1 px-3 rounded-md transition duration-200"
-                                        >
-                                            Delete
-                                        </button>
+                                        {buttonDisabled && (
+                                            <button onClick={() => openDeleteModal(item.id)}
+                                                className="bg-red-500 hover:bg-red-600 text-white font-medium py-1 px-3 rounded-md transition duration-200"
+                                            >
+                                                Delete
+                                            </button>
+                                        )}
                                     </div>
                                 </td>
                             </tr>
@@ -232,22 +228,22 @@ export default function Course({ courses }: any) {
                 </form>
             </Modal>
 
-            {/* <Modal open={open && mode === "delete"} */}
-            {/* //     onClose={closeModal}
-            //     title="Delete Data"
-            //     maxWidth="max-w-md">
-            //     <div className="p-6">
-            //         <p className="mb-6 text-gray-700 dark:text-gray-300">Are you sure you want to delete this data?</p>
-            //         <div className="flex justify-end gap-3">
-            //             <Button onClick={() => closeModal()} variant="cancel" >
-            //                 Cancelled
-            //             </Button>
-            //             <Button onClick={() => selectedId && handleDelete(selectedId)} variant="danger">
-            //                 Yes, Delete
-            //             </Button>
-            //         </div>
-            //     </div>
-            // </Modal> */}
+            <Modal open={open && mode === "delete"}
+                onClose={closeModal}
+                title="Delete Data"
+                maxWidth="max-w-md">
+                <div className="p-6">
+                    <p className="mb-6 text-gray-700 dark:text-gray-300">Are you sure you want to delete this data?</p>
+                    <div className="flex justify-end gap-3">
+                        <Button onClick={() => closeModal()} variant="cancel" >
+                            Cancelled
+                        </Button>
+                        <Button onClick={() => selectedId && handleDelete(selectedId)} variant="danger">
+                            Yes, Delete
+                        </Button>
+                    </div>
+                </div>
+            </Modal>
 
         </>
     )
