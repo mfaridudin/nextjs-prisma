@@ -4,11 +4,26 @@ import { useOpenModal } from "@/store/useOpenModal";
 import Button from "../ui/button";
 import Modal from "../ui/modal";
 import Link from "next/link";
+import { useParams } from "next/navigation";
+
 
 interface Student {
     id: number
     fullName: string
     email: string
+}
+
+interface Classroom {
+    id: number
+    name: string
+    slug: string
+    teacher?: {
+        fullName: string
+    }
+    students: Student[]
+    _count?: {
+        students: number
+    }
 }
 
 
@@ -66,18 +81,29 @@ export default function DetailClassroom() {
 
     const { open, mode, openAddModal, closeModal } = useOpenModal()
 
+    const params = useParams()
+    const id = params?.id
+
+
     async function fetchClassroom() {
+        if (!id) return
+
         try {
-            const res = await fetch('/api/classroom/1')
+            const res = await fetch(`/api/classroom/${id}`)
             const data = await res.json()
             setClassroom(data)
         } catch (err) {
             console.error(err)
         }
     }
+
     useEffect(() => {
-        fetchClassroom()
-    }, [])
+        if (id) {
+            fetchClassroom()
+            fetchTeacher()
+        }
+    }, [id])
+
 
     return (
         <>
@@ -186,7 +212,7 @@ export default function DetailClassroom() {
                                             <svg className="w-12 h-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                             </svg>
-                                            Belum ada data
+                                            No data yet
                                         </div>
                                     </td>
                                 </tr>
@@ -203,17 +229,22 @@ export default function DetailClassroom() {
             >
                 <form onSubmit={handleSubmit} className="p-6 space-y-4">
 
-                    <select
-                        multiple
-                        className="w-full h-48 border rounded p-2"
-                        onChange={handleChange}
-                    >
-                        {students.map(student => (
-                            <option key={student.id} value={student.id}>
-                                {student.fullName} ({student.email})
-                            </option>
-                        ))}
-                    </select>
+                    {students.length === 0 && (
+                        <p className="text-gray-500">No available students to add.</p>
+                    )}
+                    {students.length > 0 && (
+                        <select
+                            multiple
+                            className="w-full h-48 border rounded p-2"
+                            onChange={handleChange}
+                        >
+                            {students.map(student => (
+                                <option key={student.id} value={student.id}>
+                                    {student.fullName} ({student.email})
+                                </option>
+                            ))}
+                        </select>
+                    )}
 
                     {/* Footer */}
                     <div className="flex items-center justify-end space-x-3 p-6 border-t border-gray-200 dark:border-gray-700">

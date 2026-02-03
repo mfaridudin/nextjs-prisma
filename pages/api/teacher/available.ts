@@ -9,10 +9,10 @@ export default async function handler(req: NextApiRequest,
     switch (method) {
         case "GET":
             try {
-                const students = await prisma.user.findMany({
+                const teacher = await prisma.user.findMany({
                     where: {
-                        roleId: 3,
-                        classroomId: null,
+                        roleId: 2,
+                        courseId: null,
                     },
                     select: {
                         id: true,
@@ -22,13 +22,13 @@ export default async function handler(req: NextApiRequest,
                     },
                 });
 
-                if (!students || students.length === 0)
+                if (!teacher || teacher.length === 0)
                     return res.status(200).json([]);
 
-                res.status(200).json(students);
+                res.status(200).json(teacher);
             } catch (error) {
                 console.error(error);
-                res.status(500).json({ error: "Failed to fetch available students" });
+                res.status(500).json({ error: "Failed to fetch available teachers" });
             }
             break;
     }

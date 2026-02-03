@@ -148,10 +148,12 @@ export default function Teacher({ url }: any) {
                                 <td className="py-4 px-6 text-sm text-gray-900 dark:text-gray-100">{item.address}</td>
                                 <td className="py-4 px-6 text-sm text-gray-900 dark:text-gray-100">{item.email}</td>
                                 <td className="py-4 px-6 text-sm text-gray-900 dark:text-gray-100">
-                                    {new Date(item.createdAt).toLocaleDateString('id-ID', {
+                                    {new Date(item.createdAt).toLocaleDateString('en-US', {
                                         day: '2-digit',
                                         month: 'long',
-                                        year: 'numeric'
+                                        year: 'numeric',
+                                        minute: '2-digit',
+                                        hour: '2-digit',
                                     })}
                                 </td>
                                 <td className="py-4 px-6 text-sm">

@@ -34,15 +34,21 @@ export const useUserStore = create<UserStore>()(
     persist(
         (set) => ({
             user: null,
+            school: null,
+            role: null,
 
             setUser: (user) =>
                 set({
                     user,
+                    school: user.school ?? null,
+                    role: user.role ?? null,
                 }),
 
             clearUser: () =>
                 set({
                     user: null,
+                    school: null,
+                    role: null,
                 }),
         }),
         {

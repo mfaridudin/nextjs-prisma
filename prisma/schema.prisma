@@ -42,6 +42,8 @@ model User {
   createdAt               DateTime                 @default(now())
   updatedAt               DateTime                 @updatedAt
   magicLoginTokens        magicLoginToken[]
+  lessons                 Lesson[]
+  lessonSubmissions       LessonSubmission[]
 }
 
 model EmailVerificationToken {
@@ -98,11 +100,63 @@ model Classroom {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   school    School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  lessons   Lesson[]
 }
 
 model Course {
-  id   Int    @id @default(autoincrement())
-  name String @unique
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  teachers  User[]
+  lessons   Lesson[]
+}
 
-  teachers User[]
+model Lesson {
+  id          Int     @id @default(autoincrement())
+  title       String
+  description String?
+
+  teacherId Int
+  teacher   User @relation(fields: [teacherId], references: [id])
+
+  courseId Int
+  course   Course @relation(fields: [courseId], references: [id])
+
+  classroomId Int
+  classroom   Classroom @relation(fields: [classroomId], references: [id])
+
+  questions   Question[]
+  submissions LessonSubmission[]
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+}
+
+model Question {
+  id       Int    @id @default(autoincrement())
+  lessonId Int
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  question String
+  optionA  String
+  optionB  String
+  optionC  String
+  optionD  String
+  correct  String
+}
+
+model LessonSubmission {
+  id        Int @id @default(autoincrement())
+  lessonId  Int
+  studentId Int
+
+  lesson  Lesson @relation(fields: [lessonId], references: [id])
+  student User   @relation(fields: [studentId], references: [id])
+
+  answers Json
+  score   Int
+
+  @@unique([lessonId, studentId])
 }

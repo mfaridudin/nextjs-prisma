@@ -49,7 +49,7 @@ export default function Classroom() {
 
     async function fetchTeacher() {
         try {
-            const res = await fetch('/api/teacher')
+            const res = await fetch('/api/teacher/no-classroom')
             const data = await res.json()
             setTeachers(data)
         } catch (err) {
@@ -159,10 +159,12 @@ export default function Classroom() {
                                 <td className="py-4 px-6 text-sm text-gray-900 dark:text-gray-100">{item.slug}</td>
                                 <td className="py-4 px-6 text-sm text-gray-900 dark:text-gray-100">{item.teacher.fullName}</td>
                                 <td className="py-4 px-6 text-sm text-gray-900 dark:text-gray-100">
-                                    {new Date(item.createdAt).toLocaleDateString('id-ID', {
+                                    {new Date(item.createdAt).toLocaleDateString('en-US', {
                                         day: '2-digit',
                                         month: 'long',
-                                        year: 'numeric'
+                                        year: 'numeric',
+                                        minute: '2-digit',
+                                        hour: '2-digit',
                                     })}
                                 </td>
                                 <td className="py-4 px-6 text-sm">
