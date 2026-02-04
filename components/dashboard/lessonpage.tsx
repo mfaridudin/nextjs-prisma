@@ -12,7 +12,12 @@ export default function LessonsPage({ courses, url }: any) {
     const urls = url
 
     const { open, mode, selectedId, openAddModal, openDeleteModal, closeModal } = useOpenModal()
+
     const { user } = useUserStore()
+
+    const role = user?.role?.name
+
+    const buttonDisabled = role !== "Student"
 
     const initialForm = {
         title: "",
@@ -30,7 +35,7 @@ export default function LessonsPage({ courses, url }: any) {
 
     async function fetchLesson() {
         try {
-            const res = await fetch('/api/teacher/lesson')
+            const res = await fetch(`${urls}`)
             const data = await res.json()
 
             setLessons(Array.isArray(data) ? data : [])
@@ -119,9 +124,11 @@ export default function LessonsPage({ courses, url }: any) {
                 <h1 className="text-3xl font-bold text-white">
                     Lessons Management
                 </h1>
-                <button onClick={() => openAddModal()} className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200">
-                    Add Lesson
-                </button>
+                {buttonDisabled && (
+                    <button onClick={() => openAddModal()} className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200">
+                        Add Lesson
+                    </button>
+                )}
             </div>
 
             <div className="overflow-x-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg">
@@ -161,14 +168,16 @@ export default function LessonsPage({ courses, url }: any) {
                                         >
                                             View
                                         </Link>
-                                        <button
-                                            onClick={() => {
-                                                openDeleteModal(item.id)
-                                            }}
-                                            className="bg-red-500 hover:bg-red-600 text-white font-medium py-1 px-3 rounded-md transition duration-200"
-                                        >
-                                            Delete
-                                        </button>
+                                        {buttonDisabled && (
+                                            <button
+                                                onClick={() => {
+                                                    openDeleteModal(item.id)
+                                                }}
+                                                className="bg-red-500 hover:bg-red-600 text-white font-medium py-1 px-3 rounded-md transition duration-200"
+                                            >
+                                                Delete
+                                            </button>
+                                        )}
                                     </div>
                                 </td>
                             </tr>

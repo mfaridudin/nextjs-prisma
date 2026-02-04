@@ -25,6 +25,15 @@ export async function GET() {
                     },
                 },
             },
+            include: {
+                teachers: {
+                    select: {
+                        id: true,
+                        fullName    : true,
+                        email: true,
+                    }
+                }
+            }
         })
         return NextResponse.json(courses)
     }

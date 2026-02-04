@@ -3,9 +3,15 @@
 import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import Button from "@/components/ui/button"
+import Link from "next/link"
 
 export default function LessonQuestionsPage() {
     const params = useParams()
+
+    if (!params || !params.id) {
+        return <div>Invalid Lesson ID</div>
+    }
+
     const lessonId = params.id
 
     const [lesson, setLesson] = useState<any>(null)
@@ -84,7 +90,9 @@ export default function LessonQuestionsPage() {
                     Questions
                 </h1>
                 <Button>
-                    Add New Question
+                    <Link href={"add-question"}>
+                        Add New Question
+                    </Link>
                 </Button>
             </div>
 

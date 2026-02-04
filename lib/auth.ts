@@ -35,6 +35,7 @@ export const authOptions: NextAuthOptions = {
                         email: token.user.email,
                         roleId: token.user.roleId,
                         schoolId: token.user.schoolId ?? null,
+                        classroomId: token.user.classroomId ?? null,
                     }
                 }
 
@@ -54,8 +55,10 @@ export const authOptions: NextAuthOptions = {
                     email: user.email,
                     roleId: user.roleId,
                     schoolId: user.schoolId ?? null,
+                    classroomId: user.classroomId ?? null,   // 👈 TAMBAH INI
                 }
-            },
+            }
+
         }),
     ],
 
@@ -67,6 +70,7 @@ export const authOptions: NextAuthOptions = {
                 token.id = Number(user.id)
                 token.roleId = user.roleId
                 token.schoolId = user.schoolId ?? null
+                token.classroomId = user.classroomId ?? null
             }
             return token
         },
@@ -76,6 +80,7 @@ export const authOptions: NextAuthOptions = {
                 session.user.id = Number(token.id)
                 session.user.roleId = token.roleId
                 session.user.schoolId = token.schoolId ?? null
+                session.user.classroomId = token.classroomId ?? null
             }
             return session
         },

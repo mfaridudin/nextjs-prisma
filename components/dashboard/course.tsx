@@ -55,6 +55,8 @@ export default function Course({ courses }: any) {
         router.refresh()
     }
 
+    console.log(courses);
+
     async function handleDelete(id: string | number) {
         const response = await fetch(`/api/course/${id}`, {
             method: "DELETE",
@@ -69,6 +71,8 @@ export default function Course({ courses }: any) {
         router.refresh()
         closeModal()
     }
+    console.log(courses);
+
     return (
         <>
             <div className="flex items-center justify-between mb-6">
