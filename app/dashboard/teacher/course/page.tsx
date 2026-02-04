@@ -23,5 +23,5 @@ export default async function page() {
           },
         })
 
-  return <Course courses={courses} />
+  return <Course/>
 }

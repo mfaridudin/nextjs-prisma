@@ -5,7 +5,6 @@ import Button from "../ui/button"
 import Modal from "../ui/modal"
 import { useEffect, useState } from "react"
 import { useOpenModal } from "@/store/useOpenModal"
-import { useRouter } from "next/navigation"
 import { useUserStore } from "@/store/useUserStore"
 
 export default function Course() {
@@ -13,7 +12,6 @@ export default function Course() {
     const [name, setName] = useState("")
     const { open, mode, selectedId, openAddModal, openDeleteModal, closeModal } = useOpenModal()
     const { user } = useUserStore()
-    const router = useRouter()
     const [selectedTeacher, setSelectedTeacher] = useState<number | null>(null)
     const [teachers, setTeachers] = useState<any[]>([])
     const [course, setCourse] = useState<any[]>([])
@@ -69,24 +67,7 @@ export default function Course() {
         closeModal()
     }
 
-
-
-    // async function handleDelete(id: string | number) {
-    //     const response = await fetch(`/api/course/${id}`, {
-    //         method: "DELETE",
-    //         headers: { "Content-Type": "application/json" },
-    //     });
-
-    //     if (!response.ok) {
-    //         const data = await response.json();
-    //         console.log(data.errors || { error: data.error });
-    //         return;
-    //     }
-    //     router.refresh()
-    //     closeModal()
-    // }
-
-      async function handleDelete(id: string | number) {
+    async function handleDelete(id: string | number) {
         const response = await fetch(`/api/course/${id}`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
@@ -94,7 +75,6 @@ export default function Course() {
 
         if (!response.ok) {
             const data = await response.json();
-            // setValidation(data.errors || { error: data.error });
             console.log(data.errors || { error: data.error });
             return;
         }
@@ -166,7 +146,7 @@ export default function Course() {
                                         <svg className="w-12 h-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                         </svg>
-                                        Belum ada data
+                                        No data yet
                                     </div>
                                 </td>
                             </tr>
