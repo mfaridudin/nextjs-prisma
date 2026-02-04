@@ -10,33 +10,40 @@ export async function GET() {
     }
 
     const user = session.user
+    const schoolId = Number(user.schoolId)
 
     if (Number(user.roleId) === 1) {
-        const courses = await prisma.course.findMany()
+        const courses = await prisma.course.findMany({
+            where: { schoolId },
+        })
+
         return NextResponse.json(courses)
     }
 
-    if (Number(user.roleId) === 2) {
-        const courses = await prisma.course.findMany({
-            where: {
-                teachers: {
-                    some: {
-                        id: Number(user.id),
-                    },
-                },
-            },
-            include: {
-                teachers: {
-                    select: {
-                        id: true,
-                        fullName    : true,
-                        email: true,
-                    }
-                }
-            }
-        })
-        return NextResponse.json(courses)
-    }
+  if (Number(user.roleId) === 2) {
+  const courses = await prisma.course.findMany({
+    where: {
+      schoolId,
+      teachers: {
+        some: {
+          id: Number(user.id),
+        },
+      },
+    },
+    include: {
+      teachers: {
+        select: {
+          id: true,
+          fullName: true,
+          email: true,
+        },
+      },
+    },
+  })
+
+  return NextResponse.json(courses)
+}
+
 
     return NextResponse.json({ message: "Forbidden" }, { status: 403 })
 }
@@ -57,6 +64,7 @@ export async function POST(request: Request) {
     const newCourse = await prisma.course.create({
         data: {
             name: body.name,
+            schoolId: body.schoolId
         },
     })
 

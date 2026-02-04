@@ -313,7 +313,6 @@ export default function Students({ url }: any) {
                     </div>
                 </div>
             </Modal>
-
         </>
     )
 }

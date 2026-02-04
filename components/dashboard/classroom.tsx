@@ -27,7 +27,7 @@ export default function Classroom() {
 
     const button = role !== "Student"
     const title = role !== "Student"
-    const titleStudent = role === "Student"
+    // const titleStudent = role === "Student"
 
     const [form, setForm] = useState(initialForm)
 
@@ -112,7 +112,6 @@ export default function Classroom() {
             return;
         }
         await fetchClassroom()
-        // 
         closeModal()
     }
 
@@ -226,8 +225,6 @@ export default function Classroom() {
                         placeholder="Enter homeroom teacher name"
                     /> */}
 
-
-
                     <div>
                         <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Teacher </label>
                         <div className="relative">
@@ -272,6 +269,22 @@ export default function Classroom() {
                 </form>
             </Modal>
 
+            <Modal open={open && mode === "delete"}
+                onClose={closeModal}
+                title="Delete Data"
+                maxWidth="max-w-md">
+                <div className="p-6">
+                    <p className="mb-6 text-gray-700 dark:text-gray-300">Are you sure you want to delete this data?</p>
+                    <div className="flex justify-end gap-3">
+                        <Button onClick={() => closeModal()} variant="cancel" >
+                            Cancelled
+                        </Button>
+                        <Button onClick={() => selectedId && handleDelete(selectedId)} variant="danger">
+                            Yes, Delete
+                        </Button>
+                    </div>
+                </div>
+            </Modal>
         </>
     )
 }

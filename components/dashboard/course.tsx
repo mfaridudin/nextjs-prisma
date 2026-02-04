@@ -8,7 +8,7 @@ import { useOpenModal } from "@/store/useOpenModal"
 import { useRouter } from "next/navigation"
 import { useUserStore } from "@/store/useUserStore"
 
-export default function Course({ courses }: any) {
+export default function Course() {
 
     const [name, setName] = useState("")
     const { open, mode, selectedId, openAddModal, openDeleteModal, closeModal } = useOpenModal()
@@ -16,10 +16,24 @@ export default function Course({ courses }: any) {
     const router = useRouter()
     const [selectedTeacher, setSelectedTeacher] = useState<number | null>(null)
     const [teachers, setTeachers] = useState<any[]>([])
+    const [course, setCourse] = useState<any[]>([])
 
     const role = user?.role?.name
+    const schoolId = user?.schoolId
+
+    console.log("school Id dari course :", schoolId)
 
     const buttonDisabled = role !== "Teacher" && role !== "Student"
+
+    async function fetchCourse() {
+        try {
+            const res = await fetch('/api/course')
+            const data = await res.json()
+            setCourse(data)
+        } catch (err) {
+            console.error(err)
+        }
+    }
 
     async function fetchTeacher() {
         try {
@@ -33,6 +47,7 @@ export default function Course({ courses }: any) {
 
     useEffect(() => {
         fetchTeacher()
+        fetchCourse()
     }, [])
 
     const handleAddCourse = async (e: React.FormEvent) => {
@@ -43,21 +58,35 @@ export default function Course({ courses }: any) {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ name, teacherId: selectedTeacher }),
+            body: JSON.stringify({ name, teacherId: selectedTeacher, schoolId: schoolId }),
         })
 
-        if (response.ok) {
-            closeModal()
-        } else {
+        if (!response.ok) {
             console.error('Failed to add course')
         }
         setName("")
-        router.refresh()
+        fetchCourse()
+        closeModal()
     }
 
-    console.log(courses);
 
-    async function handleDelete(id: string | number) {
+
+    // async function handleDelete(id: string | number) {
+    //     const response = await fetch(`/api/course/${id}`, {
+    //         method: "DELETE",
+    //         headers: { "Content-Type": "application/json" },
+    //     });
+
+    //     if (!response.ok) {
+    //         const data = await response.json();
+    //         console.log(data.errors || { error: data.error });
+    //         return;
+    //     }
+    //     router.refresh()
+    //     closeModal()
+    // }
+
+      async function handleDelete(id: string | number) {
         const response = await fetch(`/api/course/${id}`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
@@ -65,13 +94,13 @@ export default function Course({ courses }: any) {
 
         if (!response.ok) {
             const data = await response.json();
+            // setValidation(data.errors || { error: data.error });
             console.log(data.errors || { error: data.error });
             return;
         }
-        router.refresh()
+        await fetchCourse()
         closeModal()
     }
-    console.log(courses);
 
     return (
         <>
@@ -97,7 +126,7 @@ export default function Course({ courses }: any) {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                        {courses.map((item: any, index: number) => (
+                        {course.map((item: any, index: number) => (
                             <tr key={item.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150">
                                 <td className="py-4 px-6 text-sm text-gray-900 dark:text-gray-100">{index + 1}</td>
                                 <td className="py-4 px-6 text-sm text-gray-900 dark:text-gray-100">{item.name}</td>
@@ -130,7 +159,7 @@ export default function Course({ courses }: any) {
                             </tr>
 
                         ))}
-                        {courses.length === 0 && (
+                        {course.length === 0 && (
                             <tr>
                                 <td colSpan={7} className="py-8 px-6 text-center text-gray-500 dark:text-gray-400">
                                     <div className="flex flex-col items-center">

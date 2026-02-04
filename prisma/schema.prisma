@@ -71,6 +71,7 @@ model School {
   educationLevel EducationLevel
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
+  courses        Course[]
 }
 
 model magicLoginToken {
@@ -108,6 +109,8 @@ model Course {
   name      String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  schoolId  Int?
+  School    School?   @relation(fields: [schoolId], references: [id])
   teachers  User[]
   lessons   Lesson[]
 }
