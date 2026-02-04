@@ -29,10 +29,18 @@ export default withAuth(
         }
 
         if (isAuth && isAuthPage) {
+            if (
+                pathname.startsWith("/auth/add-school") ||
+                pathname.startsWith("/auth/verify-email")
+            ) {
+                return NextResponse.next();
+            }
+
             return NextResponse.redirect(
                 new URL("/dashboard/admin", req.url)
             );
         }
+
 
         if (pathname.startsWith("/dashboard/admin") && role !== 1) {
             return NextResponse.redirect(

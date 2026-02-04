@@ -9,22 +9,27 @@ import { signIn } from "next-auth/react"
 import { useUserStore } from "@/store/useUserStore"
 
 export default function AddSchool() {
-    
+
     const { setUser } = useUserStore()
-    
+
     const [loading, setLoading] = useState(false)
     const [name, setName] = useState("")
     const [address, setAddress] = useState("")
     const [educationLevel, setEducationLevel] = useState("")
     const [validation, setValidation] = useState("")
-    const [token, setToken] = useState<string | null>(null)
     const router = useRouter()
 
+
     useEffect(() => {
-        const searchParams = new URLSearchParams(window.location.search)
-        const t = searchParams.get("token")
-        setToken(t)
-        console.log("JWT token:", t)
+        const channel = new BroadcastChannel("auth-status")
+
+        channel.onmessage = (event) => {
+            if (event.data === "school-complete") {
+                window.location.href = "/dashboard"
+            }
+        }
+
+        return () => channel.close()
     }, [])
 
 
@@ -38,7 +43,6 @@ export default function AddSchool() {
         })
 
         const payload = {
-            token,
             name,
             address,
             slug: generateSlug,
@@ -59,23 +63,17 @@ export default function AddSchool() {
         }
         setLoading(false)
 
-        const { magicToken } = await response.json();
-
-        await signIn("credentials", {
-            magicToken,
-            redirect: false,
-        });
-
         const meRes = await fetch("/api/me")
 
         if (meRes.ok) {
             const userData = await meRes.json()
-            setUser(userData) 
+            setUser(userData)
         }
 
         const channel = new BroadcastChannel("auth-status")
-        channel.postMessage("login-succes")
-        channel.close
+        channel.postMessage("school-complete")
+        channel.close()
+
 
         router.push("/");
     }

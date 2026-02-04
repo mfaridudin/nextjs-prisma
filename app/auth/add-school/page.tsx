@@ -6,6 +6,7 @@ export const metadata: Metadata = {
     description: "Add-School Form for My App",
 };
 
-export default function SchoolAdd() {
+export default async function SchoolAdd() {
+    
     return <AddSchool />
 }

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Button from "../ui/button"
-import Input from "../ui/input"
+// import Input from "../ui/input"
 
 export default function VerifyPending() {
     const [loading, setLoading] = useState(false)
@@ -24,13 +24,16 @@ export default function VerifyPending() {
 
     useEffect(() => {
         const channel = new BroadcastChannel("auth-status")
+
         channel.onmessage = (event) => {
-            if (event.data === "login-succes") {
-                window.location.href = "/dashboard"
+            if (event.data === "login-success") {
+                window.location.href = "/auth/add-school"
             }
         }
+
         return () => channel.close()
     }, [])
+
 
     return (
         <>

@@ -8,6 +8,8 @@ import { sendMail } from "@/lib/mail";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { method } = req;
+    const BASE_URL = process.env.NEXT_PUBLIC_APP_URL
+
 
     switch (method) {
         case "GET":
@@ -90,7 +92,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             </p>
 
                             <a
-                                href="http://127.0.0.1:3000/auth/verify-email?token=${token}"
+                              href="${BASE_URL}/auth/verify-email?token=${token}"
                                 style="
                                 display:inline-block;
                                 padding:12px 20px;

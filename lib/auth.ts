@@ -12,22 +12,22 @@ export const authOptions: NextAuthOptions = {
             credentials: {
                 email: { label: "Email", type: "email" },
                 password: { label: "Password", type: "password" },
-                magicToken: { label: "Magic Token", type: "hidden" },
+                verifyToken: { label: "verify Token", type: "hidden" },
             },
 
             async authorize(credentials) {
                 if (!credentials) return null
 
-                if (credentials.magicToken) {
-                    const token = await prisma.magicLoginToken.findUnique({
-                        where: { token: credentials.magicToken },
+                if (credentials.verifyToken) {
+                    const token = await prisma.emailVerificationToken.findUnique({
+                        where: { token: credentials.verifyToken },
                         include: { user: true },
                     })
 
                     if (!token || token.expiresAt < new Date()) return null
 
-                    await prisma.magicLoginToken.delete({
-                        where: { token: credentials.magicToken },
+                    await prisma.emailVerificationToken.delete({
+                        where: { token: credentials.verifyToken },
                     })
 
                     return {
@@ -55,7 +55,7 @@ export const authOptions: NextAuthOptions = {
                     email: user.email,
                     roleId: user.roleId,
                     schoolId: user.schoolId ?? null,
-                    classroomId: user.classroomId ?? null,   // 👈 TAMBAH INI
+                    classroomId: user.classroomId ?? null, 
                 }
             }
 

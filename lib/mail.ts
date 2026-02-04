@@ -11,7 +11,7 @@ export const transporter = nodemailer.createTransport({
 
 interface sendMailProps {
     to: string
-    subject: string
+    subject: string 
     html: string
 }
 
