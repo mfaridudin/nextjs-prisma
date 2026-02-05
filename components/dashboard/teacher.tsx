@@ -43,7 +43,7 @@ export default function Teacher({ url }: any) {
         try {
             const res = await fetch('/api/teacher')
             const data = await res.json()
-            setTeacher(data)
+            setTeacher(data.teachers)
         } catch (err) {
             console.error(err)
         }

@@ -60,7 +60,7 @@ export default function DetailClassroom() {
 
         if (!classroom) return
 
-        const res = await fetch("/api/classroom/add-students", {
+        const res = await fetch("/api/classroom/add-student", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
