@@ -6,28 +6,29 @@ import DetailPage from "../ui/detailPage";
 import Modal from "../ui/modal";
 import { useOpenModal } from "@/store/useOpenModal";
 
-export default function DetailTeacher({ item, title }: any) {
+export default function DetailTeacher({ item, title, id }: any) {
 
     const { open, mode, selectedId, openEditModal, closeModal } = useOpenModal()
 
+    const [teacher, setTeacher] = useState(item)
     const [loading, setLoading] = useState(false)
     const [validation, setValidation] = useState("")
     const [formEdit, setFormEdit] = useState({
-        fullName: item.fullName ?? "",
-        username: item.username ?? "",
-        address: item.address ?? "",
-        email: item.email ?? "",
-        age: item.age ? String(item.age) : "",
-        dateOfBirth: item.dateOfBirth
-            ? new Date(item.dateOfBirth).toISOString().split("T")[0]
+        fullName: teacher.fullName ?? "",
+        username: teacher.username ?? "",
+        address: teacher.address ?? "",
+        email: teacher.email ?? "",
+        age: teacher.age ? String(teacher.age) : "",
+        dateOfBirth: teacher.dateOfBirth
+            ? new Date(teacher.dateOfBirth).toISOString().split("T")[0]
             : "",
     });
 
     async function fetchTeacher() {
         try {
-            const res = await fetch('/api/teacher')
+            const res = await fetch(`/api/teacher/${id}`)
             const data = await res.json()
-            // setStudents(data)
+            setTeacher(data)
         } catch (err) {
             console.error(err)
         }
@@ -57,7 +58,7 @@ export default function DetailTeacher({ item, title }: any) {
             console.log(data.errors || { error: data.error })
             return;
         }
-        fetchTeacher()
+        await fetchTeacher()
         closeModal()
     }
 
@@ -65,10 +66,10 @@ export default function DetailTeacher({ item, title }: any) {
         <>
             <DetailPage
                 title={title}
-                data={item}
+                data={teacher}
                 editLabel="Edit Teacher"
                 onEdit={() =>
-                    openEditModal(item.id)
+                    openEditModal(teacher.id)
                 } />
 
             <Modal title="Edit Teacher" open={open && mode === "edit"} onClose={() => closeModal()} maxWidth="max-w-xl">

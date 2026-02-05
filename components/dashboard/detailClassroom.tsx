@@ -31,7 +31,7 @@ export default function DetailClassroom() {
     const [students, setStudents] = useState<Student[]>([])
     const [selected, setSelected] = useState<number[]>([])
 
-    async function fetchTeacher() {
+    async function fetchStudents() {
         try {
             const res = await fetch('/api/student/available')
             const data = await res.json()
@@ -43,10 +43,8 @@ export default function DetailClassroom() {
 
     useEffect(() => {
         fetchClassroom()
-        fetchTeacher()
+        fetchStudents()
     }, [])
-
-
 
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const values = Array.from(e.target.selectedOptions, option =>
@@ -73,6 +71,7 @@ export default function DetailClassroom() {
             closeModal()
             setSelected([])
             fetchClassroom()
+            fetchStudents()
         }
     }
 
@@ -100,7 +99,7 @@ export default function DetailClassroom() {
     useEffect(() => {
         if (id) {
             fetchClassroom()
-            fetchTeacher()
+            fetchStudents()
         }
     }, [id])
 
@@ -168,7 +167,7 @@ export default function DetailClassroom() {
                                 <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Username</th>
                                 <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Address</th>
                                 <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Email</th>
-                                <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Action</th>
+                                <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Date of entry</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200 dark:divide-gray-700">

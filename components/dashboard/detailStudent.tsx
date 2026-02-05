@@ -6,29 +6,29 @@ import DetailPage from "../ui/detailPage";
 import Modal from "../ui/modal";
 import { useOpenModal } from "@/store/useOpenModal";
 
-export default function DetailStudent({ item, title }: any) {
+export default function DetailStudent({ item, title, id }: any) {
 
     const { open, mode, selectedId, openEditModal, closeModal } = useOpenModal()
 
     const [loading, setLoading] = useState(false)
-    const [studentId, setStudentId] = useState("")
+    const [student, setStudent] = useState(item)
     const [validation, setValidation] = useState("")
     const [formEdit, setFormEdit] = useState({
-        fullName: item.fullName ?? "",
-        username: item.username ?? "",
-        address: item.address ?? "",
-        email: item.email ?? "",
-        age: item.age ? String(item.age) : "",
-        dateOfBirth: item.dateOfBirth
-            ? new Date(item.dateOfBirth).toISOString().split("T")[0]
+        fullName: student.fullName ?? "",
+        username: student.username ?? "",
+        address: student.address ?? "",
+        email: student.email ?? "",
+        age: student.age ? String(student.age) : "",
+        dateOfBirth: student.dateOfBirth
+            ? new Date(student.dateOfBirth).toISOString().split("T")[0]
             : "",
     });
-    
+
     async function fetchStudents() {
         try {
-            const res = await fetch('/api/student')
+            const res = await fetch(`/api/student/${id}`)
             const data = await res.json()
-            // setStudents(data)
+            setStudent(data)
         } catch (err) {
             console.error(err)
         }
@@ -67,9 +67,9 @@ export default function DetailStudent({ item, title }: any) {
         <>
             <DetailPage
                 title={title}
-                data={item}
+                data={student}
                 editLabel="Edit Student"
-                onEdit={() => openEditModal(item.id)} />
+                onEdit={() => openEditModal(student.id)} />
 
             <Modal title="Edit Student" open={open} onClose={() => closeModal()} maxWidth="max-w-xl">
                 <form onSubmit={hadleEditStudent} className="p-6 space-y-4">
