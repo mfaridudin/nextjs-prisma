@@ -64,6 +64,7 @@ export default function Course() {
         }
         setName("")
         fetchCourse()
+        fetchTeacher()
         closeModal()
     }
 
@@ -79,6 +80,7 @@ export default function Course() {
             return;
         }
         await fetchCourse()
+        fetchTeacher()
         closeModal()
     }
 
@@ -157,7 +159,7 @@ export default function Course() {
 
             <Modal open={open && mode === "add"}
                 onClose={closeModal}
-                title="Add Student"
+                title="Add Course"
                 maxWidth="max-w-xl">
 
                 <form onSubmit={handleAddCourse} className="p-6 space-y-4">

@@ -94,6 +94,7 @@ export default function Classroom() {
         }
 
         await fetchClassroom()
+        fetchTeacher()
         setForm(initialForm)
         closeModal()
         setLoading(false)
@@ -112,6 +113,7 @@ export default function Classroom() {
             return;
         }
         await fetchClassroom()
+        fetchTeacher()
         closeModal()
     }
 
@@ -225,21 +227,27 @@ export default function Classroom() {
                         placeholder="Enter homeroom teacher name"
                     /> */}
 
+
                     <div>
                         <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Teacher </label>
                         <div className="relative">
-                            <select
-                                className="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:placeholder-gray-500"
-                                name="teacherId"
-                                id="teacherId"
-                                value={form.teacherId}
-                                onChange={(e) => setForm({ ...form, teacherId: e.target.value })}
-                            >
-                                <option value="">Select Teacher</option>
-                                {teachers.map((teacher: any) => (
-                                    <option key={teacher.id} value={teacher.id}>{teacher.fullName}</option>
-                                ))}
-                            </select>
+                            {teachers.length === 0 && (
+                                <option disabled>No teacher available</option>
+                            )}
+                            {teachers.length > 0 && (
+                                <select
+                                    className="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:placeholder-gray-500"
+                                    name="teacherId"
+                                    id="teacherId"
+                                    value={form.teacherId}
+                                    onChange={(e) => setForm({ ...form, teacherId: e.target.value })}
+                                >
+                                    <option value="">Select Teacher</option>
+                                    {teachers.map((teacher: any) => (
+                                        <option key={teacher.id} value={teacher.id}>{teacher.fullName}</option>
+                                    ))}
+                                </select>
+                            )}
                             <span
                                 className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400 hover:text-gray-600"
                             >
