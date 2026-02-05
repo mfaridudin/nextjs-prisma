@@ -16,7 +16,7 @@ export async function GET() {
     const school = await prisma.school.findMany({
         where: {
             user: {
-                some: { id: userId } 
+                some: { id: userId }
             }
         }
     })

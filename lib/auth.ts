@@ -55,7 +55,7 @@ export const authOptions: NextAuthOptions = {
                     email: user.email,
                     roleId: user.roleId,
                     schoolId: user.schoolId ?? null,
-                    classroomId: user.classroomId ?? null, 
+                    classroomId: user.classroomId ?? null,
                 }
             }
 
@@ -65,24 +65,35 @@ export const authOptions: NextAuthOptions = {
     session: { strategy: "jwt" },
 
     callbacks: {
-        async jwt({ token, user }) {
+        async jwt({ token, user }) {     // Saat login pertama
             if (user) {
-                token.id = Number(user.id)
-                token.roleId = user.roleId
-                token.schoolId = user.schoolId ?? null
-                token.classroomId = user.classroomId ?? null
+                token.id = Number(user.id);
+                token.roleId = user.roleId;
             }
-            return token
-        },
 
+            if (token.id) {
+                const dbUser = await prisma.user.findUnique({
+                    where: { id: token.id },
+                    select: {
+                        schoolId: true,
+                        classroomId: true,
+                    },
+                });
+
+                token.schoolId = dbUser?.schoolId ?? null;
+                token.classroomId = dbUser?.classroomId ?? null;
+            }
+
+            return token;
+        },
         async session({ session, token }) {
             if (session.user) {
-                session.user.id = Number(token.id)
-                session.user.roleId = token.roleId
-                session.user.schoolId = token.schoolId ?? null
-                session.user.classroomId = token.classroomId ?? null
+                session.user.id = token.id as number;
+                session.user.roleId = token.roleId as number;
+                session.user.schoolId = token.schoolId as number | null;
+                session.user.classroomId = token.classroomId as number | null;
             }
-            return session
+            return session;
         },
     },
 

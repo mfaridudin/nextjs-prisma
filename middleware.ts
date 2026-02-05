@@ -41,7 +41,6 @@ export default withAuth(
             );
         }
 
-
         if (pathname.startsWith("/dashboard/admin") && role !== 1) {
             return NextResponse.redirect(
                 new URL("/dashboard", req.url)

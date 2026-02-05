@@ -5,11 +5,13 @@ import Input from "@/components/ui/input"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import slugify from "slugify"
-import { signIn } from "next-auth/react"
+// import { signIn } from "next-auth/react"
 import { useUserStore } from "@/store/useUserStore"
+// import { signIn, signOut } from "next-auth/react"
+// import { useSession } from "next-auth/react";
 
 export default function AddSchool() {
-
+    // const { update } = useSession();
     const { setUser } = useUserStore()
 
     const [loading, setLoading] = useState(false)
@@ -32,7 +34,6 @@ export default function AddSchool() {
         return () => channel.close()
     }, [])
 
-
     async function handleAddSchool(e: React.FormEvent) {
         e.preventDefault();
         setLoading(true)
@@ -49,7 +50,7 @@ export default function AddSchool() {
             educationLevel,
         };
 
-        const response = await fetch("/api/school", {
+        const response = await fetch("/api/add-school", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
@@ -63,6 +64,15 @@ export default function AddSchool() {
         }
         setLoading(false)
 
+
+        // const data = await response.json();
+
+        // await update({
+        //     user: {
+        //         schoolId: data.schoolId,
+        //     },
+        // });
+
         const meRes = await fetch("/api/me")
 
         if (meRes.ok) {
@@ -70,10 +80,10 @@ export default function AddSchool() {
             setUser(userData)
         }
 
+
         const channel = new BroadcastChannel("auth-status")
         channel.postMessage("school-complete")
         channel.close()
-
 
         router.push("/");
     }
@@ -130,7 +140,6 @@ export default function AddSchool() {
                                 </span>
                             </div>
                         </div>
-
 
                         <Button
                             className="flex items-center justify-center mt-4 gap-2" fullWidth
