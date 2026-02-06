@@ -1,6 +1,6 @@
 import { create } from "zustand"
 
-type FormMode = "add" | "edit" | "delete" | null
+type FormMode = "add" | "edit" | "delete" | "logout" | null
 
 type openModalStore = {
     open: boolean
@@ -8,6 +8,7 @@ type openModalStore = {
     mode: FormMode
 
     openAddModal: () => void
+    openLogoutModal: () => void
     openEditModal: (id: string | number) => void
     openDeleteModal: (id: string | number) => void
     closeModal: () => void
@@ -36,6 +37,13 @@ export const useOpenModal = create<openModalStore>((set) => ({
         mode: "delete",
         selectedId: id
     }),
+
+    openLogoutModal: () =>
+        set({
+            open: true,
+            mode: "logout",
+            selectedId: null,
+        }),
     closeModal: () =>
         set({
             open: false,

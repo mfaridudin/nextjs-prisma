@@ -1,11 +1,18 @@
 "use client"
 
 import { useUserStore } from "@/store/useUserStore"
+import Button from "./button"
+import Modal from "./modal"
+import { signOut } from "next-auth/react";
+import { useOpenModal } from "@/store/useOpenModal"
 
 export default function Headers() {
 
     const { user } = useUserStore()
     const school = user?.school?.name
+
+    const { open, mode, openLogoutModal, closeModal } = useOpenModal()
+    const clearUser = useUserStore((state) => state.clearUser);
 
     // console.log(school)
 
@@ -25,13 +32,9 @@ export default function Headers() {
                 <div className="flex items-center space-x-4">
                     <div className="relative">
                         <button className="p-2 bg-gray-100 dark:bg-gray-700 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-                            {/* <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5v-5zM15 7v5h5l-5 5v-5z" />
-                            </svg> */}
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0M3.124 7.5A8.969 8.969 0 015.292 3m13.416 0a8.969 8.969 0 012.168 4.5" />
                             </svg>
-
                         </button>
                         <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
                     </div>
@@ -39,8 +42,43 @@ export default function Headers() {
                         A
                     </div>
 
+                    <button onClick={openLogoutModal} className="p-2 bg-gray-100 dark:bg-gray-700 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-7 h-7 text-red-700">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+                        </svg>
+                    </button>
                 </div>
             </header>
+
+            <Modal
+                open={open && mode === "logout"}
+                onClose={closeModal}
+                title="Log out"
+                maxWidth="max-w-md"
+            >
+                <div className="p-6">
+                    <p className="mb-6 text-gray-700 dark:text-gray-300">
+                        Are you sure you want to logout?
+                    </p>
+
+                    <div className="flex justify-end gap-3">
+                        <Button onClick={closeModal} variant="cancel">
+                            Cancel
+                        </Button>
+
+                        <Button
+                            variant="danger"
+                            onClick={() => {
+                                clearUser()
+                                signOut({ callbackUrl: "/login" })
+                            }}
+                        >
+                            Yes, Logout
+                        </Button>
+                    </div>
+                </div>
+            </Modal>
+
         </>
     )
 }

@@ -11,11 +11,12 @@ export default function LessonDetail() {
     if (!params || !params.id) {
         return <div>Invalid Lesson ID</div>
     }
- 
+
     const lessonId = params.id
 
     const [lesson, setLesson] = useState<any>(null)
     const [questions, setQuestions] = useState<any[]>([])
+    const [score, setScore] = useState<any[]>([])
 
     async function fetchLessonDetail() {
         try {
@@ -31,9 +32,25 @@ export default function LessonDetail() {
         }
     }
 
+    async function fetchScore() {
+        try {
+            const res = await fetch(`/api/score-list/${lessonId}`)
+            const data = await res.json()
+
+            setScore(Array.isArray(data) ? data : [])
+        } catch (err) {
+            console.error(err)
+            setScore([])
+        }
+    }
+
+
     useEffect(() => {
         fetchLessonDetail()
+        fetchScore()
     }, [])
+
+    console.log(score)
 
     return (
         <>
@@ -85,6 +102,70 @@ export default function LessonDetail() {
                     </div>
                 </div>
             )}
+
+
+            <div className="flex items-center justify-between mb-6 mt-8">
+                <h1 className="text-3xl font-bold text-white">
+                    List Score
+                </h1>
+            </div>
+
+            <div className="overflow-x-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+                <table className="min-w-full">
+                    <thead className="bg-gray-100 dark:bg-gray-700">
+                        <tr>
+                            <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">No</th>
+                            <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Name</th>
+                            <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Classroom</th>
+                            <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Score</th>
+                            <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">working time</th>
+                            {/* <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Action</th> */}
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                        {score.map((item: any, index: number) => (
+                            <tr key={item.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150">
+                                <td className="py-4 px-6 text-sm text-gray-900 dark:text-gray-100">{index + 1}</td>
+                                <td className="py-4 px-6 text-sm text-gray-900 dark:text-gray-100">{item.student?.fullName}</td>
+                                <td className="py-4 px-6 text-sm text-gray-900 dark:text-gray-100">{item.student?.classroom?.name}</td>
+                                <td className="py-4 px-6 text-sm text-gray-900 dark:text-gray-100">{item.score}</td>
+                                <td className="py-4 px-6 text-sm text-gray-900 dark:text-gray-100">
+                                    {new Date(item.createdAt).toLocaleDateString('en-US', {
+                                        day: '2-digit',
+                                        month: 'long',
+                                        year: 'numeric',
+                                        minute: '2-digit',
+                                        hour: '2-digit',
+                                    })}
+                                </td>
+                                {/* <td className="py-4 px-6 text-sm">
+                                    <div className="flex space-x-2">
+                                        <Link href={`course/${item.id}/detail`}
+                                            className="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-1 px-3 rounded-md transition duration-200"
+                                        >
+                                            View
+                                        </Link>
+                                    </div>
+                                </td> */}
+                            </tr>
+
+                        ))}
+                        {score.length === 0 && (
+                            <tr>
+                                <td colSpan={7} className="py-8 px-6 text-center text-gray-500 dark:text-gray-400">
+                                    <div className="flex flex-col items-center">
+                                        <svg className="w-12 h-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                        No data yet
+                                    </div>
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
+
             <div className="flex items-center justify-between mb-8 mt-10">
                 <h1 className="text-3xl font-bold text-white">
                     Questions

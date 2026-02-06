@@ -158,8 +158,9 @@ model LessonSubmission {
   lesson  Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   student User   @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
-  answers Json
-  score   Int
+  answers   Json
+  score     Int
+  createdAt DateTime @default(now())
 
   @@unique([lessonId, studentId])
 }

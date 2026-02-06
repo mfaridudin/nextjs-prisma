@@ -67,7 +67,6 @@ export async function DELETE(
 
     const id = parseInt(idString || "")
 
-
     if (isNaN(id)) {
         return new Response(
             JSON.stringify({ message: "Invalid ID" }),
