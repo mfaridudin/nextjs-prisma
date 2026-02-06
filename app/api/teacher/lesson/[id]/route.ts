@@ -59,13 +59,24 @@ export async function DELETE(request: Request) {
     //     )
     // }
 
-    const body = await request.json()
+    const url = new URL(request.url)
+    const idString = url.pathname.split("/").pop()
 
-    const deletedCourse = await prisma.course.delete({
+    const id = parseInt(idString || "")
+
+
+    if (isNaN(id)) {
+        return new Response(
+            JSON.stringify({ message: "Invalid ID" }),
+            { status: 400 }
+        )
+    }
+    // const body = await request.json()
+    const deletedLesson = await prisma.lesson.delete({
         where: {
-            id: body.id,
+            id: id
         }
     })
 
-    return NextResponse.json(deletedCourse, { status: 201 })
+    return NextResponse.json(deletedLesson, { status: 201 })
 }

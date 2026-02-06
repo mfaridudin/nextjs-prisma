@@ -20,8 +20,6 @@ export default function DetailPage({
     const { user } = useUserStore()
     const role = user?.role?.name
 
-    console.log("role dari detail :", role)
-
     const button = role !== "Student"
 
     return (

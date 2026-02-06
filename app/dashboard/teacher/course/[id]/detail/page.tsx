@@ -10,5 +10,5 @@ export default async function page({ params }: any) {
 
     const course = await data.json()
 
-    return <DetailCourse data={course} />
+    return <DetailCourse data={course} url={""} />
 }

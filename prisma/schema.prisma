@@ -110,7 +110,7 @@ model Course {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   schoolId  Int?
-  School    School?   @relation(fields: [schoolId], references: [id])
+  School    School?  @relation(fields: [schoolId], references: [id], onDelete: Cascade)
   teachers  User[]
   lessons   Lesson[]
 }
@@ -124,10 +124,10 @@ model Lesson {
   teacher   User @relation(fields: [teacherId], references: [id])
 
   courseId Int
-  course   Course @relation(fields: [courseId], references: [id])
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   classroomId Int
-  classroom   Classroom @relation(fields: [classroomId], references: [id])
+  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
 
   questions   Question[]
   submissions LessonSubmission[]
@@ -155,8 +155,8 @@ model LessonSubmission {
   lessonId  Int
   studentId Int
 
-  lesson  Lesson @relation(fields: [lessonId], references: [id])
-  student User   @relation(fields: [studentId], references: [id])
+  lesson  Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  student User   @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   answers Json
   score   Int

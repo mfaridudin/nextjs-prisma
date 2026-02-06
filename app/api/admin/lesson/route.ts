@@ -1,32 +1,35 @@
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { getServerSession } from "next-auth/next"
+import { NextResponse } from "next/server"
 
 
 export async function GET(req: Request) {
     const session = await getServerSession(authOptions)
+    if (!session?.user) {
+        return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
+    }
 
-    if (!session || !session.user) {
-        return new Response(
-            JSON.stringify({ message: "Unauthorized" }),
-            { status: 401 }
+    const { searchParams } = new URL(req.url)
+    const courseId = Number(searchParams.get("courseId"))
+
+    if (!courseId) {
+        return NextResponse.json(
+            { message: "courseId is required" },
+            { status: 400 }
         )
     }
 
     const lessons = await prisma.lesson.findMany({
-        where: {
-            teacherId: Number(session.user.id)
-            
-        },
+        where: { courseId },
         include: {
             course: true,
-            classroom: true
-        }
+            classroom: true,
+        },
     })
 
-    return Response.json(lessons)
+    return NextResponse.json(lessons)
 }
-
 
 export async function POST(req: Request) {
     // const session = await getServerSession(authOptions)

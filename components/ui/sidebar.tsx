@@ -33,7 +33,7 @@ const menuAdmin = [
         ),
     },
     {
-        label: "Classrooms",
+        label: "Class",
         href: "/dashboard/admin/classrooms",
         icon: (
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}

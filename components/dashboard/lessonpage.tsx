@@ -18,6 +18,7 @@ export default function LessonsPage({ courses, url }: any) {
     const role = user?.role?.name
 
     const buttonDisabled = role !== "Student"
+    const pageTitle = role === "Student" ? "Lesson List" : "Lessons Management";
 
     const initialForm = {
         title: "",
@@ -76,7 +77,6 @@ export default function LessonsPage({ courses, url }: any) {
             courseId: selectedCourse,
             classroomId: selectedClassroom,
             teacherId: user.id
-
         };
 
 
@@ -103,7 +103,7 @@ export default function LessonsPage({ courses, url }: any) {
     }
 
     async function handleDelete(id: string | number) {
-        const response = await fetch(`/api/student/${id}`, {
+        const response = await fetch(`/api/teacher/lesson/${id}`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
         });
@@ -112,18 +112,23 @@ export default function LessonsPage({ courses, url }: any) {
             const data = await response.json();
             setValidation(data.errors || { error: data.error });
             console.log(data.errors || { error: data.error });
+
+            console.log("erooorrrr darii siniii")
             return;
         }
-
+        fetchLesson()
         closeModal()
     }
 
     return (
         <>
             <div className="flex items-center justify-between mb-6">
-                <h1 className="text-3xl font-bold text-white">
-                    Lessons Management
-                </h1>
+
+                {title && (
+                    <h1 className="text-3xl font-bold text-white">
+                        {pageTitle}
+                    </h1>
+                )}
                 {buttonDisabled && (
                     <button onClick={() => openAddModal()} className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200">
                         Add Lesson
@@ -302,22 +307,22 @@ export default function LessonsPage({ courses, url }: any) {
             </Modal>
 
 
-            {/* <Modal open={open && mode === "delete"}
-                    onClose={closeModal}
-                    title="Delete Data"
-                    maxWidth="max-w-md">
-                    <div className="p-6">
-                        <p className="mb-6 text-gray-700 dark:text-gray-300">Are you sure you want to delete this data?</p>
-                        <div className="flex justify-end gap-3">
-                            <Button onClick={() => closeModal()} variant="cancel" >
-                                Cancelled
-                            </Button>
-                            <Button onClick={() => selectedId && handleDelete(selectedId)} variant="danger">
-                                Yes, Delete
-                            </Button>
-                        </div>
+            <Modal open={open && mode === "delete"}
+                onClose={closeModal}
+                title="Delete Data"
+                maxWidth="max-w-md">
+                <div className="p-6">
+                    <p className="mb-6 text-gray-700 dark:text-gray-300">Are you sure you want to delete this data?</p>
+                    <div className="flex justify-end gap-3">
+                        <Button onClick={() => closeModal()} variant="cancel" >
+                            Cancelled
+                        </Button>
+                        <Button onClick={() => selectedId && handleDelete(selectedId)} variant="danger">
+                            Yes, Delete
+                        </Button>
                     </div>
-                </Modal> */}
+                </div>
+            </Modal>
 
         </>
     )

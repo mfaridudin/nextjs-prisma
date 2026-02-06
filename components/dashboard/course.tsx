@@ -19,7 +19,7 @@ export default function Course() {
     const role = user?.role?.name
     const schoolId = user?.schoolId
 
-    console.log("school Id dari course :", schoolId)
+    // console.log("school Id dari course :", schoolId)
 
     const buttonDisabled = role !== "Teacher" && role !== "Student"
 
@@ -259,7 +259,6 @@ export default function Course() {
                     </div>
                 </div>
             </Modal>
-
         </>
     )
 }

@@ -26,7 +26,5 @@ export default async function Detail({ params }: { params: Promise<{ id: string 
         return (<UserNotFound />)
     }
 
-    console.log("Role ID:", roleStudent)
-
     return <DetaiStudent item={student} title="Student Detail" />
 }

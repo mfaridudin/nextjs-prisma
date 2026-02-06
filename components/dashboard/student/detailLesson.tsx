@@ -4,9 +4,10 @@ import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import Button from "@/components/ui/button"
 import { useUserStore } from "@/store/useUserStore"
-
+import { Span } from "next/dist/trace"
 
 export default function StudentLessonPage() {
+
     const { user } = useUserStore()
 
     // console.log("USER DATA:", user?.id)
@@ -30,8 +31,8 @@ export default function StudentLessonPage() {
 
         setLesson(data)
 
-        if (data.submission) {
-            setScore(data.submission.score)
+        if (data.submissions && data.submissions.length > 0) {
+            setScore(data.submissions[0].score)
             setSubmitted(true)
         }
     }
@@ -78,20 +79,6 @@ export default function StudentLessonPage() {
 
     if (!lesson) return <div>Loading...</div>
 
-    // if (submitted) {
-    //     return (
-    //         <div className="p-6">
-    //             <h1 className="text-2xl font-bold">
-    //                 You already submitted
-    //             </h1>
-
-    //             <p className="mt-4 text-xl">
-    //                 Your Score: {score}
-    //             </p>
-    //         </div>
-    //     )
-    // }
-
     return (
         <>
             <div className="flex items-center justify-between mb-8">
@@ -122,7 +109,7 @@ export default function StudentLessonPage() {
                         <div className="grid grid-cols-1 md:grid-cols-1 gap-6"> {/* Ubah ke 1 kolom karena hanya 1 field; sesuaikan jika menambah */}
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Jumlah Soal</label>
+                                <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Number of Questions</label>
                                 <p className="text-lg text-gray-900 dark:text-gray-100">{lesson.questions?.length}</p>
                             </div>
 
@@ -137,9 +124,15 @@ export default function StudentLessonPage() {
                                 </label>
 
                                 <p className="text-lg font-semibold text-green-600">
-                                    {submitted
-                                        ? score
-                                        : <span className="text-red-600">Not submitted yet</span>}
+                                    {submitted ? (
+                                        score > 50 ? (
+                                            <span className="text-green-600 font-semibold">{score}</span>
+                                        ) : (
+                                            <span className="text-red-600 font-semibold">{score}</span>
+                                        )
+                                    ) : (
+                                        <span className="text-gray-500">Do the questions to get a score</span>
+                                    )}
                                 </p>
                             </div>
 
