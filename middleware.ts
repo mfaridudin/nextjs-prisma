@@ -18,11 +18,21 @@ export default withAuth(
             "/auth/verify-pending",
         ];
 
+        const publicPages = [
+            "/landingpage",
+        ];
+
+        const isPublicPage = publicPages.some((path) =>
+            pathname === path || pathname.startsWith(path + "/")
+        );
+
+
+
         const isAuthPage = authPages.some((path) =>
             pathname.startsWith(path)
         );
 
-        if (!isAuth && !isAuthPage) {
+        if (!isAuth && !isAuthPage && !isPublicPage) {
             return NextResponse.redirect(
                 new URL("/auth/login", req.url)
             );
@@ -97,6 +107,6 @@ export default withAuth(
 
 export const config = {
     matcher: [
-        "/((?!api|_next|favicon.ico).*)",
+        "/((?!api|_next|favicon.ico|assets|images|js).*)",
     ],
 };

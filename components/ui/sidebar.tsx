@@ -3,7 +3,10 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation";
 import { useUserStore } from "@/store/useUserStore"
-
+import Modal from "./modal"
+import Button from "./button"
+import { signOut } from "next-auth/react"
+import { useOpenModal } from "@/store/useOpenModal"
 
 const menuAdmin = [
     {
@@ -134,6 +137,8 @@ export default function Sidebar() {
     // const menus = menusByRole[role] || [];
 
     const { user } = useUserStore()
+    const { open, mode, openLogoutModal, closeModal } = useOpenModal()
+    const clearUser = useUserStore((state) => state.clearUser)
 
     const role = user?.roleId
 
@@ -141,46 +146,91 @@ export default function Sidebar() {
 
     return (
         <>
-            <aside className="w-64 bg-white/90 dark:bg-gray-800/90 backdrop-blur-md shadow-xl fixed h-screen p-4 border-r col">
 
-                <nav>
-                    <ul className="space-y-2">
-                        {menus.map((menu) => {
-                            const isActive =
-                                pathname === menu.href
+            <aside className="w-64 h-screen fixed bg-white border-r flex flex-col">
+                {/* Logo */}
+                <div className="p-6 font-bold text-xl text-blue-600">
+                    Educo
+                </div>
 
-                            return (
-                                <li key={menu.href}>
-                                    <Link
-                                        href={menu.href}
-                                        className={`flex items-center py-3 px-4 rounded-lg transition-all group
-                    ${isActive
-                                                ? "bg-indigo-600 text-white"
-                                                : "hover:bg-indigo-100 dark:hover:bg-gray-700"
-                                            }
-                  `}
-                                    >
-                                        <svg
-                                            className={`w-5 h-5 mr-3 transition-colors
-                      ${isActive
-                                                    ? "text-white"
-                                                    : "text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-800"
-                                                }
-                    `}
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            {menu.icon}
-                                        </svg>
-                                        {menu.label}
-                                    </Link>
-                                </li>
-                            );
-                        })}
-                    </ul>
+                {/* Menu */}
+                <nav className="flex-1 space-y-4">
+                    {menus.map((menu) => {
+                        const isActive = pathname === menu.href
+
+                        return (
+                            <Link
+                                key={menu.href}
+                                href={menu.href}
+                                className={`flex items-center gap-3 px-6 py-2 transition
+                ${isActive
+                                        ? "bg-[#4B8CF8] text-white font-bold"
+                                        : "text-[#708492] hover:bg-gray-100"
+                                    }`}
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    className="w-5 h-5"
+                                >
+                                    {menu.icon}
+                                </svg>
+
+                                <span className="text-md">
+                                    {menu.label}
+                                </span>
+                            </Link>
+                        )
+                    })}
                 </nav>
+
+                {/* Footer */}
+                <div className="px-4 pb-6 space-y-2">
+                    <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100">
+                        Settings
+                    </button>
+                    <button onClick={openLogoutModal} className="w-full text-left px-4 py-2 rounded-lg text-red-500 hover:bg-red-100">
+                        Logout
+                    </button>
+                </div>
             </aside>
+
+            <Modal
+                open={open && mode === "logout"}
+                onClose={closeModal}
+                title="Log out"
+                maxWidth="max-w-md"
+            >
+                <div className="p-6">
+                    <p className="mb-6 text-gray-700">
+                        Are you sure you want to logout?
+                    </p>
+
+                    <div className="flex justify-end gap-3">
+                        <Button onClick={closeModal} variant="cancel">
+                            Cancel
+                        </Button>
+
+                        <Button
+                            variant="danger"
+                            onClick={() => {
+                                clearUser()
+                                signOut({ callbackUrl: "/login" })
+                            }}
+                        >
+                            Yes, Logout
+                        </Button>
+                    </div>
+                </div>
+            </Modal>
         </>
     );
 }
+
+
+
+
+
+
