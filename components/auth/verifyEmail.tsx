@@ -39,7 +39,7 @@ export default function EmailVerify() {
                 await new Promise(r => setTimeout(r, 300))
                 router.replace("/auth/add-school")
 
-            } catch (err: any) {
+            } catch (err: any) { 
                 setError(err.message || "Something went wrong")
             } finally {
                 setLoading(false)

@@ -138,7 +138,7 @@ export default function SignInForm() {
                             </p>
 
                             <Button variant="primary" size="md" type="submit" fullWidth>
-                                Create Account
+                               Sign In
                             </Button>
                         </form>
 

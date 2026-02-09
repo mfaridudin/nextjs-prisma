@@ -19,7 +19,7 @@ export default function Navbar() {
 
                 </div>
 
-                <div className="gap-10 flex">
+                <div className="hidden items-center md:gap-8 lg:gap-12 md:flex">
                     <Link href="#home" className="hover:text-indigo-600">Home</Link>
                     <Link href="#features" className="hover:text-indigo-600">Features</Link>
                 </div>
