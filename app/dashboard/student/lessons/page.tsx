@@ -1,4 +1,4 @@
-import LessonsPage from "@/components/dashboard/lessonpage";
+import LessonsPage from "@/component/dashboard/lessonpage";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";

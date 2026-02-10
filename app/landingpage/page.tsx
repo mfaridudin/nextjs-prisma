@@ -1,9 +1,9 @@
 "use client"
 
-import Features from "@/components/landingpage/features";
-import Footer from "@/components/landingpage/footer";
-import HeroSection from "@/components/landingpage/heroSection";
-import Navbar from "@/components/landingpage/navbar";
+import Features from "@/component/landingpage/features";
+import Footer from "@/component/landingpage/footer";
+import HeroSection from "@/component/landingpage/heroSection";
+import Navbar from "@/component/landingpage/navbar";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { useEffect } from "react";

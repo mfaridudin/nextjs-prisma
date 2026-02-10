@@ -1,4 +1,4 @@
-import EmailVerify from "@/components/auth/verifyEmail";
+import EmailVerify from "@/component/auth/verifyEmail";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

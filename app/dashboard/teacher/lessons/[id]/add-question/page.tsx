@@ -1,4 +1,4 @@
-import AddQuestion from "@/components/dashboard/addQuestion";
+import AddQuestion from "@/component/dashboard/addQuestion";
 
 
 export default function page() {

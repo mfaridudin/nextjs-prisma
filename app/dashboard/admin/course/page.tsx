@@ -1,4 +1,4 @@
-import Course from "@/components/dashboard/course"
+import Course from "@/component/dashboard/course"
 
 
 export default async function page() {

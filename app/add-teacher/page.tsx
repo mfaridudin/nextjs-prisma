@@ -1,6 +1,6 @@
 "use client"
 import { useState } from "react"
-import Button from "@/components/ui/button"
+import Button from "@/component/ui/button"
 import { useEffect } from "react"
 
 export default function Dashboard() {

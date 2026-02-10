@@ -1,8 +1,8 @@
-import Teacher from '@/components/dashboard/teacher';
+import Teacher from '@/component/dashboard/teacher';
 import { notFound } from 'next/navigation';
-import UserNotFound from '@/components/ui/userNotFound';
+import UserNotFound from '@/component/ui/userNotFound';
 // import DetaiPage from '@/components/dashboard/detaiPage';
-import DetailTeacher from '@/components/dashboard/detailTeacher';
+import DetailTeacher from '@/component/dashboard/detailTeacher';
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

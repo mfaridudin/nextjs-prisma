@@ -1,4 +1,4 @@
-import PendingVerify from "@/components/auth/pendingVerify";
+import PendingVerify from "@/component/auth/pendingVerify";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
-import Classroom from "@/components/dashboard/classroom"
+import Classroom from "@/component/dashboard/classroom"
 
 export default async function page() {
   // const session = await getServerSession(authOptions)

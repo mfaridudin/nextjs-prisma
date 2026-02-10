@@ -1,4 +1,4 @@
-import Students from "@/components/dashboard/student"
+import Students from "@/component/dashboard/student"
 import { Metadata } from "next"
 
 export const metadata: Metadata = {

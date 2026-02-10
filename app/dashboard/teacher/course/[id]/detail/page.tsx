@@ -1,4 +1,4 @@
-import DetailCourse from "@/components/dashboard/detailCourse";
+import DetailCourse from "@/component/dashboard/detailCourse";
 
 export default async function page({ params }: any) {
 

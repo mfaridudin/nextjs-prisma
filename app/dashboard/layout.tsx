@@ -1,5 +1,5 @@
-import Headers from "@/components/ui/headers";
-import Sidebar from "@/components/ui/sidebar";
+import Headers from "@/component/ui/headers";
+import Sidebar from "@/component/ui/sidebar";
 
 export default async function DashboardLayout({
     children,

@@ -1,4 +1,4 @@
-import AddSchool from "@/components/auth/addSchool";
+import AddSchool from "@/component/auth/addSchool";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

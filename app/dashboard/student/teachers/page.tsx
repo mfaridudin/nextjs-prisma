@@ -1,5 +1,5 @@
 import { Metadata } from "next"
-import Teacher from "@/components/dashboard/teacher";
+import Teacher from "@/component/dashboard/teacher";
 
 export const metadata: Metadata = {
     title: "Teachers Page | Muhammad Farid Islamudin",

@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
-import UserNotFound from '@/components/ui/userNotFound';
+import UserNotFound from '@/component/ui/userNotFound';
 import { Metadata } from 'next';
-import DetailStudent from '@/components/dashboard/detailStudent';
+import DetailStudent from '@/component/dashboard/detailStudent';
 
 
 export const metadata: Metadata = {
