@@ -7,7 +7,7 @@ import { Box, Typography } from "@mui/material"
 export default function page() {
     return (
         <>
-            <PageContainer title="Teacher Page" description="this is Teacher page">
+            <PageContainer title="Teacher Page | Muhammad Farid" description="this is Teacher page">
                 <Box>
                     <Box mb={3}>
                         <Typography variant="h4" fontWeight={700}>

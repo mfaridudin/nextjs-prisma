@@ -9,7 +9,18 @@ import dynamic from "next/dynamic";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const ActivityOverview = () => {
-  const [month, setMonth] = React.useState("1");
+  const [month, setMonth] = React.useState("2");
+
+  const [series, setSeries] = React.useState<any>([
+    {
+      name: "Lessons Created",
+      data: [],
+    },
+    {
+      name: "Student Submissions",
+      data: [],
+    },
+  ]);
 
   const handleChange = (event: any) => {
     setMonth(event.target.value);
@@ -18,6 +29,33 @@ const ActivityOverview = () => {
   const theme = useTheme();
   const primary = theme.palette.primary.main;
   const secondary = theme.palette.secondary.main;
+
+  async function fetchActivity() {
+    try {
+      const res = await fetch(
+        `/api/admin/activity-overview?month=${month}`
+      );
+
+      const data = await res.json();
+
+      setSeries([
+        {
+          name: "Lessons Created",
+          data: data.lessons,
+        },
+        {
+          name: "Student Submissions",
+          data: data.submissions,
+        },
+      ]);
+    } catch (error) {
+      console.error("Error fetch activity:", error);
+    }
+  }
+
+  React.useEffect(() => {
+    fetchActivity();
+  }, [month]);
 
   const options: any = {
     chart: {
@@ -48,12 +86,7 @@ const ActivityOverview = () => {
       strokeDashArray: 3,
     },
     xaxis: {
-      categories: [
-        "Week 1",
-        "Week 2",
-        "Week 3",
-        "Week 4",
-      ],
+      categories: ["Week 1", "Week 2", "Week 3", "Week 4"],
       axisBorder: { show: false },
     },
     yaxis: {
@@ -64,29 +97,14 @@ const ActivityOverview = () => {
     },
   };
 
-  const series: any = [
-    {
-      name: "Lessons Created",
-      data: [12, 18, 15, 20],
-    },
-    {
-      name: "Student Submissions",
-      data: [40, 55, 48, 60],
-    },
-  ];
-
   return (
     <DashboardCard
       title="Activity Overview"
       action={
-        <Select
-          size="small"
-          value={month}
-          onChange={handleChange}
-        >
-          <MenuItem value={1}>March 2025</MenuItem>
-          <MenuItem value={2}>April 2025</MenuItem>
-          <MenuItem value={3}>May 2025</MenuItem>
+        <Select size="small" value={month} onChange={handleChange}>
+          <MenuItem value={2}>February 2026</MenuItem>
+          <MenuItem value={3}>March 2026</MenuItem>
+          <MenuItem value={4}>April 2026</MenuItem>
         </Select>
       }
     >

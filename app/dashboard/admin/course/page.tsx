@@ -7,7 +7,7 @@ import CourseTable from "../../components/course/course";
 export default function Page() {
     return (
         <>
-            <PageContainer title="Teacher Page" description="this is Teacher page">
+            <PageContainer title="Course Page | Muhammad Farid" description="this is Teacher page">
                 <Box>
                     <Box mb={3}>
                         <Typography variant="h4" fontWeight={700}>

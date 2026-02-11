@@ -206,7 +206,7 @@ const ClassroomTable = () => {
 
                                 <TableCell>
                                     <Stack direction="row" spacing={1}>
-                                        <Link href={`/tes/admin/classroom/${item.id}/detail`}>
+                                        <Link href={`classroom/${item.id}/detail`}>
                                             <Button
                                                 variant="outlined"
                                                 size="small"

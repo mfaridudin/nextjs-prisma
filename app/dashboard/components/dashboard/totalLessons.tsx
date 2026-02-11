@@ -5,14 +5,30 @@ import { IconNotebook } from "@tabler/icons-react";
 import { useTheme } from "@mui/material/styles";
 
 import DashboardCard from '@/app/dashboard/components/shared/DashboardCard';
-type Props = {
-    totalLesson: number;
-};
+import { useEffect, useState } from 'react';
 
-const TotalLessonCard = ({ totalLesson }: Props) => {
+
+const TotalLessonCard = () => {
     const theme = useTheme();
     const primary = theme.palette.primary.main;
     const primaryLight = theme.palette.primary.light;
+
+    const [totalLesson, setTotalLesson] = useState<number | null>(null);
+
+    async function fetchSummary() {
+        try {
+            const res = await fetch("/api/admin/total-lesson");
+            const data = await res.json();
+            setTotalLesson(data.totalLesson);
+        } catch (error) {
+            console.error("Error fetch summary:", error);
+        }
+    }
+
+    useEffect(() => {
+        fetchSummary();
+    }, []);
+
 
     return (
         <DashboardCard>
