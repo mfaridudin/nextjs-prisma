@@ -11,6 +11,9 @@ import {
     Button,
     Input,
     Stack,
+    TableContainer,
+    Paper,
+    Divider,
 } from "@mui/material";
 import DashboardCard from "@/app/dashboard/components/shared/DashboardCard";
 import AddIcon from "@mui/icons-material/Add";
@@ -22,11 +25,17 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Link from "next/link";
 
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
+
 const StudentTable = () => {
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
     const { open, mode, selectedId, openAddModal, openDeleteModal, closeModal } = useOpenModal()
+
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const initialForm = {
         fullName: "",
@@ -124,84 +133,79 @@ const StudentTable = () => {
                     <TableHead>
                         <TableRow>
                             <TableCell>
-                                <Typography fontWeight={600}>No</Typography>
+                                <Typography fontWeight={600} noWrap>No</Typography>
                             </TableCell>
                             <TableCell>
-                                <Typography fontWeight={600}>Full Name</Typography>
+                                <Typography fontWeight={600} noWrap>Full Name</Typography>
                             </TableCell>
                             <TableCell>
-                                <Typography fontWeight={600}>Username</Typography>
+                                <Typography fontWeight={600} noWrap>Username</Typography>
                             </TableCell>
                             <TableCell>
-                                <Typography fontWeight={600}>Address</Typography>
+                                <Typography fontWeight={600} noWrap>Address</Typography>
                             </TableCell>
                             <TableCell>
-                                <Typography fontWeight={600}>Email</Typography>
+                                <Typography fontWeight={600} noWrap>Email</Typography>
                             </TableCell>
                             <TableCell>
-                                <Typography fontWeight={600}>Create Date</Typography>
+                                <Typography fontWeight={600} noWrap>Create Date</Typography>
                             </TableCell>
                             <TableCell>
-                                <Typography fontWeight={600}>Action</Typography>
+                                <Typography fontWeight={600} noWrap>Action</Typography>
                             </TableCell>
                         </TableRow>
                     </TableHead>
 
                     <TableBody>
                         {students.map((student: any, index: number) => (
-                            <TableRow key={student.id}>
+                            <TableRow key={student.id} hover>
                                 <TableCell>
-                                    <Typography fontWeight={500}>
-                                        {index + 1}
-                                    </Typography>
+                                    <Typography variant="subtitle2" fontWeight={500}>{index + 1}</Typography>
                                 </TableCell>
 
                                 <TableCell>
-                                    <Typography fontWeight={600}>
+                                    <Typography variant="subtitle2" fontWeight={600} noWrap>
                                         {student.fullName}
                                     </Typography>
                                 </TableCell>
 
                                 <TableCell>
-                                    <Typography fontWeight={600} color="textSecondary">
+                                    <Typography color="textSecondary" variant="subtitle2" noWrap>
                                         {student.username}
                                     </Typography>
                                 </TableCell>
 
                                 <TableCell>
-                                    <Typography fontWeight={600} color="textSecondary">
+                                    <Typography color="textSecondary" variant="subtitle2" sx={{ minWidth: 150 }}>
                                         {student.address}
                                     </Typography>
                                 </TableCell>
+
                                 <TableCell>
-                                    <Typography fontWeight={600} color="textSecondary">
+                                    <Typography color="textSecondary" variant="subtitle2" noWrap>
                                         {student.email}
                                     </Typography>
                                 </TableCell>
 
                                 <TableCell>
-                                    <Typography fontWeight={600} color="textSecondary">
-                                        {new Date(student.createdAt).toLocaleDateString('en-US', {
+                                    <Typography color="textSecondary" variant="subtitle2" noWrap>
+                                        {new Date(student.createdAt).toLocaleDateString('id-ID', {
                                             day: '2-digit',
-                                            month: 'long',
-                                            year: 'numeric',
-                                            minute: '2-digit',
-                                            hour: '2-digit',
+                                            month: 'short',
+                                            year: 'numeric'
                                         })}
                                     </Typography>
                                 </TableCell>
 
                                 <TableCell>
                                     <Stack direction="row" spacing={1}>
-                                      <Link href={`students/${student.id}/detail`}>    {/* /tes/admin/students */}
+                                        <Link href={`students/${student.id}/detail`} style={{ textDecoration: 'none' }}>
                                             <Button
                                                 variant="outlined"
                                                 size="small"
                                                 startIcon={<VisibilityIcon />}
                                             >
-
                                                 View
-
                                             </Button>
                                         </Link>
                                         <Button
@@ -215,7 +219,6 @@ const StudentTable = () => {
                                         </Button>
                                     </Stack>
                                 </TableCell>
-
                             </TableRow>
                         ))}
                     </TableBody>

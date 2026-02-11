@@ -53,11 +53,14 @@ export default function RootLayout({
         {/* PageContent */}
         {/* ------------------------------------------- */}
         <Container
+          maxWidth={false}
+          disableGutters
           sx={{
             paddingTop: "20px",
-            maxWidth: "1200px",
+            px: 3,
           }}
         >
+
           {/* ------------------------------------------- */}
           {/* Page Route */}
           {/* ------------------------------------------- */}

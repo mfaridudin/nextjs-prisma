@@ -28,11 +28,10 @@ export default function Navbar() {
                     id="mobileMenu"
                     className="fixed inset-0 flex flex-col items-center justify-center gap-6 text-lg font-medium bg-white/40 backdrop-blur-md md:hidden transition duration-300 -translate-x-full"
                 >
-                    <Link href="#!">Home</Link>
-                    <Link href="#!">Features</Link>
-                    <Link href="#!">Pricing</Link>
-                    <Link href="#!">Docs</Link>
-                    <button>Sign in</button>
+                    <Link href="#home">Home</Link>
+                    <Link href="#features">Features</Link>
+                    {/* <Link href="#!">Pricing</Link> */}
+                    {/* <button>Sign in</button> */}
                     <button
                         id="closeMenu"
                         className="aspect-square size-10 p-1 items-center justify-center bg-indigo-600 hover:bg-indigo-700 transition text-white rounded-md flex"

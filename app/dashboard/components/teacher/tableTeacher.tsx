@@ -12,6 +12,10 @@ import {
     Input,
     Stack,
     Link,
+    useTheme,
+    useMediaQuery,
+    Paper,
+    Divider,
 } from "@mui/material";
 import DashboardCard from "@/app/dashboard/components/shared/DashboardCard";
 import AddIcon from "@mui/icons-material/Add";
@@ -42,6 +46,9 @@ const TeacherTable = () => {
         password: "",
         password_confirmation: "",
     }
+
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const button = role !== "Student"
     const title = role !== "Student"

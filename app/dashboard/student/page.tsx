@@ -10,7 +10,6 @@ import RecentLessons from '../components/dashboard/recentlesson';
 import RecentSubmissions from '../components/dashboard/recentSubmission';
 import PendingLessons from '../components/dashboard/pendingLesson';
 import ScoreSummary from '../components/dashboard/score';
-import AverageScoreCard from '../components/dashboard/average';
 import TeachersList from '../components/dashboard/teacherList';
 
 export default function page() {
@@ -27,14 +26,16 @@ export default function page() {
         </Box>
         <Grid container spacing={3}>
           <Grid
-            size={{
-              xs: 12,
-              lg: 2
-            }}>
-            <Grid size={{xs: 12}}>
-              <ScoreSummary/>
+            size={{ xs: 12, lg: 2 }}
+            sx={{ width: "100%" }}
+          >
+            <Grid container direction="column" spacing={2}>
+              <Grid item xs={12}>
+                <ScoreSummary />
+              </Grid>
             </Grid>
           </Grid>
+
 
           <Grid
             size={{

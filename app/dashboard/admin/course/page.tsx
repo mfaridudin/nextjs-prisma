@@ -11,10 +11,10 @@ export default function Page() {
                 <Box>
                     <Box mb={3}>
                         <Typography variant="h4" fontWeight={700}>
-                            Teachers Management
+                            Course Management
                         </Typography>
                         <Typography color="text.secondary">
-                            Manage Teachers data efficiently and keep everything organized in one place.
+                            Manage Course data efficiently and keep everything organized in one place.
                         </Typography>
                     </Box>
                     <CourseTable />

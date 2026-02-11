@@ -16,37 +16,25 @@ export default function Modal({
     onClose,
     title,
     children,
-    maxWidth = "max-w-xl",
 }: ModalProps) {
     if (!open) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-            <div
-                className={`
-          w-full ${maxWidth}
-          bg-white
-          rounded-xl
-          shadow-[0_10px_40px_rgba(0,0,0,0.15)]
-          animate-in fade-in zoom-in-95
-        `}
-            >
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+            <div className="w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl bg-white rounded-xl shadow-lg">
+
                 {title && (
-                    <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-                        <h2 className="text-lg font-semibold text-gray-900">
-                            {title}
-                        </h2>
-                        <button
-                            onClick={onClose}
-                            className="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition"
-                        >
+                    <div className="flex items-center justify-between px-6 py-4 border-b">
+                        <h2 className="text-lg font-semibold">{title}</h2>
+                        <button onClick={onClose}>
                             <IconX />
                         </button>
                     </div>
                 )}
 
-                <div className="px-6 py-5">{children}</div>
+                <div className="p-6">{children}</div>
             </div>
         </div>
     );
 }
+

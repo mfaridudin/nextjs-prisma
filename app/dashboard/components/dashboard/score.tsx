@@ -84,30 +84,33 @@ export default function ScoreSummary() {
 
     return (
         <Grid container spacing={2} direction="column">
-            <Grid item xs={12} display="flex">
+            <Grid item xs={12}>
                 <ScoreCard
                     title="Average Score"
                     value={avg}
                     icon={<TrendingUpIcon />}
                     color="#1976d2"
+                    sx={{ width: "100%" }}
                 />
             </Grid>
 
-            <Grid item xs={12} display="flex">
+            <Grid item xs={12}>
                 <ScoreCard
                     title="Best Score"
                     value={bestScore}
                     icon={<EmojiEventsIcon />}
                     color="#2e7d32"
+                    sx={{ width: "100%" }}
                 />
             </Grid>
 
-            <Grid item xs={12} display="flex">
+            <Grid item xs={12}>
                 <ScoreCard
                     title="Lowest Score"
                     value={worstScore}
                     icon={<ArrowDownwardIcon />}
                     color="#d32f2f"
+                    sx={{ width: "100%" }}
                 />
             </Grid>
         </Grid>

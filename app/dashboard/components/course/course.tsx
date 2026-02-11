@@ -101,7 +101,7 @@ const CourseTable = () => {
     }
 
     return (
-        <DashboardCard title="Students" action={
+        <DashboardCard title="Course" action={
             <Button
                 variant="contained"
                 startIcon={<AddIcon />}
