@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
+import { Select } from "@mui/material"
 
 export async function GET() {
     try {
@@ -13,10 +14,9 @@ export async function GET() {
 
         const user = session.user
 
-        console.log("SESSION USER:", user)
-
         const student = user
 
+        const studentId = Number(student.id)
 
         if (Number(user.roleId) !== 3) {
             return NextResponse.json({ message: "Forbidden" }, { status: 403 })
@@ -33,23 +33,33 @@ export async function GET() {
             )
         }
 
-        const lessons = await prisma.lesson.findMany({
+        const pendingLessons = await prisma.lesson.findMany({
             where: {
-                classroomId: classroomId
+                classroomId: classroomId,
+                submissions: {
+                    none: {
+                        studentId: studentId,
+                    },
+                },
             },
             include: {
-                course: true,
-                classroom: true,
-                submissions: {
-                    where: {
-                        studentId: student.id
-                    }
-                }
-            }
-        })
+                course: {
+                    select: {
+                        name: true,
+                    },
+                },
+                classroom: {
+                    select: {
+                        name: true,
+                    },
+                },
+            },
+        });
 
 
-        return NextResponse.json(lessons)
+
+
+        return NextResponse.json(pendingLessons)
 
     } catch (error: any) {
         console.error("ERROR LESSON API:", error)

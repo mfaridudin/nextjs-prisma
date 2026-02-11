@@ -1,5 +1,8 @@
 import React from "react";
-import Menuitems from "./MenuItems";
+// import Menuitems from "./MenuItems";
+import { useUserStore } from "@/store/useUserStore";
+import { menusByRole } from "./MenuItems";
+
 import { Box, Typography } from "@mui/material";
 import {
   Logo,
@@ -27,7 +30,7 @@ const renderMenuItems = (items: any, pathDirect: any) => {
       return (
         <Menu
           subHeading={item.subheader}
-          key={item.subheader} children={undefined}        />
+          key={item.subheader} children={undefined} />
       );
     }
 
@@ -68,21 +71,25 @@ const renderMenuItems = (items: any, pathDirect: any) => {
 
 const SidebarItems = () => {
   const pathname = usePathname();
-  const pathDirect = pathname;
+  const { user } = useUserStore();
+
+  const role = user?.roleId;
+  const Menuitems = menusByRole[role ?? 0] || [];
 
   return (
-    < >
-      <MUI_Sidebar width={"100%"} showProfile={false} themeColor={"#5D87FF"} themeSecondaryColor={'#49beff'} >
+    <MUI_Sidebar
+      width={"100%"}
+      showProfile={false}
+      themeColor={"#5D87FF"}
+      themeSecondaryColor={"#49beff"}
+    >
+      <Logo img="/images/logos/dark-logo.svg" component={Link} href="/">
+        Modernize
+      </Logo>
 
-        <Logo img='/images/logos/dark-logo.svg' component={Link} href="/" >Modernize</Logo>
-
-        {renderMenuItems(Menuitems, pathDirect)}
-        <Box px={2}>
-          {/* <Upgrade /> */}
-        </Box>
-      </MUI_Sidebar>
-
-    </>
+      {renderMenuItems(Menuitems, pathname)}
+    </MUI_Sidebar>
   );
 };
+
 export default SidebarItems;

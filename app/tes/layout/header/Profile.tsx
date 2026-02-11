@@ -1,3 +1,4 @@
+"use client"
 import React, { useState } from "react";
 import Link from "next/link";
 import {
@@ -12,6 +13,8 @@ import {
 } from "@mui/material";
 
 import { IconListCheck, IconMail, IconUser } from "@tabler/icons-react";
+import { signOut } from "next-auth/react"
+import { useUserStore } from "@/store/useUserStore";
 
 const Profile = () => {
   const [anchorEl2, setAnchorEl2] = useState(null);
@@ -21,6 +24,8 @@ const Profile = () => {
   const handleClose2 = () => {
     setAnchorEl2(null);
   };
+
+  const clearUser = useUserStore((state) => state.clearUser)
 
   return (
     <Box>
@@ -83,10 +88,13 @@ const Profile = () => {
         </MenuItem>
         <Box mt={1} py={1} px={2}>
           <Button
-            href="/authentication/login"
+            onClick={() => {
+              clearUser()
+              signOut({ callbackUrl: "/login" })
+            }}
             variant="outlined"
             color="primary"
-            component={Link}
+            // component={Link}
             fullWidth
           >
             Logout

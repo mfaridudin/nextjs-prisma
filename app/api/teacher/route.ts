@@ -21,6 +21,13 @@ export async function GET() {
             schoolId: schoolId,
             roleId: 2
         },
+        include: {
+            course :{
+                select:{
+                    name: true
+                }
+            }
+        },
     })
 
     return NextResponse.json({ teachers }, { status: 200 })

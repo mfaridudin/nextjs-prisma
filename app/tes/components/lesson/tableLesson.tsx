@@ -21,60 +21,96 @@ import { IconEye } from "@tabler/icons-react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Link from "next/link";
+import { useUserStore } from "@/store/useUserStore";
 
-const StudentTable = () => {
-    const [showPassword, setShowPassword] = useState(false)
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-
+const LessonTable = () => {
     const { open, mode, selectedId, openAddModal, openDeleteModal, closeModal } = useOpenModal()
 
+    const { user } = useUserStore()
+
+    console.log("apa", user?.id)
+
+    const teacherId = user?.id
+    const role = user?.role?.name
+
+    const buttonDisabled = role !== "Student"
+    const pageTitle = role === "Student" ? "Lesson List" : "Lessons Management";
+
     const initialForm = {
-        fullName: "",
-        username: "",
-        address: "",
-        dateOfBirth: "",
-        age: "",
-        email: "",
-        password: "",
-        password_confirmation: "",
+        title: "",
+        description: "",
     }
 
     const [form, setForm] = useState(initialForm);
 
     const [loading, setLoading] = useState(false)
-    const [students, setStudents] = useState([])
+    const [lessons, setLessons] = useState<any[]>([])
     const [validation, setValidation] = useState<any>({});
+    const [selectedCourse, setSelectedCourse] = useState<number | null>(null);
+    const [courses, setCourses] = useState<any[]>([])
+    const [selectedClassroom, setSelectedClassroom] = useState<number | null>(null);
+    const [classrooms, setClassrooms] = useState<any[]>([])
 
-
-    async function fetchStudent() {
+    async function fetchLesson() {
         try {
-            const res = await fetch('/api/student')
+            const res = await fetch("/api/teacher/lesson")
             const data = await res.json()
-            setStudents(data)
+
+            setLessons(Array.isArray(data) ? data : [])
+
         } catch (err) {
             console.error(err)
+            setLessons([])
+        }
+    }
+
+    async function fetchCourse() {
+        try {
+            const res = await fetch('/api/course')
+            const data = await res.json()
+            setCourses(Array.isArray(data) ? data : [])
+        } catch {
+            setCourses([])
+        }
+    }
+
+    async function fetchClassrooms() {
+        try {
+            const res = await fetch('/api/classroom')
+            const data = await res.json()
+            setClassrooms(Array.isArray(data) ? data : [])
+        } catch {
+            setClassrooms([])
         }
     }
 
     useEffect(() => {
-        fetchStudent()
+        fetchLesson()
+        fetchClassrooms()
+        fetchCourse()
     }, []);
 
-    async function handleAddStudent(e: React.FormEvent) {
+    async function handleAddLesson(e: React.FormEvent) {
         e.preventDefault();
         setLoading(true)
 
+        if (!selectedCourse || !selectedClassroom) {
+            alert("Course and Classroom must be selected    !");
+            return;
+        }
+
         const payload = {
-            ...form,
-            dateOfBirth: form.dateOfBirth ? new Date(form.dateOfBirth).toISOString() : undefined,
-            age: form.age ? Number(form.age) : undefined,
-            roleId: 3,
-            emailVerified: true,
+            title: form.title,
+            description: form.description,
+            courseId: selectedCourse,
+            classroomId: selectedClassroom,
+            teacherId: teacherId
         };
+
 
         console.log(payload)
 
-        const response = await fetch("/api/student", {
+        const response = await fetch("/api/teacher/lesson", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
@@ -83,17 +119,19 @@ const StudentTable = () => {
         if (!response.ok) {
             const data = await response.json();
             setValidation(data.errors || { error: data.error });
-            console.log(data.errors || { error: data.error })
+            setLoading(false)
             return;
         }
-        fetchStudent()
+
+        await fetchLesson()
+
         setLoading(false)
         setForm(initialForm)
         closeModal()
     }
 
     async function handleDelete(id: string | number) {
-        const response = await fetch(`/api/student/${id}`, {
+        const response = await fetch(`/api/teacher/lesson/${id}`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
         });
@@ -102,21 +140,23 @@ const StudentTable = () => {
             const data = await response.json();
             setValidation(data.errors || { error: data.error });
             console.log(data.errors || { error: data.error });
+
+            console.log("erooorrrr darii siniii")
             return;
         }
-        fetchStudent()
+        fetchLesson()
         closeModal()
     }
 
     return (
-        <DashboardCard title="Students" action={
+        <DashboardCard title="Lesson" action={
             <Button
                 variant="contained"
                 startIcon={<AddIcon />}
                 size="small"
                 onClick={openAddModal}
             >
-                Add Student
+                Add Lesson
             </Button>
         }>
             <Box sx={{ overflow: "auto" }}>
@@ -127,16 +167,16 @@ const StudentTable = () => {
                                 <Typography fontWeight={600}>No</Typography>
                             </TableCell>
                             <TableCell>
-                                <Typography fontWeight={600}>Full Name</Typography>
+                                <Typography fontWeight={600}>Title</Typography>
                             </TableCell>
                             <TableCell>
-                                <Typography fontWeight={600}>Username</Typography>
+                                <Typography fontWeight={600}>Description</Typography>
                             </TableCell>
                             <TableCell>
-                                <Typography fontWeight={600}>Address</Typography>
+                                <Typography fontWeight={600}>Classroom</Typography>
                             </TableCell>
                             <TableCell>
-                                <Typography fontWeight={600}>Email</Typography>
+                                <Typography fontWeight={600}>Course</Typography>
                             </TableCell>
                             <TableCell>
                                 <Typography fontWeight={600}>Create Date</Typography>
@@ -148,8 +188,8 @@ const StudentTable = () => {
                     </TableHead>
 
                     <TableBody>
-                        {students.map((student: any, index: number) => (
-                            <TableRow key={student.id}>
+                        {lessons.map((lesson: any, index: number) => (
+                            <TableRow key={lesson.id}>
                                 <TableCell>
                                     <Typography fontWeight={500}>
                                         {index + 1}
@@ -158,30 +198,30 @@ const StudentTable = () => {
 
                                 <TableCell>
                                     <Typography fontWeight={600}>
-                                        {student.fullName}
+                                        {lesson.title}
                                     </Typography>
                                 </TableCell>
 
                                 <TableCell>
                                     <Typography fontWeight={600} color="textSecondary">
-                                        {student.username}
+                                        {lesson.description}
                                     </Typography>
                                 </TableCell>
 
                                 <TableCell>
                                     <Typography fontWeight={600} color="textSecondary">
-                                        {student.address}
+                                        {lesson.classroom.name}
                                     </Typography>
                                 </TableCell>
                                 <TableCell>
                                     <Typography fontWeight={600} color="textSecondary">
-                                        {student.email}
+                                        {lesson.course.name}
                                     </Typography>
                                 </TableCell>
 
                                 <TableCell>
                                     <Typography fontWeight={600} color="textSecondary">
-                                        {new Date(student.createdAt).toLocaleDateString('en-US', {
+                                        {new Date(lesson.createdAt).toLocaleDateString('en-US', {
                                             day: '2-digit',
                                             month: 'long',
                                             year: 'numeric',
@@ -193,7 +233,7 @@ const StudentTable = () => {
 
                                 <TableCell>
                                     <Stack direction="row" spacing={1}>
-                                      <Link href={`students/${student.id}/detail`}>    {/* /tes/admin/students */}
+                                        <Link href={`lesson/${lesson.id}/detail`}>    {/* /tes/admin/students */}
                                             <Button
                                                 variant="outlined"
                                                 size="small"
@@ -209,7 +249,7 @@ const StudentTable = () => {
                                             color="error"
                                             size="small"
                                             startIcon={<DeleteIcon />}
-                                            onClick={() => openDeleteModal(student.id)}
+                                            onClick={() => openDeleteModal(lesson.id)}
                                         >
                                             Delete
                                         </Button>
@@ -224,104 +264,96 @@ const StudentTable = () => {
 
             <Modal open={open && mode === "add"}
                 onClose={closeModal}
-                title="Add Student"
+                title="Add Lesson"
                 maxWidth="max-w-xl">
                 {/* form */}
-                <form onSubmit={handleAddStudent} className="p-6 space-y-4">
+                <form onSubmit={handleAddLesson} className="p-6 space-y-5">
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <Input
-                            value={form.fullName}
-                            onChange={(e) => setForm({ ...form, fullName: e.target.value, })}
-                            // label="Full Name"
-                            type="text"
-                            placeholder="Enter full name"
-                        />
-                        <Input
-                            value={form.username}
-                            onChange={(e) => setForm({ ...form, username: e.target.value, })}
-                            // label="Username"
-                            type="text"
-                            placeholder="Enter username"
-                        />
+                    <Input
+                        className="w-full"
+                        value={form.title}
+                        onChange={(e) => setForm({ ...form, title: e.target.value })}
+                        type="text"
+                        placeholder="Enter Lesson Title"
+                    />
+
+
+                    <Input
+                        className="w-full"
+                        value={form.description}
+                        onChange={(e) => setForm({ ...form, description: e.target.value })}
+                        type="text"
+                        placeholder="Enter Lesson Description"
+                    />
+
+                    <div>
+                        <div className="relative">
+                            {courses.length === 0 && (
+                                <option disabled>No course available</option>
+                            )}
+
+                            {courses.length > 0 && (
+                                <select
+                                    className={`w-full appearance-none focus-none py-3 text-sm ${!form.courseId ? "text-gray-400" : "text-gray-800"
+                                        }`}
+                                    name="courseId"
+                                    id="courseId"
+                                    value={selectedCourse ?? ""}
+                                    onChange={(e) => setSelectedCourse(Number(e.target.value))}
+                                >
+                                    <option value="">Select Course</option>
+                                    {courses.map((course: any) => (
+                                        <option key={course.id} value={course.id}>
+                                            {course.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            )}
+                            <span
+                                className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400 hover:text-gray-600"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                </svg>
+                            </span>
+                        </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <Input
-                            value={form.email}
-                            onChange={(e) => setForm({ ...form, email: e.target.value })}
-                            // label="Email"
-                            type="email"
-                            placeholder="Enter email"
-                        />
+                    <div>
+                        <div className="relative">
+                            {classrooms.length === 0 && (
+                                <option disabled>No classroom available</option>
+                            )}
 
-                        <Input
-                            value={form.address}
-                            onChange={(e) => setForm({ ...form, address: e.target.value })}
-                            // label="Address"
-                            type="text"
-                            placeholder="Enter address"
-                        />
+                            {classrooms.length > 0 && (
+                                <select
+                                    className={`w-full appearance-none focus-none py-3 text-sm ${!form.classroomId ? "text-gray-400" : "text-gray-800"
+                                        }`}
+                                    name="classroomId"
+                                    id="classroomId"
+                                    value={selectedClassroom ?? ""}
+                                    onChange={(e) => setSelectedClassroom(Number(e.target.value))}
+                                >
+                                    <option value="">Select Classroom</option>
+                                    {classrooms.map((classroom: any) => (
+                                        <option key={classroom.id} value={classroom.id}>
+                                            {classroom.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            )}
+                            <span
+                                className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400 hover:text-gray-600"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                </svg>
+                            </span>
+                        </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <Input
-                            value={form.dateOfBirth}
-                            onChange={(e) => setForm({ ...form, dateOfBirth: e.target.value })}
-                            // label="Date of Birth"
-                            type="date"
-                            placeholder="Enter age"
-                        />
-                        <Input
-                            value={form.age}
-                            onChange={(e) => setForm({ ...form, age: e.target.value })}
-                            // label="Age"
-                            type="number"
-                            placeholder="Enter age"
-                        />
-                    </div>
-
-                    <div className="relative w-full">
-                        <Input
-                            className="w-full pr-12"
-                            value={form.password}
-                            onChange={(e) =>
-                                setForm({ ...form, password: e.target.value })
-                            }
-                            type={showPassword ? "text" : "password"}
-                            placeholder="Enter Password"
-                        />
-
-                        <span
-                            onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400 hover:text-gray-600"
-                        >
-                            <IconEye />
-                        </span>
-                    </div>
-
-
-                    <div className="relative w-full">
-                        <Input
-                            className="w-full pr-12"
-                            value={form.password_confirmation}
-                            onChange={(e) =>
-                                setForm({ ...form, password_confirmation: e.target.value })
-                            }
-                            type={showConfirmPassword ? "text" : "password"}
-                            placeholder="Confirm Password"
-                        />
-                        <span
-                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer
-               text-gray-400 hover:text-gray-600"
-                        >
-                            <IconEye />
-                        </span>
-                    </div>
-
-
-                    <div className="flex items-center justify-end gap-4  pt-6  border-gray-200">
+                    {/* Footer */}
+                    <div className="flex items-center justify-end gap-4 pt-6 border-gray-200">
                         <Button
                             onClick={closeModal}
                             sx={{
@@ -336,10 +368,11 @@ const StudentTable = () => {
                             Cancelled
                         </Button>
                         <Button
-                            type="submit"
+                            color="info"
                             variant="contained"
+                            type="submit"
                         >
-                            Add Student
+                            Add Class
                         </Button>
                     </div>
                 </form>
@@ -380,4 +413,4 @@ const StudentTable = () => {
     );
 };
 
-export default StudentTable;
+export default LessonTable;
