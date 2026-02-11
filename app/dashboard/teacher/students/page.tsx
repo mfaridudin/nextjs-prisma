@@ -1,15 +1,20 @@
-import Students from "@/component/dashboard/student"
-import { Metadata } from "next"
+"use client"
 
-export const metadata: Metadata = {
-    title: "Students Page | Muhammad Farid Islamudin",
-    description: "Students Form for My App",
-};
+import StudentTable from "../../components/students/tableStudent"
+import { Box, Typography } from "@mui/material"
 
-export default async function page() {
+export default function page() {
     return (
-        <div>
-            <Students url={"/dashboard/teacher/students"} />
-        </div>
+        <>
+            <Box mb={3}>
+                <Typography variant="h4" fontWeight={700}>
+                    Students Management
+                </Typography>
+                <Typography color="text.secondary">
+                    Manage student data efficiently and keep everything organized in one place.
+                </Typography>
+            </Box>
+            <StudentTable/>
+        </>
     )
 }

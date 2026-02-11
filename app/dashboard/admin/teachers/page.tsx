@@ -1,13 +1,25 @@
-import { Metadata } from "next"
-import Teacher from "@/component/dashboard/teacher";
+"use client"
 
-export const metadata: Metadata = {
-    title: "Teachers Page | Muhammad Farid Islamudin",
-    description: "Teachers Form for My App",
-};
+import PageContainer from "../../components/container/PageContainer"
+import TeacherTable from "../../components/teacher/tableTeacher"
+import { Box, Typography } from "@mui/material"
 
-export default function Teachers() {
+export default function page() {
     return (
-        <Teacher url={"/dashboard/admin/teachers"} />
+        <>
+            <PageContainer title="Teacher Page" description="this is Teacher page">
+                <Box>
+                    <Box mb={3}>
+                        <Typography variant="h4" fontWeight={700}>
+                            Teachers Management
+                        </Typography>
+                        <Typography color="text.secondary">
+                            Manage Teachers data efficiently and keep everything organized in one place.
+                        </Typography>
+                    </Box>
+                    <TeacherTable />
+                </Box>
+            </PageContainer>
+        </>
     )
 }
