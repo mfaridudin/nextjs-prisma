@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { signIn } from "next-auth/react"
 import { useUserStore } from "@/store/useUserStore"
+import { Box, Paper, Typography, CircularProgress } from "@mui/material";
 
 export default function EmailVerify() {
     const searchParams = useSearchParams()
@@ -39,7 +40,7 @@ export default function EmailVerify() {
                 await new Promise(r => setTimeout(r, 300))
                 router.replace("/auth/add-school")
 
-            } catch (err: any) { 
+            } catch (err: any) {
                 setError(err.message || "Something went wrong")
             } finally {
                 setLoading(false)
@@ -51,41 +52,41 @@ export default function EmailVerify() {
 
 
     return (
-        <div className="flex min-h-screen w-full items-center justify-center bg-gray-50 dark:bg-gray-950 p-4">
-            <div className="flex flex-col items-center justify-center gap-4 max-w-md w-full bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg text-center">
-
+        <Box
+            sx={{
+                minHeight: "100vh",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                bgcolor: "grey.100",
+                p: 2,
+            }}
+        >
+            <Paper
+                elevation={4}
+                sx={{
+                    maxWidth: 420,
+                    width: "100%",
+                    p: 4,
+                    borderRadius: 3,
+                    textAlign: "center",
+                }}
+            >
                 {loading && (
-                    <>
-                        <svg
-                            className="h-10 w-10 animate-spin text-gray-800 dark:text-white"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                        >
-                            <circle
-                                className="opacity-25"
-                                cx="12"
-                                cy="12"
-                                r="10"
-                                stroke="currentColor"
-                                strokeWidth="4"
-                            />
-                            <path
-                                className="opacity-75"
-                                fill="currentColor"
-                                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                            />
-                        </svg>
-                        <span className="text-2xl text-gray-800 dark:text-white">
+                    <Box display="flex" flexDirection="column" alignItems="center" gap={2}>
+                        <CircularProgress />
+                        <Typography variant="h6">
                             Verifying your email...
-                        </span>
-                    </>
+                        </Typography>
+                    </Box>
                 )}
 
                 {!loading && error && (
-                    <span className="text-red-500 text-lg">{error}</span>
+                    <Typography color="error" fontWeight={500}>
+                        {error}
+                    </Typography>
                 )}
-            </div>
-        </div>
+            </Paper>
+        </Box>
     )
 }

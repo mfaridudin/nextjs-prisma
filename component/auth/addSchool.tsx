@@ -1,17 +1,22 @@
 "use client"
 
-import Button from "@/component/ui/button"
-import Input from "@/component/ui/input"
+import {
+  Box,
+  Paper,
+  Typography,
+  TextField,
+  Button,
+  MenuItem,
+  CircularProgress,
+  Stack,
+} from "@mui/material";
+
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import slugify from "slugify"
-// import { signIn } from "next-auth/react"
 import { useUserStore } from "@/store/useUserStore"
-// import { signIn, signOut } from "next-auth/react"
-// import { useSession } from "next-auth/react";
 
 export default function AddSchool() {
-    // const { update } = useSession();
     const { setUser } = useUserStore()
 
     const [loading, setLoading] = useState(false)
@@ -64,22 +69,12 @@ export default function AddSchool() {
         }
         setLoading(false)
 
-
-        // const data = await response.json();
-
-        // await update({
-        //     user: {
-        //         schoolId: data.schoolId,
-        //     },
-        // });
-
         const meRes = await fetch("/api/me")
 
         if (meRes.ok) {
             const userData = await meRes.json()
             setUser(userData)
         }
-
 
         const channel = new BroadcastChannel("auth-status")
         channel.postMessage("school-complete")
@@ -89,88 +84,80 @@ export default function AddSchool() {
     }
 
     return (
-        <>
-            <div className="flex min-h-screen w-full items-center justify-center bg-gray-50 dark:bg-gray-950 p-4">
-                <div className="max-w-md w-full bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg text-center">
-                    <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Add School</h1>
+        <Box
+            sx={{
+                minHeight: "100vh",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                bgcolor: "grey.100",
+                p: 2,
+            }}
+        >
+            <Paper
+                elevation={3}
+                sx={{
+                    maxWidth: 420,
+                    width: "100%",
+                    p: 4,
+                    borderRadius: 3,
+                }}
+            >
+                <Typography variant="h5" fontWeight={600} mb={3} textAlign="center">
+                    Add School
+                </Typography>
 
-                    <form onSubmit={handleAddSchool} className="flex flex-col gap-4">
-                        <Input label="Name"
-                            required
+                <form onSubmit={handleAddSchool}>
+                    <Stack spacing={2}>
+                        <TextField
+                            label="Name"
                             placeholder="Name School"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                        // error={validation?.name?.[0]}
+                            fullWidth
+                            required
                         />
 
-                        <Input label="Address"
-                            required
-                            placeholder="Addree School"
+                        <TextField
+                            label="Address"
+                            placeholder="Address School"
                             value={address}
                             onChange={(e) => setAddress(e.target.value)}
-                        // error={validation?.age?.[0]}
+                            fullWidth
+                            required
                         />
 
-                        <div className="flex flex-col gap-1 w-full text-start">
-                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                School Level
-                            </label>
-                            <div className="relative">
-                                <select
-                                    value={educationLevel}
-                                    onChange={(e) => setEducationLevel(e.target.value)}
-                                    className="appearance-none w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:placeholder-gray-500"
-                                >
-                                    <option value="">Select School Level</option>
-                                    <option value="PRIMARY_SCHOOL">Primary School</option>
-                                    <option value="JUNIOR_HIGH_SCHOOL">Junior High School</option>
-                                    <option value="SENIOR_HIGH_SCHOOL">Senior High School</option>
-                                </select>
-                                <span className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400 hover:text-gray-600">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        strokeWidth="1.5"
-                                        stroke="currentColor"
-                                        className="dark:text-white text-gray-900 size-4"
-                                    >
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                    </svg>
-                                </span>
-                            </div>
-                        </div>
+                        <TextField
+                            select
+                            label="School Level"
+                            value={educationLevel}
+                            onChange={(e) => setEducationLevel(e.target.value)}
+                            fullWidth
+                            required
+                        >
+                            <MenuItem value="">Select School Level</MenuItem>
+                            <MenuItem value="PRIMARY_SCHOOL">Primary School</MenuItem>
+                            <MenuItem value="JUNIOR_HIGH_SCHOOL">
+                                Junior High School
+                            </MenuItem>
+                            <MenuItem value="SENIOR_HIGH_SCHOOL">
+                                Senior High School
+                            </MenuItem>
+                        </TextField>
 
                         <Button
-                            className="flex items-center justify-center mt-4 gap-2" fullWidth
+                            type="submit"
+                            variant="contained"
+                            size="large"
+                            fullWidth
+                            disabled={loading}
+                            sx={{ mt: 1 }}
                         >
-                            {loading && (
-                                <svg
-                                    className="h-5 w-5 animate-spin text-white"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <circle
-                                        className="opacity-25"
-                                        cx="12"
-                                        cy="12"
-                                        r="10"
-                                        stroke="currentColor"
-                                        strokeWidth="4"
-                                    ></circle>
-                                    <path
-                                        className="opacity-75"
-                                        fill="currentColor"
-                                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                                    ></path>
-                                </svg>
-                            )}
-                            {loading ? "Loading..." : "Submit"}
+                            {loading ? <CircularProgress size={22} /> : "Submit"}
                         </Button>
-                    </form>
-                </div>
-            </div>
-        </>
+                    </Stack>
+                </form>
+            </Paper>
+        </Box>
     )
 }
