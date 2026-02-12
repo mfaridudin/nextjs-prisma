@@ -189,7 +189,7 @@ const ClassroomTable = () => {
 
                                 <TableCell>
                                     <Typography fontWeight={600} color="textSecondary">
-                                        {item.teacher.fullName}
+                                        {item.User.fullName}
                                     </Typography>
                                 </TableCell>
 

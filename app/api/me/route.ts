@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma"
+import { supabase } from "@/lib/supabase";
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 
@@ -12,39 +12,36 @@ export async function GET() {
     )
   }
 
-  const user = await prisma.user.findUnique({
-    where: {
-      id: Number(session.user.id),
-    },
-    select: {
-      id: true,
-      roleId: true,
-      fullName: true,
-      username: true,
-      email: true,
-      address: true,
-      schoolId: true,
-      role: {
-        select: {
-          name: true,
-        },
-      },
-      school: {
-        select: {
-          name: true,
-          slug: true,
-          address: true,
-        },
-      },
-    },
-  })
 
+  const userId = Number(session.user.id);
+
+  const { data: user, error } = await supabase
+    .from("User")
+    .select(`
+        id,
+        roleId,
+        fullName,
+        username,
+        email,
+        address,
+        schoolId,
+        role (
+          name
+        ),
+        school (
+          name,
+          slug,
+          address
+        )
+      `)
+    .eq("id", userId)
+    .single();
+
+  if (error) throw error;
   if (!user) {
-    return new Response(
-      JSON.stringify({ message: "User not found" }),
-      { status: 404 }
-    )
+    return Response.json({ message: "User not found" }, { status: 404 });
   }
+
 
   return Response.json(user)
 }

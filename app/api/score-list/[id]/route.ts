@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma"
 import { createClassroomSchema } from "@/lib/validators/classroom"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
+import { supabase } from "@/lib/supabase"
 
 export async function GET(request: Request) {
     const session = await getServerSession(authOptions)
@@ -24,22 +25,31 @@ export async function GET(request: Request) {
     }
 
     try {
-        const scorelist = await prisma.lessonSubmission.findMany({
-            where: { lessonId: id },
-            include: {
-                student: {  
-                    select: {
-                        fullName: true,
-                        username: true,
-                        classroom: {
-                            select: {
-                                name: true
-                            }
-                        }
-                    }
-                }
-            }
-        })
+        const { data: scorelist, error } = await supabase
+            .from("LessonSubmission")
+            .select(`
+                id,
+                lessonId,
+                score,
+                student:User (
+                fullName,
+                username,
+                classroom:Classroom!User_classroomId_fkey (
+                    name
+                )
+                ),
+                createdAt
+            `)
+            .eq("lessonId", id);
+
+
+        if (error) {
+            return NextResponse.json(
+                { message: error.message },
+                { status: 500 }
+            );
+        }
+
 
 
         return NextResponse.json(scorelist, { status: 200 })

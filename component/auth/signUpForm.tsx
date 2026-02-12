@@ -86,21 +86,64 @@ export default function SignUpForm() {
 
                     <form onSubmit={handleRegister}>
                         <Stack spacing={2}>
-                            <TextField label="Full Name" fullWidth />
-                            <TextField label="Username" fullWidth />
-                            <TextField label="Email" type="email" fullWidth />
-                            <TextField label="Address" fullWidth />
+                            <TextField label="Full Name" fullWidth
+                                value={fullName}
+                                onChange={(e) => setFullName(e.target.value)} />
+
+                            <TextField
+                                label="Username"
+                                fullWidth
+                                value={username}
+                                onChange={(e) => setUserName(e.target.value)}
+                            />
+
+                            <TextField
+                                label="Email"
+                                type="email"
+                                fullWidth
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+
+                            <TextField
+                                label="Address"
+                                fullWidth
+                                value={address}
+                                onChange={(e) => setAddress(e.target.value)}
+                            />
 
                             <TextField
                                 label="Date of Birth"
                                 type="date"
                                 InputLabelProps={{ shrink: true }}
                                 fullWidth
+                                value={dateOfBirth}
+                                onChange={(e) => setDateOfBirth(e.target.value)}
                             />
 
-                            <TextField label="Age" type="number" fullWidth />
-                            <TextField label="Password" type="password" fullWidth />
-                            <TextField label="Confirm Password" type="password" fullWidth />
+                            <TextField
+                                label="Age"
+                                type="number"
+                                fullWidth
+                                value={age}
+                                onChange={(e) => setAge(e.target.value)}
+                            />
+
+                            <TextField
+                                label="Password"
+                                type="password"
+                                fullWidth
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+
+                            <TextField
+                                label="Confirm Password"
+                                type="password"
+                                fullWidth
+                                value={password_confirmation}
+                                onChange={(e) => setPasswordConfirmation(e.target.value)}
+                            />
 
                             <Button
                                 type="submit"

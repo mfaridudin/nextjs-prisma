@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma"
+import { supabase } from "@/lib/supabase"
 
 import { NextResponse } from "next/server"
 
@@ -18,19 +19,28 @@ export async function GET(request: Request) {
     }
 
     try {
-        const lesson = await prisma.lesson.findUnique({
-            where: { id },
-            select: {
-                id: true,
-                title: true,
-                description: true,
-                createdAt: true,
-                course: true,
-                classroom: true,
-                teacher: true,
-                questions: true
-            },
-        })
+        const { data: lesson, error } = await supabase
+            .from("Lesson")
+            .select(`
+                id,
+                title,
+                description,
+                createdAt,
+                course:Course (*),
+                classroom:Classroom (*),
+                teacher:User (*),
+                questions:Question (*)
+            `)
+            .eq("id", id)
+            .single();
+
+        if (error) {
+            return NextResponse.json(
+                { message: error.message },
+                { status: 500 }
+            );
+        }
+
 
         if (!lesson) {
             return new Response(
@@ -72,11 +82,20 @@ export async function DELETE(request: Request) {
         )
     }
     // const body = await request.json()
-    const deletedLesson = await prisma.lesson.delete({
-        where: {
-            id: id
-        }
-    })
+    const { data: deletedLesson, error } = await supabase
+        .from("Lesson")
+        .delete()
+        .eq("id", id)
+        .select()
+        .single();
+
+    if (error) {
+        return NextResponse.json(
+            { message: error.message },
+            { status: 500 }
+        );
+    }
+
 
     return NextResponse.json(deletedLesson, { status: 201 })
 }

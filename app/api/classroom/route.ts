@@ -3,12 +3,10 @@ import { prisma } from "@/lib/prisma"
 import { createClassroomSchema } from "@/lib/validators/classroom"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
+import { supabase } from "@/lib/supabase"
 
 export async function GET() {
     const session = await getServerSession(authOptions)
-    // const session = await getServerSession(authOptions)
-    console.log(session)
-
 
     if (!session || !session.user) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
@@ -16,38 +14,33 @@ export async function GET() {
 
     const schoolId = Number(session.user.schoolId)
 
-    // if (!schoolId) {
-    //     return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
-    // }
-
     try {
-        const classrooms = await prisma.classroom.findMany({
-            where: { schoolId },
-            select: {
-                id: true,
-                name: true,
-                slug: true,
-                schoolId: true,
-                teacherId: true,
-                teacher: {
-                    select: { fullName: true },
-                },
-                school: {
-                    select: { name: true },
-                },
-                createdAt: true,
-                updatedAt: true,
-            },
-        })
+        const { data: classrooms, error } = await supabase
+            .from("Classroom")
+            .select(`
+                id,
+                name,
+                slug,
+                schoolId,
+                teacherId,
+                User!teacherId(fullName),
+                School(name),
+                createdAt,
+                updatedAt
+            `)
+            .eq("schoolId", schoolId);
+
+        if (error) throw error;
 
         return NextResponse.json(classrooms, { status: 200 })
-    } catch (error) {
-        console.error(error)
+    } catch (error: any) {
+        console.error("CLASSROOM ERROR:", error);
         return NextResponse.json(
-            { error: "Failed to fetch classrooms" },
+            { error: error.message || "Failed to fetch classrooms" },
             { status: 500 }
-        )
+        );
     }
+
 }
 
 export async function POST(req: Request) {
@@ -56,6 +49,8 @@ export async function POST(req: Request) {
     if (!session || !session.user) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
+
+    const schoolId = Number(session.user.schoolId)
 
     const body = await req.json()
     const result = createClassroomSchema.safeParse(body)
@@ -70,14 +65,24 @@ export async function POST(req: Request) {
     try {
         const { name, slug, teacherId } = result.data
 
-        const classroom = await prisma.classroom.create({
-            data: {
-                name,
-                slug,
-                teacherId,
-                schoolId: Number(session.user.schoolId),
-            },
-        })
+        const now = new Date().toISOString();
+
+        const { data: classroom, error } = await supabase
+            .from("Classroom")
+            .insert([
+                {
+                    name,
+                    slug,
+                    teacherId,
+                    schoolId,
+                    createdAt: now,
+                    updatedAt: now,
+                }
+            ])
+            .select()
+            .single();
+
+        if (error) throw error;
 
         return NextResponse.json({ classroom }, { status: 201 })
     } catch (error: any) {

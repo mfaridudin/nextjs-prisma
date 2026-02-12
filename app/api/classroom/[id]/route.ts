@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
+import { supabase } from "@/lib/supabase"
 
 export async function GET(
     request: NextRequest,
@@ -21,46 +22,46 @@ export async function GET(
     }
 
     try {
-        const classroom = await prisma.classroom.findUnique({
-            where: { id: classroomId },
-            select: {
-                id: true,
-                name: true,
-                slug: true,
-                schoolId: true,
-                teacherId: true,
-                teacher: {
-                    select: { fullName: true },
-                },
-                students: {
-                    select: {
-                        id: true,
-                        fullName: true,
-                        username: true,
-                        address: true,
-                        email: true,
-                        createdAt: true,
-                    },
-                },
-                _count: {
-                    select: { students: true },
-                },
-                school: {
-                    select: { name: true },
-                },
-                createdAt: true,
-                updatedAt: true,
-            },
-        })
+        const { data, error } = await supabase
+            .from("Classroom")
+            .select(`
+                id,
+                name,
+                slug,
+                schoolId,
+                teacherId,
+                createdAt,
+                updatedAt,
 
-        if (!classroom) {
+                teacher:User!Classroom_teacherId_fkey (
+                fullName
+                ),
+
+                students:User!User_classroomId_fkey (
+                id,
+                fullName,
+                username,
+                address,
+                email,
+                createdAt
+                ),
+
+                school:School!Classroom_schoolId_fkey (
+                name
+                )
+            `)
+            .eq("id", classroomId)
+            .single();
+
+
+        if (!data) {
             return NextResponse.json(
                 { error: "Classroom not found" },
                 { status: 404 }
             )
         }
 
-        return NextResponse.json(classroom, { status: 200 })
+        return NextResponse.json(data, { status: 200 })
     } catch (error) {
         console.error(error)
         return NextResponse.json(
@@ -93,16 +94,19 @@ export async function PUT(
     const body = await request.json()
 
     try {
-        const updatedClassroom = await prisma.classroom.update({
-            where: { id: classroomId },
-            data: {
+        const { data, error } = await supabase
+            .from("Classroom")
+            .update({
                 name: body.name,
                 slug: body.slug,
                 teacherId: body.teacherId,
-            },
-        })
+            })
+            .eq("id", classroomId)
+            .select()
+            .single();
 
-        return NextResponse.json(updatedClassroom, { status: 200 })
+
+        return NextResponse.json(data, { status: 200 })
     } catch (error) {
         console.error(error)
         return NextResponse.json(
@@ -130,9 +134,15 @@ export async function DELETE(
     }
 
     try {
-        await prisma.classroom.delete({
-            where: { id: classroomId },
-        })
+        const { error } = await supabase
+            .from("Classroom")
+            .delete()
+            .eq("id", classroomId);
+
+        if (error) {
+            throw new Error(error.message);
+        }
+
 
         return NextResponse.json(
             { message: "Classroom deleted successfully" },

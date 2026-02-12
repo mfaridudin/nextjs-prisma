@@ -155,14 +155,14 @@ export default function DetailClassroom() {
                         <div>
                             <span className="text-xs font-medium uppercase tracking-wide text-gray-400">Number of Students</span>
                             <p className="text-sm font-semibold text-gray-900">
-                                {classroom?._count?.students || 0}
+                                {classroom?.students?.length || 0}
                             </p>
                         </div>
 
                     </div>
 
 
-                    <div className="mt-8 flex justify-end">
+                    {/* <div className="mt-8 flex justify-end">
                         <Button
                             variant="contained"
                             // onClick={onEdit}
@@ -171,7 +171,7 @@ export default function DetailClassroom() {
                         >
                             Edit
                         </Button>
-                    </div>
+                    </div> */}
 
                 </div>
             </div>

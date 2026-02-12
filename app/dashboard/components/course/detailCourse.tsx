@@ -227,7 +227,7 @@ export default function DetailCourse() {
                     </div>
 
 
-                    <div className="mt-8 flex justify-end">
+                    {/* <div className="mt-8 flex justify-end">
                         <Button
                             variant="contained"
                             // onClick={onEdit}
@@ -236,7 +236,7 @@ export default function DetailCourse() {
                         >
                             Edit
                         </Button>
-                    </div>
+                    </div> */}
                 </div>
             </div>
             <DashboardCard title="Lesson" action={

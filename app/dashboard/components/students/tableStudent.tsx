@@ -59,7 +59,7 @@ const StudentTable = () => {
         try {
             const res = await fetch('/api/student')
             const data = await res.json()
-            setStudents(data)
+            setStudents(data.students)
         } catch (err) {
             console.error(err)
         }

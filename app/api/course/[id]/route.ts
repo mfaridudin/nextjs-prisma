@@ -1,5 +1,6 @@
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { supabase } from "@/lib/supabase"
 import { getServerSession } from "next-auth"
 
 import { NextResponse } from "next/server"
@@ -20,22 +21,22 @@ export async function GET(request: Request) {
     }
 
     try {
-        const course = await prisma.course.findUnique({
-            where: { id },
-            select: {
-                id: true,
-                name: true,
-                createdAt: true,
-                teachers: {
-                    select: {
-                        id: true,
-                        fullName: true,
-                        email: true,
-                        username: true,
-                    }
-                },
-            },
-        })
+        const { data: course, error } = await supabase
+            .from("Course")
+            .select(`
+                id,
+                name,
+                createdAt,
+                teachers:User (
+                id,
+                fullName,
+                email,
+                username
+                )
+            `)
+            .eq("id", id)
+            .single();
+
 
         if (!course) {
             return new Response(
@@ -74,9 +75,17 @@ export async function DELETE(
         )
     }
     try {
-        await prisma.course.delete({
-            where: { id },
-        })
+        const { error } = await supabase
+            .from("Course")
+            .delete()
+            .eq("id", id);
+
+        if (error) {
+            return NextResponse.json(
+                { message: error.message },
+                { status: 500 }
+            );
+        }
 
         return NextResponse.json(
             { message: "Course deleted successfully" },

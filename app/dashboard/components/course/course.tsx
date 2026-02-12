@@ -76,8 +76,11 @@ const CourseTable = () => {
         })
 
         if (!response.ok) {
-            console.error('Failed to add course')
+            const errorData = await response.json()
+            console.error("API Error:", errorData)
+            return
         }
+
         setName("")
         fetchCourse()
         fetchTeacher()
@@ -122,6 +125,9 @@ const CourseTable = () => {
                                 <Typography fontWeight={600}>Name</Typography>
                             </TableCell>
                             <TableCell>
+                                <Typography fontWeight={600}>Teacher</Typography>
+                            </TableCell>
+                            <TableCell>
                                 <Typography fontWeight={600}>Create Date</Typography>
                             </TableCell>
                             <TableCell>
@@ -142,6 +148,12 @@ const CourseTable = () => {
                                 <TableCell>
                                     <Typography fontWeight={600}>
                                         {item.name}
+                                    </Typography>
+                                </TableCell>
+
+                                <TableCell>
+                                    <Typography fontWeight={600}>
+                                        {item.teachers?.[0]?.fullName ?? "-"}
                                     </Typography>
                                 </TableCell>
 
@@ -186,7 +198,7 @@ const CourseTable = () => {
             </Box>
             <Modal open={open && mode === "add"}
                 onClose={closeModal}
-                title="Add Student"
+                title="Add Course"
                 maxWidth="max-w-xl">
                 {/* form */}
                 <form onSubmit={handleAddCourse} className="p-6 space-y-4">

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
+import { supabase } from "@/lib/supabase"
 
 export async function GET(request: Request) {
     try {
@@ -15,21 +16,23 @@ export async function GET(request: Request) {
             )
         }
 
-        const teachers = await prisma.user.findMany({
-            where: {
-                roleId: 3,
-                schoolId: schoolId,
-                classroomId: null,
-            },
-            select: {
-                id: true,
-                fullName: true,
-                username: true,
-                email: true,
-                schoolId: true,
-            },
+        const { data: teachers, error } = await supabase
+            .from("User")
+            .select(`
+                id,
+                fullName,
+                username,
+                email,
+                schoolId
+            `)
+            .eq("roleId", 3)
+            .eq("schoolId", schoolId)
+            .is("classroomId", null);
 
-        })
+        if (error) {
+            throw new Error(error.message);
+        }
+
 
         return NextResponse.json(teachers, { status: 200 })
     } catch (error) {

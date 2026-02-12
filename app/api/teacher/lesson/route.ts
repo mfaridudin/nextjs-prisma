@@ -1,5 +1,6 @@
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { supabase } from "@/lib/supabase"
 import { getServerSession } from "next-auth/next"
 
 
@@ -13,54 +14,51 @@ export async function GET(req: Request) {
         )
     }
 
-    const lessons = await prisma.lesson.findMany({
-        where: {
-            teacherId: Number(session.user.id)
-            
-        },
-        include: {
-            course: true,
-            classroom: true
-        }
-    })
+    const { data: lessons, error } = await supabase
+        .from("Lesson")
+        .select(`
+            *,
+            course:Course (*),
+            classroom:Classroom (*)
+        `)
+        .eq("teacherId", Number(session.user.id));
+
+    if (error) {
+        return Response.json(
+            { message: error.message },
+            { status: 500 }
+        );
+    }
+
 
     return Response.json(lessons)
+
+
 }
 
 
 export async function POST(req: Request) {
-    // const session = await getServerSession(authOptions)
-
-    // if (!session || !session.user) {
-    //     return new Response(
-    //         JSON.stringify({ message: "Unauthorized" }),
-    //         { status: 401 }
-    //     )
-    // }
-
     const body = await req.json()
 
     try {
-        const lesson = await prisma.lesson.create({
-            data: {
+        const { data: lesson, error: lessonError } = await supabase
+            .from("Lesson")
+            .insert({
                 title: body.title,
                 description: body.description,
                 teacherId: body.teacherId,
                 courseId: body.courseId,
                 classroomId: body.classroomId,
+            })
+            .select()
+            .single();
 
-                // questions: {
-                //     create: body.questions.map((q: any) => ({
-                //         question: q.question,
-                //         optionA: q.optionA,
-                //         optionB: q.optionB,
-                //         optionC: q.optionC,
-                //         optionD: q.optionD,
-                //         correct: q.correct
-                //     }))
-                // }
-            }
-        })
+        if (lessonError) {
+            return Response.json(
+                { message: lessonError.message },
+                { status: 500 }
+            );
+        }
 
         return Response.json(lesson)
 

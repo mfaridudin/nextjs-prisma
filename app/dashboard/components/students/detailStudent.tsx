@@ -8,6 +8,7 @@ import Modal from "@/app/dashboard/components/ui/modal";
 import { useOpenModal } from "@/store/useOpenModal";
 
 type Student = {
+    Role: any;
     id: number;
     fullName: string;
     username: string;
@@ -213,7 +214,7 @@ export default function DetailStudent() {
                         <div className="md:col-span-2">
                             <span className="text-xs font-medium uppercase tracking-wide text-gray-400">Role</span>
                             <p className="text-sm font-semibold text-gray-900">
-                                {student.role.name}
+                                {student.Role.name}
                             </p>
                         </div>
 

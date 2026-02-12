@@ -8,6 +8,7 @@ import { useOpenModal } from "@/store/useOpenModal";
 import Modal from "@/app/dashboard/components/ui/modal";
 
 type Teacher = {
+    Role: any;
     id: number;
     fullName: string;
     username: string;
@@ -230,7 +231,7 @@ export default function TeacherDetailPage() {
                                 Role
                             </span>
                             <p className="text-sm font-semibold text-gray-900">
-                                {teacher.role?.name ?? "-"}
+                                {teacher.Role?.name ?? "-"}
                             </p>
                         </div>
 
@@ -325,9 +326,8 @@ export default function TeacherDetailPage() {
                         <Button
                             type="submit"
                             variant="contained"
-                            color="error"
                         >
-                            Add Teacher
+                            Edit Teacher
                         </Button>
                     </div>
                 </form>

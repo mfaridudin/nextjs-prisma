@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { supabase } from "@/lib/supabase";
 
 
 export async function GET() {
@@ -16,11 +17,15 @@ export async function GET() {
         }
 
         const schoolId = Number(session.user.schoolId)
-        const totalClassroom = await prisma.classroom.count({
-            where: {
-                schoolId: schoolId,
-            },
-        });
+
+         const { data: classrooms, error } = await supabase
+                    .from("Classroom")
+                    .select("*")
+                    .eq("schoolId", schoolId);
+        
+                if (error) throw error;
+        
+                const totalClassroom = classrooms?.length || 0;
 
         return NextResponse.json({ totalClassroom });
     } catch (error) {

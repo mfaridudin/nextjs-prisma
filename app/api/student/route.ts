@@ -17,7 +17,7 @@ export async function GET() {
         return NextResponse.json({ message: "User has no school assigned" }, { status: 400 })
     }
 
-    const { data: teachers, error } = await supabase
+    const { data: students, error } = await supabase
         .from("User")
         .select(`
             id,
@@ -31,11 +31,11 @@ export async function GET() {
             Course(name)
         `)
         .eq("schoolId", schoolId)
-        .eq("roleId", 2);
+        .eq("roleId", 3);
 
     if (error) throw error;
 
-    return NextResponse.json({ teachers }, { status: 200 })
+    return NextResponse.json({ students }, { status: 200 })
 }
 
 export async function POST(request: Request) {
@@ -73,7 +73,7 @@ export async function POST(request: Request) {
 
         const now = new Date().toISOString();
 
-        const { data: newTeacher, error } = await supabase
+        const { data: newStudent, error } = await supabase
             .from("User")
             .insert([{
                 ...userData,
@@ -81,24 +81,23 @@ export async function POST(request: Request) {
                 emailVerified: userData.emailVerified ?? false,
                 dateOfBirth: dateOfBirth ? new Date(dateOfBirth).toISOString() : null,
                 age: age !== undefined ? Number(age) : null,
-                roleId: userData.roleId || 2,
+                roleId: userData.roleId || 3,
                 schoolId: schoolId,
                 createdAt: now,
                 updatedAt: now,
             }])
             .select()
-            .single(); // ambil hasil record yang baru dibuat
-
+            .single();
         if (error) throw error;
 
-        console.log(newTeacher);
+        console.log(newStudent);
 
 
-        return NextResponse.json({ teacher: newTeacher }, { status: 201 })
+        return NextResponse.json({ student: newStudent }, { status: 201 })
     } catch (error: any) {
         console.error(error)
         return NextResponse.json(
-            { error: error.message || "Failed to create new teacher" },
+            { error: error.message || "Failed to create new student" },
             { status: 500 }
         )
     }

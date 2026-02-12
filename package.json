@@ -16,6 +16,7 @@
     "@mui/material": "^7.3.7",
     "@prisma/adapter-pg": "^7.3.0",
     "@prisma/client": "^7.3.0",
+    "@supabase/supabase-js": "^2.95.3",
     "@tabler/icons-react": "^3.36.1",
     "aos": "^2.3.4",
     "apexcharts": "^5.3.6",

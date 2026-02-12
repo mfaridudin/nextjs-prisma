@@ -1,5 +1,6 @@
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { supabase } from "@/lib/supabase"
 import { getServerSession } from "next-auth/next"
 import { NextResponse } from "next/server"
 
@@ -20,13 +21,22 @@ export async function GET(req: Request) {
         )
     }
 
-    const lessons = await prisma.lesson.findMany({
-        where: { courseId },
-        include: {
-            course: true,
-            classroom: true,
-        },
-    })
+    const { data: lessons, error } = await supabase
+        .from("Lesson")
+        .select(`
+    id,
+    title,
+    course:Course (
+      id,
+      name
+    ),
+    classroom:Classroom (
+      id,
+      name
+    )
+  `)
+        .eq("courseId", courseId);
+
 
     return NextResponse.json(lessons)
 }
@@ -44,26 +54,25 @@ export async function POST(req: Request) {
     const body = await req.json()
 
     try {
-        const lesson = await prisma.lesson.create({
-            data: {
+        const { data: lesson, error } = await supabase
+            .from("Lesson")
+            .insert({
                 title: body.title,
                 description: body.description,
                 teacherId: body.teacherId,
                 courseId: body.courseId,
                 classroomId: body.classroomId,
+            })
+            .select()
+            .single();
 
-                // questions: {
-                //     create: body.questions.map((q: any) => ({
-                //         question: q.question,
-                //         optionA: q.optionA,
-                //         optionB: q.optionB,
-                //         optionC: q.optionC,
-                //         optionD: q.optionD,
-                //         correct: q.correct
-                //     }))
-                // }
-            }
-        })
+        if (error) {
+            return NextResponse.json(
+                { message: error.message },
+                { status: 500 }
+            );
+        }
+
 
         return Response.json(lesson)
 
