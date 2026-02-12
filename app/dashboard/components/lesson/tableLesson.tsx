@@ -28,8 +28,6 @@ const LessonTable = () => {
 
     const { user } = useUserStore()
 
-    console.log("apa", user?.id)
-
     const teacherId = user?.id
     const role = user?.role?.name
 
@@ -39,6 +37,8 @@ const LessonTable = () => {
     const initialForm = {
         title: "",
         description: "",
+        courseId: null,
+        classroomId: null
     }
 
     const [form, setForm] = useState(initialForm);

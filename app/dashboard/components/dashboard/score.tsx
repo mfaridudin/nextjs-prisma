@@ -84,7 +84,7 @@ export default function ScoreSummary() {
 
     return (
         <Grid container spacing={2} direction="column">
-            <Grid item xs={12}>
+            <Grid size={{ xs: 6 }}>
                 <ScoreCard
                     title="Average Score"
                     value={avg}
@@ -94,7 +94,7 @@ export default function ScoreSummary() {
                 />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={{ xs: 6 }}>
                 <ScoreCard
                     title="Best Score"
                     value={bestScore}
@@ -104,7 +104,7 @@ export default function ScoreSummary() {
                 />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={{ xs: 6 }}>
                 <ScoreCard
                     title="Lowest Score"
                     value={worstScore}

@@ -60,7 +60,7 @@ const TeacherSummary = () => {
         <DashboardCard title="Summary">
             <Grid container spacing={10}>
                 {summary.map((item, index) => (
-                    <Grid key={index} xs={6} sm={3}>
+                    <Grid key={index} size={{ xs: 6, sm: 3 }}>
                         <Stack spacing={2}>
                             <Avatar sx={{ bgcolor: item.color, width: 40, height: 40 }}>
                                 {item.icon}

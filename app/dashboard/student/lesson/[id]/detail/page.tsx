@@ -109,21 +109,21 @@ export default function StudentLessonPage() {
         </Typography>
 
         <Grid container spacing={3}>
-          <Grid xs={12} md={4}>
+          <Grid size={{ xs: 12, md:4 }}>
             <Typography color="text.secondary">Questions</Typography>
             <Typography fontWeight={600}>
               {lesson.questions?.length}
             </Typography>
           </Grid>
 
-          <Grid xs={12} md={4}>
+          <Grid size={{ xs: 12, md:4 }}>
             <Typography color="text.secondary">Description</Typography>
             <Typography fontWeight={600}>
               {lesson.description || "-"}
             </Typography>
           </Grid>
 
-          <Grid xs={12} md={4}>
+          <Grid size={{ xs: 12, md:4 }}>
             <Typography color="text.secondary">Your Score</Typography>
             <Typography
               fontWeight={700}

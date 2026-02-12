@@ -11,7 +11,7 @@ export async function GET() {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
-    const schoolId = session.user.schoolId
+    const schoolId = Number(session.user.schoolId)
     if (!schoolId) {
         return NextResponse.json({ message: "User has no school assigned" }, { status: 400 })
     }
@@ -22,8 +22,8 @@ export async function GET() {
             roleId: 2
         },
         include: {
-            course :{
-                select:{
+            course: {
+                select: {
                     name: true
                 }
             }
@@ -40,9 +40,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
-    const schoolId = session.user.schoolId
-
-
+    const schoolId = Number(session.user.schoolId)
 
     const body = await request.json()
     const result = createUserSchema.safeParse(body)

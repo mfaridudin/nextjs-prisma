@@ -14,7 +14,7 @@ export async function GET() {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
-    const schoolId = session.user.schoolId
+    const schoolId = Number(session.user.schoolId)
 
     // if (!schoolId) {
     //     return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
@@ -75,7 +75,7 @@ export async function POST(req: Request) {
                 name,
                 slug,
                 teacherId,
-                schoolId: session.user.schoolId,
+                schoolId: Number(session.user.schoolId),
             },
         })
 

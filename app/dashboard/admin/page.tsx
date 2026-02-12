@@ -28,35 +28,35 @@ export default function page() {
                             xs: 12,
                             lg: 6
                         }}>
-                        <TotalTeacherCard totalTeacher={12} />
+                        <TotalTeacherCard />
                     </Grid>
                     <Grid
                         size={{
                             xs: 12,
                             lg: 6
                         }}>
-                        <TotalStudentCard totalStudent={12} />
+                        <TotalStudentCard />
                     </Grid>
                     <Grid
                         size={{
                             xs: 12,
                             lg: 4
                         }}>
-                        <TotalClassroomCard totalClassroom={12} />
+                        <TotalClassroomCard />
                     </Grid>
                     <Grid
                         size={{
                             xs: 12,
                             lg: 4
                         }}>
-                        <TotalCourseCard totalCourse={12} />
+                        <TotalCourseCard/>
                     </Grid>
                     <Grid
                         size={{
                             xs: 12,
                             lg: 4
                         }}>
-                        <TotalLessonCard totalLesson={12} />
+                        <TotalLessonCard />
                     </Grid>
                     <Grid
                         size={{

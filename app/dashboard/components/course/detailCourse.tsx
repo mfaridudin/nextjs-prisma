@@ -12,6 +12,24 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Modal from "@/app/dashboard/components/ui/modal";
 
+type Teacher = {
+    id: number
+    fullName: string
+}
+
+type Course = {
+    id: number
+    name: string
+    teachers: Teacher[]
+}
+
+type CourseForm = {
+    title: string
+    description: string
+    classroomId: number | null
+}
+
+
 export default function DetailCourse() {
     const params = useParams();
     const id = params?.id as string;
@@ -26,15 +44,16 @@ export default function DetailCourse() {
 
     const { open, mode, selectedId, openAddModal, openDeleteModal, closeModal } = useOpenModal()
 
-    const initialForm = {
+    const initialForm: CourseForm = {
         title: "",
         description: "",
+        classroomId: null
     }
 
-    const [form, setForm] = useState(initialForm);
+    const [form, setForm] = useState<CourseForm>(initialForm);
 
     const [loading, setLoading] = useState(false)
-    const [course, setCourse] = useState<any[]>([])
+    const [course, setCourse] = useState<Course | null>(null)
     const [lessons, setLessons] = useState<any[]>([])
     const [teacher, setTeacher] = useState<any[]>([])
     const [validation, setValidation] = useState<any>({});
@@ -55,7 +74,7 @@ export default function DetailCourse() {
 
         } catch (err) {
             console.error(err)
-            setCourse([])
+            setCourse(null)
         }
     }
 

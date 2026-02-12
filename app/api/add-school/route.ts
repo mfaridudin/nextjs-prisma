@@ -11,7 +11,7 @@ export async function GET() {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
-    const userId = session.user.id
+    const userId = parseInt(session.user.id)
 
     const school = await prisma.school.findMany({
         where: {
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const userId = session.user.id
+    const userId = Number(session.user.id)
 
     const body = await request.json()
     const result = createSchoolSchema.safeParse(body)

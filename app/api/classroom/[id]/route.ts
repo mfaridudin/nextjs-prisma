@@ -1,16 +1,11 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 
-type Params = {
-    params: {
-        id: string
-    }
-}
-
 export async function GET(
-    request: Request
+    request: NextRequest,
+    context: { params: Promise<{ id: string }> }
 ) {
     const session = await getServerSession(authOptions)
 
@@ -18,21 +13,16 @@ export async function GET(
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
-    const url = new URL(request.url)
-    const idString = url.pathname.split("/").pop()
+    const { id } = await context.params
+    const classroomId = Number(id)
 
-    const id = parseInt(idString || "")
-
-
-    if (isNaN(id)) {
-        return new Response(
-            JSON.stringify({ message: "Invalid ID" }),
-            { status: 400 }
-        )
+    if (isNaN(classroomId)) {
+        return NextResponse.json({ message: "Invalid ID" }, { status: 400 })
     }
+
     try {
         const classroom = await prisma.classroom.findUnique({
-            where: { id },
+            where: { id: classroomId },
             select: {
                 id: true,
                 name: true,
@@ -81,8 +71,8 @@ export async function GET(
 }
 
 export async function PUT(
-    req: Request,
-    { params }: Params
+    request: NextRequest,
+    context: { params: Promise<{ id: string }> }
 ) {
     const session = await getServerSession(authOptions)
 
@@ -90,16 +80,21 @@ export async function PUT(
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
-    const id = Number(params.id)
-    if (isNaN(id)) {
-        return NextResponse.json({ error: "Invalid classroom ID" }, { status: 400 })
+    const { id } = await context.params
+    const classroomId = Number(id)
+
+    if (isNaN(classroomId)) {
+        return NextResponse.json(
+            { error: "Invalid classroom ID" },
+            { status: 400 }
+        )
     }
 
-    const body = await req.json()
+    const body = await request.json()
 
     try {
         const updatedClassroom = await prisma.classroom.update({
-            where: { id },
+            where: { id: classroomId },
             data: {
                 name: body.name,
                 slug: body.slug,
@@ -118,7 +113,8 @@ export async function PUT(
 }
 
 export async function DELETE(
-    request: Request
+    request: NextRequest,
+    context: { params: Promise<{ id: string }> }
 ) {
     const session = await getServerSession(authOptions)
 
@@ -126,21 +122,16 @@ export async function DELETE(
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
-    const url = new URL(request.url)
-    const idString = url.pathname.split("/").pop()
+    const { id } = await context.params
+    const classroomId = Number(id)
 
-    const id = parseInt(idString || "")
-
-
-    if (isNaN(id)) {
-        return new Response(
-            JSON.stringify({ message: "Invalid ID" }),
-            { status: 400 }
-        )
+    if (isNaN(classroomId)) {
+        return NextResponse.json({ message: "Invalid ID" }, { status: 400 })
     }
+
     try {
         await prisma.classroom.delete({
-            where: { id },
+            where: { id: classroomId },
         })
 
         return NextResponse.json(

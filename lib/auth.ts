@@ -31,12 +31,13 @@ export const authOptions: NextAuthOptions = {
                     })
 
                     return {
-                        id: Number(token.user.id),
+                        id: token.user.id.toString(),
                         email: token.user.email,
                         roleId: token.user.roleId,
                         schoolId: token.user.schoolId ?? null,
                         classroomId: token.user.classroomId ?? null,
                     }
+
                 }
 
                 if (!credentials.email || !credentials.password) return null
@@ -51,12 +52,13 @@ export const authOptions: NextAuthOptions = {
                 if (!valid) return null
 
                 return {
-                    id: Number(user.id),
+                    id: user.id.toString(),
                     email: user.email,
                     roleId: user.roleId,
                     schoolId: user.schoolId ?? null,
                     classroomId: user.classroomId ?? null,
                 }
+
             }
 
         }),
@@ -65,15 +67,15 @@ export const authOptions: NextAuthOptions = {
     session: { strategy: "jwt" },
 
     callbacks: {
-        async jwt({ token, user }) {     // Saat login pertama
+        async jwt({ token, user }) {
             if (user) {
-                token.id = Number(user.id);
+                token.id = user.id;
                 token.roleId = user.roleId;
             }
 
             if (token.id) {
                 const dbUser = await prisma.user.findUnique({
-                    where: { id: token.id },
+                    where: { id: Number(token.id) },
                     select: {
                         schoolId: true,
                         classroomId: true,
@@ -86,15 +88,17 @@ export const authOptions: NextAuthOptions = {
 
             return token;
         },
+
         async session({ session, token }) {
             if (session.user) {
-                session.user.id = token.id as number;
+                session.user.id = token.id as string;
                 session.user.roleId = token.roleId as number;
                 session.user.schoolId = token.schoolId as number | null;
                 session.user.classroomId = token.classroomId as number | null;
             }
             return session;
-        },
+        }
+
     },
 
     secret: process.env.NEXTAUTH_SECRET,

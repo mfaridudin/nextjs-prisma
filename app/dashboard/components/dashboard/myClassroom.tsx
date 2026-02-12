@@ -39,7 +39,7 @@ const MyClassroom = () => {
                 </Typography>
 
                 <Grid container spacing={2}>
-                    <Grid xs={6}>
+                    <Grid size={{ xs: 6 }}>
                         <Typography variant="subtitle2" color="textSecondary">
                             Students
                         </Typography>
@@ -48,7 +48,7 @@ const MyClassroom = () => {
                         </Typography>
                     </Grid>
 
-                    <Grid xs={6}>
+                    <Grid size={{ xs: 6 }}>
                         <Typography variant="subtitle2" color="textSecondary">
                             Course
                         </Typography>

@@ -42,7 +42,7 @@ export async function GET() {
                 classroom: true,
                 submissions: {
                     where: {
-                        studentId: student.id
+                        studentId: Number(student.id)
                     }
                 }
             }

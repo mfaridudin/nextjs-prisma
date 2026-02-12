@@ -32,7 +32,7 @@ const TotalCourseCard = () => {
         <DashboardCard>
             <Grid container spacing={2} alignItems="center">
                 {/* ICON */}
-                <Grid xs={4}>
+                <Grid size={{ xs: 4, }}>
                     <Avatar
                         sx={{
                             bgcolor: primaryLight,
@@ -45,7 +45,7 @@ const TotalCourseCard = () => {
                 </Grid>
 
                 {/* CONTENT */}
-                <Grid xs={8}>
+                <Grid size={{ xs: 8, }}>
                     <Typography variant="subtitle2" color="textSecondary">
                         Total Course
                     </Typography>
