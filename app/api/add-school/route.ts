@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { createSchoolSchema } from "@/lib/validators/school"
+import { supabase } from "@/lib/supabase"
 
 
 export async function GET() {
@@ -13,22 +14,31 @@ export async function GET() {
 
     const userId = parseInt(session.user.id)
 
-    const school = await prisma.school.findMany({
-        where: {
-            user: {
-                some: { id: userId }
-            }
-        }
-    })
+    const { data: school, error } = await supabase
+        .from("School")
+        .select(`
+            *,
+            school_users!inner(user_id)
+        `)
+        .eq("school_users.user_id", userId)
+
+    if (error) {
+        console.error(error)
+    }
+
 
     return NextResponse.json({ school }, { status: 200 })
 }
 
 
 export async function POST(request: Request) {
-    const session = await getServerSession(authOptions)
-    if (!session?.user?.id) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+        return NextResponse.json(
+            { message: "Unauthorized" },
+            { status: 401 }
+        );
     }
 
     const userId = Number(session.user.id)
@@ -46,18 +56,46 @@ export async function POST(request: Request) {
     try {
         const { name, address, slug, educationLevel } = result.data
 
-        const newSchool = await prisma.school.create({
-            data: { name, address, slug, educationLevel }
-        })
+        const { data: newSchool, error: schoolError } = await supabase
+            .from("School")
+            .insert([
+                {
+                    name: body.name,
+                    slug: body.slug,
+                    address: body.address,
+                    educationLevel: body.educationLevel,
+                }
+            ])
+            .select()
+            .single()
 
-        await prisma.user.update({
-            where: { id: userId },
-            data: { schoolId: newSchool.id }
-        })
+        if (schoolError) {
+            console.error(schoolError)
+        }
 
-        const updatedUser = await prisma.user.findUnique({
-            where: { id: userId }
-        })
+
+        const { error: userUpdateError } = await supabase
+            .from("User")
+            .update({
+                schoolId: newSchool.id
+            })
+            .eq("id", userId)
+
+        if (userUpdateError) {
+            console.error("Eror Update School Id: ", userUpdateError)
+        }
+
+
+        const { data: updatedUser, error: userError } = await supabase
+            .from("User")
+            .select("*")
+            .eq("id", userId)
+            .single()
+
+        if (userError) {
+            console.error("Eror Dari sini", userError)
+        }
+
 
         return NextResponse.json({
             school: newSchool,

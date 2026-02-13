@@ -19,24 +19,30 @@ export const authOptions: NextAuthOptions = {
             async authorize(credentials) {
                 if (!credentials) return null;
 
-                // ✅ Login via email verification token
                 if (credentials.verifyToken) {
                     const { data: tokenData, error } = await supabase
-                        .from("emailVerificationToken")
-                        .select("*, User(*)")
+                        .from("EmailVerificationToken")
+                        .select("*")
                         .eq("token", credentials.verifyToken)
                         .single();
 
                     if (error || !tokenData) return null;
                     if (new Date(tokenData.expiresAt) < new Date()) return null;
 
-                    // Delete token setelah dipakai
-                    await supabase
-                        .from("emailVerificationToken")
-                        .delete()
-                        .eq("token", credentials.verifyToken);
+                    const { data: user, error: userError } = await supabase
+                        .from("User")
+                        .select("*")
+                        .eq("id", tokenData.userId)
+                        .single();
 
-                    const user = tokenData.User;
+                    if (!user || userError) return null;
+
+                    // Hapus token setelah verifikasi
+                    // await supabase
+                    //     .from("EmailVerificationToken")
+                    //     .delete()
+                    //     .eq("token", credentials.verifyToken);
+
                     return {
                         id: user.id.toString(),
                         email: user.email,
@@ -46,7 +52,8 @@ export const authOptions: NextAuthOptions = {
                     };
                 }
 
-                // ✅ Login via email & password
+
+
                 if (!credentials.email || !credentials.password) return null;
 
                 const { data: user, error } = await supabase

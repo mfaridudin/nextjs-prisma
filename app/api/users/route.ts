@@ -6,20 +6,6 @@ import { NextResponse } from "next/server";
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL;
 
-export async function GET() {
-    try {
-        const { data: users, error } = await supabase
-            .from("User")
-            .select("*, role(name)");
-
-        if (error) throw error;
-
-        return NextResponse.json(users, { status: 200 });
-    } catch (error: any) {
-        return NextResponse.json({ error: error.message || "Failed to fetch users" }, { status: 500 });
-    }
-}
-
 export async function POST(request: Request) {
     try {
         const body = await request.json();
@@ -30,6 +16,17 @@ export async function POST(request: Request) {
 
         if (body.password !== body.password_confirmation) {
             return NextResponse.json({ error: "Password confirmation does not match" }, { status: 400 });
+        }
+
+        const { data: existingUser, error: checkError } = await supabase
+            .from("User")
+            .select("*")
+            .eq("email", body.email)
+            .single();
+
+        if (checkError && checkError.code !== "PGRST116") throw checkError; // PGRST116 = no rows found
+        if (existingUser) {
+            return NextResponse.json({ error: "Email sudah terdaftar" }, { status: 400 });
         }
 
         const hashedPassword = await bcrypt.hash(body.password, 10);
@@ -54,17 +51,17 @@ export async function POST(request: Request) {
 
         if (insertError) throw insertError;
 
-        // Email verification token
         const token = crypto.randomUUID();
         const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
 
-        await supabase.from("emailVerificationToken").insert([{
-            token,
-            userId: newUser.id,
-            expiresAt,
-        }]);
+        console.log("token sebelum insert :", token)
+        const { error: tokenError } = await supabase
+            .from("EmailVerificationToken")
+            .insert([{ token, userId: newUser.id, expiresAt }]);
 
-        // Optional: send email
+        if (tokenError) throw tokenError;
+
+        console.log("token sebelum kirim Email", token)
         await sendMail({
             to: newUser.email,
             subject: "Verifikasi Email Akun Anda",
@@ -79,7 +76,9 @@ export async function POST(request: Request) {
         });
 
         return NextResponse.json(newUser, { status: 201 });
+
     } catch (error: any) {
+        console.error(error);
         return NextResponse.json({ error: error.message || "Failed to create user" }, { status: 500 });
     }
 }
