@@ -25,10 +25,10 @@ export async function GET() {
         email,
         address,
         schoolId,
-        role (
+        role: Role (
           name
         ),
-        school (
+        school: School (
           name,
           slug,
           address

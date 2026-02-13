@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
+import { supabase } from "@/lib/supabase"
 
 export async function GET() {
     try {
@@ -24,8 +25,6 @@ export async function GET() {
 
         const classroomId = Number(user.classroomId)
 
-        console.log("CLASSROOM ID:", classroomId)
-
         if (!classroomId) {
             return NextResponse.json(
                 { error: "Student belum memiliki classroomId di session" },
@@ -33,21 +32,17 @@ export async function GET() {
             )
         }
 
-        const lessons = await prisma.lesson.findMany({
-            where: {
-                classroomId: classroomId
-            },
-            include: {
-                course: true,
-                classroom: true,
-                submissions: {
-                    where: {
-                        studentId: Number(student.id)
-                    }
-                }
-            }
-        })
-
+        const { data: lessons, error } = await supabase
+            .from("Lesson")
+            .select(`
+                *,
+                course:Course(*),
+                classroom:Classroom(*),
+                submissions:LessonSubmission!left(
+                *
+                )
+            `)
+            .eq("classroomId", classroomId)
 
         return NextResponse.json(lessons)
 

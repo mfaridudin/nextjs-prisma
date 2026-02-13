@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { NextResponse } from "next/server"
+import { supabase } from "@/lib/supabase"
 
 export async function GET() {
     const session = await getServerSession(authOptions)
@@ -10,18 +11,12 @@ export async function GET() {
     }
 
     const user = session.user
-    const studentId = user.id
+    const studentId = Number(user.id)
 
+    const { data: scores } = await supabase
+        .from("LessonSubmission")
+        .select("score")    
+        .eq("studentId", studentId)
 
-    const scores = await prisma.lessonSubmission.findMany({
-        where: {
-            studentId: Number(studentId)
-        },
-        select: {
-            score: true
-        }
-    })
-
-
-    return NextResponse.json( scores , { status: 200 })
+    return NextResponse.json(scores, { status: 200 })
 }

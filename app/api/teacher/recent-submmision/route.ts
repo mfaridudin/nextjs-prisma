@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { supabase } from "@/lib/supabase";
 
 export async function GET() {
     try {
@@ -16,33 +17,56 @@ export async function GET() {
 
         const teacherId = Number(session.user.id);
 
-        const submissions = await prisma.lessonSubmission.findMany({
-            where: {
-                lesson: {
-                    teacherId: teacherId,
-                },
-            },
-            include: {
-                student: true,
-                lesson: true,
-            },
-            orderBy: {
-                createdAt: "desc",
-            },
-            take: 10,
-        });
+        // const submissions = await prisma.lessonSubmission.findMany({
+        //     where: {
+        //         lesson: {
+        //             teacherId: teacherId,
+        //         },
+        //     },
+        //     include: {
+        //         student: true,
+        //         lesson: true,
+        //     },
+        //     orderBy: {
+        //         createdAt: "desc",
+        //     },
+        //     take: 10,
+        // });
 
-        const result = submissions.map((item) => ({
+        const { data: submissions, error } = await supabase
+            .from("LessonSubmission")
+            .select(`
+                *,
+                student: User(*),
+                lesson: Lesson(*)
+            `)
+            .eq("lesson.teacherId", teacherId)
+            .order("createdAt", { ascending: false })
+            .limit(10);
+
+        if (error) {
+            console.error("SUPABASE ERROR:", error);
+            return NextResponse.json(
+                { message: error.message },
+                { status: 400 }
+            );
+        }
+
+
+        const result = submissions?.map((item) => ({
             id: item.id,
-            student: item.student.fullName || item.student.username || "Unknown",
-            lesson: item.lesson.title,
-            score: item.score,
-            date: item.createdAt.toLocaleDateString("id-ID", {
+            student:
+                item.student?.fullName ??
+                item.student?.username ??
+                "Unknown",
+            lesson: item.lesson?.title ?? "-",
+            score: item.score ?? 0,
+            date: new Date(item.createdAt).toLocaleDateString("en-US", {
                 day: "2-digit",
                 month: "short",
                 year: "numeric",
             }),
-        }));
+        })) ?? [];
 
         return NextResponse.json(result);
     } catch (error) {

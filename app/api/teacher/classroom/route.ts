@@ -1,8 +1,7 @@
-import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { Select } from "@mui/material";
+import { supabase } from "@/lib/supabase";
 
 export async function GET() {
     try {
@@ -17,45 +16,75 @@ export async function GET() {
 
         const teacherId = Number(session.user.id);
 
-        const classroom = await prisma.classroom.findFirst({
-            where: {
-                teacherId: teacherId,
-            },
-            include: {
-                school: true,
-                students: true,
-            },
-        });
+        if (!teacherId || isNaN(teacherId)) {
+            return NextResponse.json(
+                { message: "Invalid teacher ID" },
+                { status: 400 }
+            );
+        }
 
-        const course = await prisma.user.findFirst({
-            where: {
-                id: teacherId,
-            },
-            select: {
-                course: {
-                    select: {
-                        name: true,
-                    },
-                },
-            },
-        });
+        /* ===============================
+           1️⃣ Ambil Classroom
+        =============================== */
+        const { data: classroom, error: classroomError } = await supabase
+            .from("Classroom")
+            .select("id, name, schoolId")
+            .eq("teacherId", teacherId)
+            .single();
 
-
-        if (!classroom) {
+        if (classroomError || !classroom) {
             return NextResponse.json(null);
+        }
+
+        let schoolName = "-";
+
+        if (classroom.schoolId) {
+            const { data: school } = await supabase
+                .from("School")
+                .select("name")
+                .eq("id", classroom.schoolId)
+                .single();
+
+            schoolName = school?.name || "-";
+        }
+
+        const { data: students } = await supabase
+            .from("User")
+            .select("id")
+            .eq("classroomId", classroom.id);
+
+        const studentsCount = students?.length || 0;
+
+        const { data: teacher } = await supabase
+            .from("User")
+            .select("courseId")
+            .eq("id", teacherId)
+            .single();
+
+        let courseName = "-";
+
+        if (teacher?.courseId) {
+            const { data: course } = await supabase
+                .from("Course")
+                .select("name")
+                .eq("id", teacher.courseId)
+                .single();
+
+            courseName = course?.name || "-";
         }
 
         return NextResponse.json({
             name: classroom.name,
-            school: classroom.school?.name,
-            studentsCount: classroom.students.length,
-            course: course?.course?.name || "-"
+            school: schoolName,
+            studentsCount,
+            course: courseName,
         });
-    } catch (error) {
-        console.error(error);
+
+    } catch (error: any) {
+        console.error("ERROR:", error);
 
         return NextResponse.json(
-            { message: "Failed to fetch classroom" },
+            { message: error.message || "Failed to fetch classroom" },
             { status: 500 }
         );
     }

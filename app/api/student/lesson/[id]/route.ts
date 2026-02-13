@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
+import { supabase } from "@/lib/supabase"
 
 export async function GET(request: Request) {
     try {
@@ -27,32 +28,38 @@ export async function GET(request: Request) {
             )
         }
 
-        const lesson = await prisma.lesson.findUnique({
-            where: {
-                id: lessonId
-            },
-            include: {
-                questions: {
-                    select: {
-                        id: true,
-                        question: true,
-                        optionA: true,
-                        optionB: true,
-                        optionC: true,
-                        optionD: true
-                    }
-                },
-                submissions: {
-                    where: {
-                        studentId: studentId
-                    },
-                    select: {
-                        id: true,
-                        score: true
-                    }
-                }
-            }
-        })
+        const { data: lesson, error } = await supabase
+            .from("Lesson")
+            .select(`
+                id,
+                title,
+                description,
+                questions:Question(
+                id,
+                question,
+                optionA,
+                optionB,
+                optionC,
+                optionD
+                ),
+                submissions:LessonSubmission(
+                id,
+                studentId,
+                score
+                )
+            `)
+            .eq("id", lessonId)
+            .single()
+
+        if (error) throw error
+
+        const formattedLesson = {
+            ...lesson,
+            submissions: lesson.submissions.filter(
+                (s) => s.studentId === studentId
+            )
+        }
+
 
         if (!lesson) {
             return NextResponse.json(
@@ -61,7 +68,7 @@ export async function GET(request: Request) {
             )
         }
 
-        return NextResponse.json(lesson)
+        return NextResponse.json(formattedLesson)
 
     } catch (error: any) {
         console.error("ERROR DETAIL:", error)

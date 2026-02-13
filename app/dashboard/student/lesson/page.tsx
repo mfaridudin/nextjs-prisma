@@ -13,18 +13,15 @@ import {
     Stack,
 } from "@mui/material";
 import DashboardCard from "@/app/dashboard/components/shared/DashboardCard";
-import AddIcon from "@mui/icons-material/Add";
 import { useEffect, useState } from "react";
 import { useOpenModal } from "@/store/useOpenModal";
 
-import { IconEye } from "@tabler/icons-react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import DeleteIcon from "@mui/icons-material/Delete";
 import Link from "next/link";
 import { useUserStore } from "@/store/useUserStore";
 
 const LessonTable = () => {
-    const { open, mode, selectedId, openAddModal, openDeleteModal, closeModal } = useOpenModal()
+    useOpenModal()
 
     const { user } = useUserStore()
 
@@ -32,9 +29,6 @@ const LessonTable = () => {
 
     const teacherId = user?.id
     const role = user?.role?.name
-
-    const buttonDisabled = role !== "Student"
-    const pageTitle = role === "Student" ? "Lesson List" : "Lessons Management";
 
     const initialForm = {
         title: "",

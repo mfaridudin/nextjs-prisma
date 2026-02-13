@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma"
+import { supabase } from "@/lib/supabase"
 import { NextResponse } from "next/server"
 
 export async function POST(req: Request) {
@@ -7,12 +8,15 @@ export async function POST(req: Request) {
 
         const { studentId, lessonId, answers } = body
 
-        const existing = await prisma.lessonSubmission.findFirst({
-            where: {
-                studentId,
-                lessonId
-            }
-        })
+        const { data: existing, error } = await supabase
+            .from("LessonSubmission")
+            .select("*")
+            .eq("studentId", studentId)
+            .eq("lessonId", lessonId)
+            .maybeSingle()
+
+        if (error) throw error
+
 
         if (existing) {
             return NextResponse.json(
@@ -21,9 +25,13 @@ export async function POST(req: Request) {
             )
         }
 
-        const questions = await prisma.question.findMany({
-            where: { lessonId }
-        })
+        const { data: questions, error: erorQuestion } = await supabase
+            .from("Question")
+            .select("*")
+            .eq("lessonId", lessonId)
+
+        if (erorQuestion) throw erorQuestion
+
 
         let correctCount = 0
 
@@ -45,16 +53,21 @@ export async function POST(req: Request) {
             (correctCount / questions.length) * 100
         )
 
-        const submission = await prisma.lessonSubmission.create({
-            data: {
-                studentId,
-                lessonId,
-                score,
-                answers: {
-                    create: answerData
+        const { data: submission, error: erorSubmission } = await supabase
+            .from("LessonSubmission")
+            .insert([
+                {
+                    studentId,
+                    lessonId,
+                    score,
+                    answers: answerData
                 }
-            }
-        })
+            ])
+            .select()
+            .single()
+
+        if (erorSubmission) throw erorSubmission
+
 
         return NextResponse.json(submission)
 

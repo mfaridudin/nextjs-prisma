@@ -3,11 +3,6 @@ import { Grid, Box, Typography } from '@mui/material';
 import PageContainer from '@/app/dashboard/components/container/PageContainer';
 
 // components
-
-import TeacherSummary from '../components/dashboard/summary';
-import MyClassroom from '../components/dashboard/myClassroom';
-import RecentLessons from '../components/dashboard/recentlesson';
-import RecentSubmissions from '../components/dashboard/recentSubmission';
 import PendingLessons from '../components/dashboard/pendingLesson';
 import ScoreSummary from '../components/dashboard/score';
 import TeachersList from '../components/dashboard/teacherList';
