@@ -6,8 +6,11 @@ interface Params {
     params: { id: string };
 }
 
-export async function GET(request: Request, { params }: Params) {
-    const { id } = params;
+export async function GET(request: Request) {
+
+    const url = new URL(request.url)
+    const idString = url.pathname.split("/").pop()
+    const id = idString;
 
     if (!id) return NextResponse.json({ error: "Invalid user ID" }, { status: 400 });
 
@@ -28,8 +31,10 @@ export async function GET(request: Request, { params }: Params) {
     }
 }
 
-export async function PUT(request: Request, { params }: Params) {
-    const { id } = params;
+export async function PUT(request: Request) {
+    const url = new URL(request.url)
+    const idString = url.pathname.split("/").pop()
+    const id = idString;
     if (!id) return NextResponse.json({ error: "Invalid user ID" }, { status: 400 });
 
     try {
@@ -64,8 +69,10 @@ export async function PUT(request: Request, { params }: Params) {
     }
 }
 
-export async function DELETE(request: Request, { params }: Params) {
-    const { id } = params;
+export async function DELETE(request: Request) {
+    const url = new URL(request.url)
+    const idString = url.pathname.split("/").pop()
+    const id = idString;
     if (!id) return NextResponse.json({ error: "Invalid user ID" }, { status: 400 });
 
     try {
