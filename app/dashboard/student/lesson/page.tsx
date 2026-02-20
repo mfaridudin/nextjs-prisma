@@ -16,7 +16,7 @@ import DashboardCard from "@/app/dashboard/components/shared/DashboardCard";
 import { useEffect, useState } from "react";
 import { useOpenModal } from "@/store/useOpenModal";
 
-import VisibilityIcon from "@mui/icons-material/Visibility";
+import AssignmentIcon from "@mui/icons-material/Assignment";
 import Link from "next/link";
 import { useUserStore } from "@/store/useUserStore";
 
@@ -177,11 +177,9 @@ const LessonTable = () => {
                                             <Button
                                                 variant="outlined"
                                                 size="small"
-                                                startIcon={<VisibilityIcon />}
+                                                startIcon={<AssignmentIcon />}
                                             >
-
-                                                View
-
+                                                Attempt
                                             </Button>
                                         </Link>
                                     </Stack>

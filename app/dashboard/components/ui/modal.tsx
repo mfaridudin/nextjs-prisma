@@ -26,7 +26,7 @@ export default function Modal({
                 {title && (
                     <div className="flex items-center justify-between px-6 py-4 border-b">
                         <h2 className="text-lg font-semibold">{title}</h2>
-                        <button onClick={onClose}>
+                        <button onClick={onClose} className="cursor-pointer">
                             <IconX />
                         </button>
                     </div>

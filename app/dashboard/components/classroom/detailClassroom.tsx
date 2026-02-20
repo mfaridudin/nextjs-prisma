@@ -39,6 +39,11 @@ export default function DetailClassroom() {
 
     const { open, mode, openAddModal, closeModal } = useOpenModal()
 
+    useEffect(() => {
+        if (!open) {
+            setSelected([])
+        }
+    }, [open])
 
     async function fetchStudents() {
         try {

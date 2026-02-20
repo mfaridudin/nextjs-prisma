@@ -64,6 +64,14 @@ export default function DetailCourse() {
 
     const teacherId = course?.teachers?.[0]?.id
 
+    // tutuup modal
+    useEffect(() => {
+        if (!open) {
+            setForm(initialForm)
+            setSelectedClassroom(null)
+        }
+    }, [open])
+
     async function fetchCourse() {
         try {
             const res = await fetch(`/api/course/${courseId}`)

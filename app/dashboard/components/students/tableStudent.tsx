@@ -37,6 +37,15 @@ const StudentTable = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
+    // tutuup modal
+    useEffect(() => {
+        if (!open) {
+            setForm(initialForm)
+            setShowPassword(false)
+            setShowConfirmPassword(false)
+        }
+    }, [open])
+
     const initialForm = {
         fullName: "",
         username: "",

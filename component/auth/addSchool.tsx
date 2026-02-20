@@ -1,14 +1,14 @@
 "use client"
 
 import {
-  Box,
-  Paper,
-  Typography,
-  TextField,
-  Button,
-  MenuItem,
-  CircularProgress,
-  Stack,
+    Box,
+    Paper,
+    Typography,
+    TextField,
+    Button,
+    MenuItem,
+    CircularProgress,
+    Stack,
 } from "@mui/material";
 
 import { useRouter } from "next/navigation"
@@ -136,13 +136,13 @@ export default function AddSchool() {
                             required
                         >
                             <MenuItem value="">Select School Level</MenuItem>
-                            <MenuItem value="PRIMARY_SCHOOL">Primary School</MenuItem>
-                            <MenuItem value="JUNIOR_HIGH_SCHOOL">
-                                Junior High School
-                            </MenuItem>
                             <MenuItem value="SENIOR_HIGH_SCHOOL">
                                 Senior High School
                             </MenuItem>
+                            <MenuItem value="JUNIOR_HIGH_SCHOOL">
+                                Junior High School
+                            </MenuItem>
+                            <MenuItem value="PRIMARY_SCHOOL">Primary School</MenuItem>
                         </TextField>
 
                         <Button

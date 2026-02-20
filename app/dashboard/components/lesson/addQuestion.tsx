@@ -1,19 +1,26 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { Button, Card, CardContent, Divider, FormControl, IconButton, Input, InputLabel, MenuItem, Select, Stack, TextField, Typography } from "@mui/material"
 import { DeleteIcon } from "lucide-react"
 import { IconArrowLeft } from "@tabler/icons-react"
+import { useUserStore } from "@/store/useUserStore"
+// import { useSession } from "next-auth/react"
 // import Input from "@/component/ui/input"
 
 export default function AddQuestion() {
-    const params = useParams()
+    const { user } = useUserStore()
 
+    const role = user?.role?.name
+
+    console.log(role)
+
+    const params = useParams()
+    const router = useRouter()
     if (!params || !params.id) {
         return <div>Invalid Lesson ID</div>
     }
-
     const lessonId = params.id
 
     const [lesson, setLesson] = useState<any>(null)
@@ -86,7 +93,14 @@ export default function AddQuestion() {
         })
 
         if (res.ok) {
-            alert("Questions saved successfully!")
+
+            if (role === "Admin") {
+                alert("Questions saved successfully!")
+                router.replace(`/dashboard/admin/lesson/${lessonId}/detail`)
+            } else {
+                alert("Questions saved successfully!")
+                router.replace(`/dashboard/teacher/lesson/${lessonId}/detail`)
+            }
             fetchDetail()
         } else {
             alert("Failed to save questions")
@@ -102,6 +116,7 @@ export default function AddQuestion() {
                 correct: "A"
             }
         ])
+
     }
 
     console.log("LESSON DATA:", lesson)

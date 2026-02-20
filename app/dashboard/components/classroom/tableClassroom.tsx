@@ -41,6 +41,12 @@ const ClassroomTable = () => {
     const title = role !== "Student"
     // const titleStudent = role === "Student"
 
+    useEffect(() => {
+        if (!open) {
+            setForm(initialForm)
+        }
+    }, [open])
+
     const [form, setForm] = useState(initialForm)
 
     const [loading, setLoading] = useState(false)
@@ -140,9 +146,9 @@ const ClassroomTable = () => {
                 Add Class
             </Button>
         }>
-            <Box sx={{ overflow: "scroll"}}>
-            
-                <Table className="" sx={{ whiteSpace: "nowrap", mt: 2, overflow: "scroll"}}>
+            <Box sx={{ overflow: "scroll" }}>
+
+                <Table className="" sx={{ whiteSpace: "nowrap", mt: 2, overflow: "scroll" }}>
                     <TableHead>
                         <TableRow>
                             <TableCell>

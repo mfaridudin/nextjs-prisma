@@ -41,6 +41,14 @@ const LessonTable = () => {
         classroomId: null
     }
 
+    // tutuup modal
+    useEffect(() => {
+        if (!open) {
+            setForm(initialForm)
+            setSelectedClassroom(null)
+        }
+    }, [open])
+
     const [form, setForm] = useState(initialForm);
 
     const [loading, setLoading] = useState(false)

@@ -39,6 +39,14 @@ const CourseTable = () => {
 
     const buttonDisabled = role !== "Teacher" && role !== "Student"
 
+    // tutuup modal
+    useEffect(() => {
+        if (!open) {
+            setName("")
+            setSelectedTeacher(null)
+        }
+    }, [open])
+
     async function fetchCourse() {
         try {
             const res = await fetch('/api/course')

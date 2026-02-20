@@ -1,4 +1,5 @@
 import { Card, CardContent, Typography, Stack, Chip } from "@mui/material";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function PendingLessons() {
@@ -52,21 +53,23 @@ export default function PendingLessons() {
                 >
                     {lessons.map((lesson: any) => (
                         <Card key={lesson.id} variant="outlined">
-                            <CardContent>
-                                <Typography fontWeight={600}>
-                                    {lesson.title}
-                                </Typography>
+                            <Link href={`student/lesson/${lesson.id}/detail`}>
+                                <CardContent>
+                                    <Typography fontWeight={600}>
+                                        {lesson.title}
+                                    </Typography>
 
-                                <Typography variant="body2" color="text.secondary">
-                                    Course: {lesson.course?.name}
-                                </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Course: {lesson.course?.name}
+                                    </Typography>
 
-                                <Typography variant="body2" color="text.secondary">
-                                    Classroom: {lesson.classroom?.name}
-                                </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Classroom: {lesson.classroom?.name}
+                                    </Typography>
 
-                                <Chip label="Not submitted" color="warning" size="small" sx={{ mt: 1 }} />
-                            </CardContent>
+                                    <Chip label="Not submitted" color="warning" size="small" sx={{ mt: 1 }} />
+                                </CardContent>
+                            </Link>
                         </Card>
                     ))}
                 </Stack>

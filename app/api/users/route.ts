@@ -24,7 +24,7 @@ export async function POST(request: Request) {
             .eq("email", body.email)
             .single();
 
-        if (checkError && checkError.code !== "PGRST116") throw checkError; // PGRST116 = no rows found
+        if (checkError && checkError.code !== "PGRST116") throw checkError;
         if (existingUser) {
             return NextResponse.json({ error: "Email sudah terdaftar" }, { status: 400 });
         }
@@ -67,10 +67,10 @@ export async function POST(request: Request) {
             subject: "Verifikasi Email Akun Anda",
             html: `
         <div style="max-width:600px;margin:auto;font-family:sans-serif;">
-          <h2>Halo ${newUser.fullName ?? "User"} 👋</h2>
-          <p>Terima kasih telah mendaftar. Silakan klik tombol di bawah untuk memverifikasi email Anda.</p>
+          <h2>Hello ${newUser.fullName ?? "User"} 👋</h2>
+          <p>Thank you for registering. Please click the button below to verify your email.</p>
           <a href="${BASE_URL}/auth/verify-email?token=${token}" style="display:inline-block;padding:12px 20px;background:#2563eb;color:#fff;text-decoration:none;border-radius:6px;margin-top:16px;">Verifikasi Email</a>
-          <p style="margin-top:24px;font-size:12px;color:#666;">Link ini akan kedaluwarsa dalam 24 jam.</p>
+          <p style="margin-top:24px;font-size:12px;color:#666;">This link will expire in 24 hours.</p>
         </div>
       `,
         });

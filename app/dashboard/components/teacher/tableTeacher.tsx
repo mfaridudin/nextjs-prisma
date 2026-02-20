@@ -36,6 +36,13 @@ const TeacherTable = () => {
 
     const role = user?.role?.name
 
+    // tutuup modal
+    useEffect(() => {
+        if (!open) {
+            setForm(initialForm)
+        }
+    }, [open])
+
     const initialForm = {
         fullName: "",
         username: "",
