@@ -57,6 +57,8 @@ const RecentSubmissions = () => {
     //     },
     // ];
 
+    console.log(submissions)
+
     return (
         <DashboardCard title="Recent Submissions">
             <Stack spacing={2} sx={{

@@ -17,28 +17,12 @@ export async function GET() {
 
         const teacherId = Number(session.user.id);
 
-        // const submissions = await prisma.lessonSubmission.findMany({
-        //     where: {
-        //         lesson: {
-        //             teacherId: teacherId,
-        //         },
-        //     },
-        //     include: {
-        //         student: true,
-        //         lesson: true,
-        //     },
-        //     orderBy: {
-        //         createdAt: "desc",
-        //     },
-        //     take: 10,
-        // });
-
         const { data: submissions, error } = await supabase
             .from("LessonSubmission")
             .select(`
                 *,
-                student: User(*),
-                lesson: Lesson(*)
+                student:User(*),
+                lesson:Lesson!inner(*)
             `)
             .eq("lesson.teacherId", teacherId)
             .order("createdAt", { ascending: false })
