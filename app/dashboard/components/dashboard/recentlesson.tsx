@@ -5,6 +5,7 @@ import {
 } from "@mui/material";
 import DashboardCard from "@/app/dashboard/components/shared/DashboardCard";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 const RecentLessons = () => {
 
@@ -58,19 +59,21 @@ const RecentLessons = () => {
                 }}
             >
                 {lessons.map((lesson, index) => (
-                    <div key={lesson.id}>
-                        <Typography fontWeight="600">{lesson.title}</Typography>
+                    <Link href={`teacher/lesson/${lesson.id}/detail`}>
+                        <div key={lesson.id}>
+                            <Typography fontWeight="600">{lesson.title}</Typography>
 
-                        <Typography variant="body2" color="textSecondary">
-                            {lesson.course} • {lesson.classroom}
-                        </Typography>
+                            <Typography variant="body2" color="textSecondary">
+                                {lesson.course} • {lesson.classroom}
+                            </Typography>
 
-                        <Typography variant="caption" color="textSecondary">
-                            {lesson.date}
-                        </Typography>
+                            <Typography variant="caption" color="textSecondary">
+                                {lesson.date}
+                            </Typography>
 
-                        {index !== lessons.length - 1 && <Divider sx={{ mt: 2 }} />}
-                    </div>
+                            {index !== lessons.length - 1 && <Divider sx={{ mt: 2 }} />}
+                        </div>
+                    </Link>
                 ))}
             </Stack>
         </DashboardCard>
