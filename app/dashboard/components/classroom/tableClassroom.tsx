@@ -151,9 +151,8 @@ const ClassroomTable = () => {
                 Add Class
             </Button>
         }>
-            <Box>
-
-                <Table className="" sx={{ whiteSpace: "nowrap", mt: 2, }}>
+            <Box sx={{ overflow: "auto" }}>
+                <Table className="" sx={{ whiteSpace: "nowrap", mt: 2 }}>
                     <TableHead>
                         <TableRow>
                             <TableCell>
