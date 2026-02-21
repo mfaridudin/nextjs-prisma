@@ -6,6 +6,7 @@ import { Button, Card, CardContent, Divider, FormControl, IconButton, Input, Inp
 import { DeleteIcon } from "lucide-react"
 import { IconArrowLeft } from "@tabler/icons-react"
 import { useUserStore } from "@/store/useUserStore"
+import PageContainer from "../container/PageContainer"
 // import { useSession } from "next-auth/react"
 // import Input from "@/component/ui/input"
 
@@ -122,7 +123,7 @@ export default function AddQuestion() {
     console.log("LESSON DATA:", lesson)
 
     return (
-        <>
+        <PageContainer>
             <div className="flex items-center justify-between mb-8">
                 <div>
                     <h1 className="text-2xl font-semibold text-gray-900">
@@ -243,6 +244,6 @@ export default function AddQuestion() {
                     </Stack>
                 </CardContent>
             </Card>
-        </>
+        </PageContainer>
     )
 }

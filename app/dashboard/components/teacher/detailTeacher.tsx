@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { Button, Input } from "@mui/material";
+import { Button, Dialog, DialogContent, DialogTitle, IconButton, Input } from "@mui/material";
 import { IconArrowLeft } from "@tabler/icons-react";
 import { useOpenModal } from "@/store/useOpenModal";
-import Modal from "@/app/dashboard/components/ui/modal";
+import CloseIcon from "@mui/icons-material/Close";
+import PageContainer from "../container/PageContainer";
 
 type Teacher = {
     Role: any;
@@ -99,7 +100,7 @@ export default function TeacherDetailPage() {
     if (!teacher) return <p>Teacher not found</p>;
 
     return (
-        <div>
+        <PageContainer>
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -250,88 +251,102 @@ export default function TeacherDetailPage() {
                 </div>
             </div>
 
-            <Modal open={open && mode === "edit"}
-                onClose={closeModal}
-                title="Add Teacher"
-                maxWidth="max-w-xl">
-                {/* form */}
-                <form onSubmit={handleEditTeacher} className="p-6 space-y-4">
+            <Dialog open={open && mode === "edit"} onClose={closeModal} maxWidth="sm" fullWidth>
+                <DialogTitle sx={{ m: 0, p: 2 }}>
+                    Edit Teacher
+                    <IconButton
+                        aria-label="close"
+                        onClick={closeModal}
+                        sx={{
+                            position: "absolute",
+                            right: 8,
+                            top: 8,
+                            color: (theme) => theme.palette.grey[500],
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <Input
-                            value={formEdit.fullName}
-                            onChange={(e) => setFormEdit({ ...formEdit, fullName: e.target.value, })}
-                            // label="Full Name"
-                            type="text"
-                            placeholder="Enter full name"
-                        />
-                        <Input
-                            value={formEdit.username}
-                            onChange={(e) => setFormEdit({ ...formEdit, username: e.target.value, })}
-                            // label="Username"
-                            type="text"
-                            placeholder="Enter username"
-                        />
-                    </div>
+                <DialogContent dividers>
+                    <form onSubmit={handleEditTeacher} className="p-6 space-y-4">
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <Input
-                            value={formEdit.email}
-                            onChange={(e) => setFormEdit({ ...formEdit, email: e.target.value })}
-                            // label="Email"
-                            type="email"
-                            placeholder="Enter email"
-                        />
+                        <div className="grid grid-cols-2 gap-4">
+                            <Input
+                                value={formEdit.fullName}
+                                onChange={(e) => setFormEdit({ ...formEdit, fullName: e.target.value, })}
+                                // label="Full Name"
+                                type="text"
+                                placeholder="Enter full name"
+                            />
+                            <Input
+                                value={formEdit.username}
+                                onChange={(e) => setFormEdit({ ...formEdit, username: e.target.value, })}
+                                // label="Username"
+                                type="text"
+                                placeholder="Enter username"
+                            />
+                        </div>
 
-                        <Input
-                            value={formEdit.address}
-                            onChange={(e) => setFormEdit({ ...formEdit, address: e.target.value })}
-                            // label="Address"
-                            type="text"
-                            placeholder="Enter address"
-                        />
-                    </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <Input
+                                value={formEdit.email}
+                                onChange={(e) => setFormEdit({ ...formEdit, email: e.target.value })}
+                                // label="Email"
+                                type="email"
+                                placeholder="Enter email"
+                            />
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <Input
-                            value={formEdit.dateOfBirth}
-                            onChange={(e) => setFormEdit({ ...formEdit, dateOfBirth: e.target.value })}
-                            // label="Date of Birth"
-                            type="date"
-                            placeholder="Enter age"
-                        />
-                        <Input
-                            value={formEdit.age}
-                            onChange={(e) => setFormEdit({ ...formEdit, age: e.target.value })}
-                            // label="Age"
-                            type="number"
-                            placeholder="Enter age"
-                        />
-                    </div>
+                            <Input
+                                value={formEdit.address}
+                                onChange={(e) => setFormEdit({ ...formEdit, address: e.target.value })}
+                                // label="Address"
+                                type="text"
+                                placeholder="Enter address"
+                            />
+                        </div>
 
-                    <div className="flex items-center justify-end gap-4  pt-6  border-gray-200">
-                        <Button
-                            onClick={closeModal}
-                            sx={{
-                                backgroundColor: "#F3F4F6",
-                                color: "#374151",
-                                px: 2,
-                                '&:hover': {
-                                    backgroundColor: "#E5E7EB",
-                                },
-                            }}
-                        >
-                            Cancelled
-                        </Button>
-                        <Button
-                            type="submit"
-                            variant="contained"
-                        >
-                            Edit Teacher
-                        </Button>
-                    </div>
-                </form>
-            </Modal>
-        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <Input
+                                value={formEdit.dateOfBirth}
+                                onChange={(e) => setFormEdit({ ...formEdit, dateOfBirth: e.target.value })}
+                                // label="Date of Birth"
+                                type="date"
+                                placeholder="Enter age"
+                            />
+                            <Input
+                                value={formEdit.age}
+                                onChange={(e) => setFormEdit({ ...formEdit, age: e.target.value })}
+                                // label="Age"
+                                type="number"
+                                placeholder="Enter age"
+                            />
+                        </div>
+
+                        <div className="flex items-center justify-end gap-4  pt-6  border-gray-200">
+                            <Button
+                                onClick={closeModal}
+                                sx={{
+                                    backgroundColor: "#F3F4F6",
+                                    color: "#374151",
+                                    px: 2,
+                                    '&:hover': {
+                                        backgroundColor: "#E5E7EB",
+                                    },
+                                }}
+                            >
+                                Cancelled
+                            </Button>
+                            <Button
+                                type="submit"
+                                variant="contained"
+                            >
+                                Edit Teacher
+                            </Button>
+                        </div>
+                    </form>
+                </DialogContent>
+            </Dialog>
+        </PageContainer>
     );
 }

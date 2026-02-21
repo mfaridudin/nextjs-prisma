@@ -1,11 +1,12 @@
 "use client"
 
+import PageContainer from "../../components/container/PageContainer"
 import LessonTable from "../../components/lesson/tableLesson"
 import { Box, Typography } from "@mui/material"
 
 export default function page() {
     return (
-        <>
+        <PageContainer>
             <Box mb={3}>
                 <Typography variant="h4" fontWeight={700}>
                     Lesson Management
@@ -15,6 +16,6 @@ export default function page() {
                 </Typography>
             </Box>
             <LessonTable />
-        </>
+            </PageContainer>
     )
 }

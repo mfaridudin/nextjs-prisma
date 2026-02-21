@@ -83,8 +83,8 @@ const SidebarItems = () => {
       themeColor={"#5D87FF"}
       themeSecondaryColor={"#49beff"}
     >
-      <Logo img="/images/logos/dark-logo.svg" component={Link} href="/">
-        Modernize
+      <Logo img="/images/logos/logo.svg" component={Link} href="/">
+        Logo
       </Logo>
 
       {renderMenuItems(Menuitems, pathname)}

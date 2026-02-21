@@ -7,6 +7,7 @@ import Link from "next/link"
 import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import AddIcon from "@mui/icons-material/Add";
+import PageContainer from "../container/PageContainer"
 
 export default function DetailLesson() {
 
@@ -58,7 +59,7 @@ export default function DetailLesson() {
 
     console.log(score)
     return (
-        <div>
+        <PageContainer>
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -262,7 +263,6 @@ export default function DetailLesson() {
                     )}
                 </CardContent>
             </Card>
-
-        </div>
+        </PageContainer>
     )
 }

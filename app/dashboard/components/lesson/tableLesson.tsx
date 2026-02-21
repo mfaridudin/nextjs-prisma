@@ -11,13 +11,16 @@ import {
     Button,
     Input,
     Stack,
+    Dialog,
+    IconButton,
+    DialogTitle,
+    DialogContent,
 } from "@mui/material";
 import DashboardCard from "@/app/dashboard/components/shared/DashboardCard";
 import AddIcon from "@mui/icons-material/Add";
 import { useEffect, useState } from "react";
 import { useOpenModal } from "@/store/useOpenModal";
-import Modal from "../ui/modal";
-import { IconEye } from "@tabler/icons-react";
+import CloseIcon from "@mui/icons-material/Close";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Link from "next/link";
@@ -270,153 +273,185 @@ const LessonTable = () => {
                 </Table>
             </Box>
 
-            <Modal open={open && mode === "add"}
-                onClose={closeModal}
-                title="Add Lesson"
-                maxWidth="max-w-xl">
-                {/* form */}
-                <form onSubmit={handleAddLesson} className="p-6 space-y-5">
+            <Dialog open={open && mode === "add"} onClose={closeModal} maxWidth="sm" fullWidth>
+                <DialogTitle sx={{ m: 0, p: 2 }}>
+                    Edit Student
 
-                    <Input
-                        className="w-full"
-                        value={form.title}
-                        onChange={(e) => setForm({ ...form, title: e.target.value })}
-                        type="text"
-                        placeholder="Enter Lesson Title"
-                    />
+                    <IconButton
+                        aria-label="close"
+                        onClick={closeModal}
+                        sx={{
+                            position: "absolute",
+                            right: 8,
+                            top: 8,
+                            color: (theme) => theme.palette.grey[500],
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
+
+                <DialogContent dividers>
+                    <form onSubmit={handleAddLesson} className="p-6 space-y-5">
+
+                        <Input
+                            className="w-full"
+                            value={form.title}
+                            onChange={(e) => setForm({ ...form, title: e.target.value })}
+                            type="text"
+                            placeholder="Enter Lesson Title"
+                        />
 
 
-                    <Input
-                        className="w-full"
-                        value={form.description}
-                        onChange={(e) => setForm({ ...form, description: e.target.value })}
-                        type="text"
-                        placeholder="Enter Lesson Description"
-                    />
+                        <Input
+                            className="w-full"
+                            value={form.description}
+                            onChange={(e) => setForm({ ...form, description: e.target.value })}
+                            type="text"
+                            placeholder="Enter Lesson Description"
+                        />
 
-                    <div>
-                        <div className="relative">
-                            {courses.length === 0 && (
-                                <option disabled>No course available</option>
-                            )}
+                        <div>
+                            <div className="relative">
+                                {courses.length === 0 && (
+                                    <option disabled>No course available</option>
+                                )}
 
-                            {courses.length > 0 && (
-                                <select
-                                    className={`w-full appearance-none focus-none py-3 text-sm ${!form.courseId ? "text-gray-400" : "text-gray-800"
-                                        }`}
-                                    name="courseId"
-                                    id="courseId"
-                                    value={selectedCourse ?? ""}
-                                    onChange={(e) => setSelectedCourse(Number(e.target.value))}
+                                {courses.length > 0 && (
+                                    <select
+                                        className={`w-full appearance-none focus-none py-3 text-sm ${!form.courseId ? "text-gray-400" : "text-gray-800"
+                                            }`}
+                                        name="courseId"
+                                        id="courseId"
+                                        value={selectedCourse ?? ""}
+                                        onChange={(e) => setSelectedCourse(Number(e.target.value))}
+                                    >
+                                        <option value="">Select Course</option>
+                                        {courses.map((course: any) => (
+                                            <option key={course.id} value={course.id}>
+                                                {course.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                )}
+                                <span
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400 hover:text-gray-600"
                                 >
-                                    <option value="">Select Course</option>
-                                    {courses.map((course: any) => (
-                                        <option key={course.id} value={course.id}>
-                                            {course.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            )}
-                            <span
-                                className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400 hover:text-gray-600"
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div className="relative">
+                                {classrooms.length === 0 && (
+                                    <option disabled>No classroom available</option>
+                                )}
+
+                                {classrooms.length > 0 && (
+                                    <select
+                                        className={`w-full appearance-none focus-none py-3 text-sm ${!form.classroomId ? "text-gray-400" : "text-gray-800"
+                                            }`}
+                                        name="classroomId"
+                                        id="classroomId"
+                                        value={selectedClassroom ?? ""}
+                                        onChange={(e) => setSelectedClassroom(Number(e.target.value))}
+                                    >
+                                        <option value="">Select Classroom</option>
+                                        {classrooms.map((classroom: any) => (
+                                            <option key={classroom.id} value={classroom.id}>
+                                                {classroom.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                )}
+                                <span
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400 hover:text-gray-600"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Footer */}
+                        <div className="flex items-center justify-end gap-4 pt-6 border-gray-200">
+                            <Button
+                                onClick={closeModal}
+                                sx={{
+                                    backgroundColor: "#F3F4F6",
+                                    color: "#374151",
+                                    px: 2,
+                                    '&:hover': {
+                                        backgroundColor: "#E5E7EB",
+                                    },
+                                }}
                             >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                                </svg>
-                            </span>
+                                Cancelled
+                            </Button>
+                            <Button
+                                color="info"
+                                variant="contained"
+                                type="submit"
+                            >
+                                Add Class
+                            </Button>
+                        </div>
+                    </form>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={open && mode === "delete"} onClose={closeModal} maxWidth="sm" fullWidth>
+                <DialogTitle sx={{ m: 0, p: 2 }}>
+                    Edit Student
+
+                    <IconButton
+                        aria-label="close"
+                        onClick={closeModal}
+                        sx={{
+                            position: "absolute",
+                            right: 8,
+                            top: 8,
+                            color: (theme) => theme.palette.grey[500],
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
+
+                <DialogContent dividers>
+                    <div className="p-6">
+                        <p className="mb-6 text-gray-700">Are you sure you want to delete this data?</p>
+                        <div className="flex justify-end gap-3">
+                            <Button
+                                size="small"
+                                onClick={closeModal}
+                                sx={{
+                                    backgroundColor: "#F3F4F6",
+                                    color: "#374151",
+                                    px: 2,
+                                    '&:hover': {
+                                        backgroundColor: "#E5E7EB",
+                                    },
+                                }}
+                            >
+                                Cancelled
+                            </Button>
+
+                            <Button
+                                variant="contained"
+                                color="error"
+                                size="small" onClick={() => selectedId && handleDelete(selectedId)}>
+                                Yes, Delete
+                            </Button>
                         </div>
                     </div>
+                </DialogContent>
+            </Dialog>
 
-                    <div>
-                        <div className="relative">
-                            {classrooms.length === 0 && (
-                                <option disabled>No classroom available</option>
-                            )}
-
-                            {classrooms.length > 0 && (
-                                <select
-                                    className={`w-full appearance-none focus-none py-3 text-sm ${!form.classroomId ? "text-gray-400" : "text-gray-800"
-                                        }`}
-                                    name="classroomId"
-                                    id="classroomId"
-                                    value={selectedClassroom ?? ""}
-                                    onChange={(e) => setSelectedClassroom(Number(e.target.value))}
-                                >
-                                    <option value="">Select Classroom</option>
-                                    {classrooms.map((classroom: any) => (
-                                        <option key={classroom.id} value={classroom.id}>
-                                            {classroom.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            )}
-                            <span
-                                className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400 hover:text-gray-600"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                                </svg>
-                            </span>
-                        </div>
-                    </div>
-
-                    {/* Footer */}
-                    <div className="flex items-center justify-end gap-4 pt-6 border-gray-200">
-                        <Button
-                            onClick={closeModal}
-                            sx={{
-                                backgroundColor: "#F3F4F6",
-                                color: "#374151",
-                                px: 2,
-                                '&:hover': {
-                                    backgroundColor: "#E5E7EB",
-                                },
-                            }}
-                        >
-                            Cancelled
-                        </Button>
-                        <Button
-                            color="info"
-                            variant="contained"
-                            type="submit"
-                        >
-                            Add Class
-                        </Button>
-                    </div>
-                </form>
-            </Modal>
-
-            <Modal open={open && mode === "delete"}
-                onClose={closeModal}
-                title="Delete Data"
-                maxWidth="max-w-md">
-                <div className="p-6">
-                    <p className="mb-6 text-gray-700">Are you sure you want to delete this data?</p>
-                    <div className="flex justify-end gap-3">
-                        <Button
-                            size="small"
-                            onClick={closeModal}
-                            sx={{
-                                backgroundColor: "#F3F4F6",
-                                color: "#374151",
-                                px: 2,
-                                '&:hover': {
-                                    backgroundColor: "#E5E7EB",
-                                },
-                            }}
-                        >
-                            Cancelled
-                        </Button>
-
-                        <Button
-                            variant="contained"
-                            color="error"
-                            size="small" onClick={() => selectedId && handleDelete(selectedId)}>
-                            Yes, Delete
-                        </Button>
-                    </div>
-                </div>
-            </Modal>
         </DashboardCard>
     );
 };

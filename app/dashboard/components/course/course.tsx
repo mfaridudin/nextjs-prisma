@@ -12,13 +12,17 @@ import {
     Button,
     Input,
     Stack,
+    DialogContent,
+    DialogTitle,
+    IconButton,
+    Dialog,
 } from "@mui/material";
 import DashboardCard from "@/app/dashboard/components/shared/DashboardCard";
 import AddIcon from "@mui/icons-material/Add";
 import { useEffect, useState } from "react";
 import { useOpenModal } from "@/store/useOpenModal";
 import { useUserStore } from "@/store/useUserStore";
-import Modal from "../ui/modal";
+import CloseIcon from "@mui/icons-material/Close";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Link from "next/link";
@@ -204,110 +208,140 @@ const CourseTable = () => {
                     </TableBody>
                 </Table>
             </Box>
-            <Modal open={open && mode === "add"}
-                onClose={closeModal}
-                title="Add Course"
-                maxWidth="max-w-xl">
-                {/* form */}
-                <form onSubmit={handleAddCourse} className="p-6 space-y-4">
 
-                    <Input
-                        className="w-full"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        type="text"
-                        placeholder="Enter Course Name"
-                    />
+            <Dialog open={open && mode === "add"} onClose={closeModal} maxWidth="sm" fullWidth>
+                <DialogTitle sx={{ m: 0, p: 2 }}>
+                    Add Course
+                    <IconButton
+                        aria-label="close"
+                        onClick={closeModal}
+                        sx={{
+                            position: "absolute",
+                            right: 8,
+                            top: 8,
+                            color: (theme) => theme.palette.grey[500],
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
 
-                    <div>
-                        <div className="relative">
-                            {teachers.length === 0 && (
-                                <option disabled>No teacher available</option>
-                            )}
-                            {teachers.length > 0 && (
-                                <select
-                                    className={`w-full appearance-none py-3 text-sm ${!selectedTeacher ? "text-gray-400" : "text-gray-800"
-                                        }`}
-                                    name="teacherId"
-                                    value={selectedTeacher ?? ""}
-                                    onChange={(e) => setSelectedTeacher(Number(e.target.value))}
+                <DialogContent dividers>
+                    <form onSubmit={handleAddCourse} className="p-6 space-y-4">
+
+                        <Input
+                            className="w-full"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            type="text"
+                            placeholder="Enter Course Name"
+                        />
+
+                        <div>
+                            <div className="relative">
+                                {teachers.length === 0 && (
+                                    <option disabled>No teacher available</option>
+                                )}
+                                {teachers.length > 0 && (
+                                    <select
+                                        className={`w-full appearance-none py-3 text-sm ${!selectedTeacher ? "text-gray-400" : "text-gray-800"
+                                            }`}
+                                        name="teacherId"
+                                        value={selectedTeacher ?? ""}
+                                        onChange={(e) => setSelectedTeacher(Number(e.target.value))}
+                                    >
+                                        <option value="">Select Teacher</option>
+
+                                        {teachers.map((teacher: any) => (
+                                            <option key={teacher.id} value={teacher.id}>
+                                                {teacher.fullName}
+                                            </option>
+                                        ))}
+                                    </select>
+                                )}
+                                <span
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400 hover:text-gray-600"
                                 >
-                                    <option value="">Select Teacher</option>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
 
-                                    {teachers.map((teacher: any) => (
-                                        <option key={teacher.id} value={teacher.id}>
-                                            {teacher.fullName}
-                                        </option>
-                                    ))}
-                                </select>
-                            )}
-                            <span
-                                className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400 hover:text-gray-600"
+                        {/* Footer */}
+                        <div className="flex items-center justify-end gap-4 pt-6 border-gray-200">
+                            <Button
+                                onClick={closeModal}
+                                sx={{
+                                    backgroundColor: "#F3F4F6",
+                                    color: "#374151",
+                                    px: 2,
+                                    '&:hover': {
+                                        backgroundColor: "#E5E7EB",
+                                    },
+                                }}
                             >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                                </svg>
-                            </span>
+                                Cancelled
+                            </Button>
+                            <Button
+                                color="info"
+                                variant="contained"
+                                type="submit"
+                            >
+                                Add Course
+                            </Button>
+                        </div>
+                    </form>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={open && mode === "delete"} onClose={closeModal} maxWidth="sm" fullWidth>
+                <DialogTitle sx={{ m: 0, p: 2 }}>
+                    Delete Course
+                    <IconButton
+                        aria-label="close"
+                        onClick={closeModal}
+                        sx={{
+                            position: "absolute",
+                            right: 8,
+                            top: 8,
+                            color: (theme) => theme.palette.grey[500],
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
+
+                <DialogContent dividers>
+                    <div className="p-6">
+                        <p className="mb-6 text-gray-700">Are you sure you want to delete this data?</p>
+                        <div className="flex justify-end gap-3">
+                            <Button
+                                size="small"
+                                onClick={closeModal}
+                                sx={{
+                                    backgroundColor: "#F3F4F6",
+                                    color: "#374151",
+                                    px: 2,
+                                    '&:hover': {
+                                        backgroundColor: "#E5E7EB",
+                                    },
+                                }}
+                            >
+                                Cancelled
+                            </Button>
+
+                            <Button
+                                variant="contained"
+                                color="error"
+                                size="small" onClick={() => selectedId && handleDelete(selectedId)}>
+                                Yes, Delete
+                            </Button>
                         </div>
                     </div>
-
-                    {/* Footer */}
-                    <div className="flex items-center justify-end gap-4 pt-6 border-gray-200">
-                        <Button
-                            onClick={closeModal}
-                            sx={{
-                                backgroundColor: "#F3F4F6",
-                                color: "#374151",
-                                px: 2,
-                                '&:hover': {
-                                    backgroundColor: "#E5E7EB",
-                                },
-                            }}
-                        >
-                            Cancelled
-                        </Button>
-                        <Button
-                            color="info"
-                            variant="contained"
-                            type="submit"
-                        >
-                            Add Course
-                        </Button>
-                    </div>
-                </form>
-            </Modal>
-
-            <Modal open={open && mode === "delete"}
-                onClose={closeModal}
-                title="Delete Data"
-                maxWidth="max-w-md">
-                <div className="p-6">
-                    <p className="mb-6 text-gray-700">Are you sure you want to delete this data?</p>
-                    <div className="flex justify-end gap-3">
-                        <Button
-                            size="small"
-                            onClick={closeModal}
-                            sx={{
-                                backgroundColor: "#F3F4F6",
-                                color: "#374151",
-                                px: 2,
-                                '&:hover': {
-                                    backgroundColor: "#E5E7EB",
-                                },
-                            }}
-                        >
-                            Cancelled
-                        </Button>
-
-                        <Button
-                            variant="contained"
-                            color="error"
-                            size="small" onClick={() => selectedId && handleDelete(selectedId)}>
-                            Yes, Delete
-                        </Button>
-                    </div>
-                </div>
-            </Modal>
+                </DialogContent>
+            </Dialog>
         </DashboardCard>
     );
 };

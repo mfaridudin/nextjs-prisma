@@ -16,6 +16,10 @@ import {
     useMediaQuery,
     Paper,
     Divider,
+    DialogTitle,
+    IconButton,
+    DialogContent,
+    Dialog,
 } from "@mui/material";
 import DashboardCard from "@/app/dashboard/components/shared/DashboardCard";
 import AddIcon from "@mui/icons-material/Add";
@@ -26,6 +30,9 @@ import Modal from "../ui/modal";
 import { IconEye } from "@tabler/icons-react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
+import PageContainer from "../container/PageContainer";
+import CloseIcon from "@mui/icons-material/Close";
+
 
 const TeacherTable = () => {
 
@@ -33,6 +40,7 @@ const TeacherTable = () => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const { open, mode, selectedId, openAddModal, openDeleteModal, closeModal } = useOpenModal()
     const { user } = useUserStore()
+
 
     const role = user?.role?.name
 
@@ -134,274 +142,306 @@ const TeacherTable = () => {
 
 
     return (
-        <DashboardCard title="Teachers" action={
-            <Button
-                variant="contained"
-                startIcon={<AddIcon />}
-                size="small"
-                onClick={openAddModal}
-            >
-                Add Teachers
-            </Button>
-        }>
-            <Box sx={{ overflow: "auto" }}>
-                <Table sx={{ whiteSpace: "nowrap", mt: 2 }}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>
-                                <Typography fontWeight={600}>ID</Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography fontWeight={600}>Full Name</Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography fontWeight={600}>Username</Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography fontWeight={600}>Address</Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography fontWeight={600}>Email</Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography fontWeight={600}>Create Date</Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography fontWeight={600}>Action</Typography>
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-
-                    <TableBody>
-                        {teachers.map((teacher: any, index: number) => (
-                            <TableRow key={teacher.id}>
+        <PageContainer>
+            <DashboardCard title="Teachers" action={
+                <Button
+                    variant="contained"
+                    startIcon={<AddIcon />}
+                    size="small"
+                    onClick={openAddModal}
+                >
+                    Add Teachers
+                </Button>
+            }>
+                <Box sx={{ overflow: "auto" }}>
+                    <Table sx={{ whiteSpace: "nowrap", mt: 2 }}>
+                        <TableHead>
+                            <TableRow>
                                 <TableCell>
-                                    <Typography fontWeight={500}>
-                                        {index + 1}
-                                    </Typography>
-                                </TableCell>
-
-                                <TableCell>
-                                    <Typography fontWeight={600}>
-                                        {teacher.fullName}
-                                    </Typography>
-                                </TableCell>
-
-                                <TableCell>
-                                    <Typography fontWeight={600} color="textSecondary">
-                                        {teacher.username}
-                                    </Typography>
-                                </TableCell>
-
-                                <TableCell>
-                                    <Typography fontWeight={600} color="textSecondary">
-                                        {teacher.address}
-                                    </Typography>
+                                    <Typography fontWeight={600}>ID</Typography>
                                 </TableCell>
                                 <TableCell>
-                                    <Typography fontWeight={600} color="textSecondary">
-                                        {teacher.email}
-                                    </Typography>
+                                    <Typography fontWeight={600}>Full Name</Typography>
                                 </TableCell>
-
                                 <TableCell>
-                                    <Typography fontWeight={600} color="textSecondary">
-                                        {new Date(teacher.createdAt).toLocaleDateString('en-US', {
-                                            day: '2-digit',
-                                            month: 'long',
-                                            year: 'numeric',
-                                            minute: '2-digit',
-                                            hour: '2-digit',
-                                        })}
-                                    </Typography>
+                                    <Typography fontWeight={600}>Username</Typography>
                                 </TableCell>
-
                                 <TableCell>
-                                    <Stack direction="row" spacing={1}>
-                                        <Link href={`teachers/${teacher.id}/detail`}>
-                                            <Button
-                                                variant="outlined"
-                                                size="small"
-                                                startIcon={<VisibilityIcon />}
-                                            // onClick={() => handleView(student.id)}
-                                            >
-                                                View
-                                            </Button>
-                                        </Link>
-                                        <Button
-                                            variant="outlined"
-                                            color="error"
-                                            size="small"
-                                            startIcon={<DeleteIcon />}
-                                            onClick={() => openDeleteModal(teacher.id)}
-                                        >
-                                            Delete
-                                        </Button>
-                                    </Stack>
+                                    <Typography fontWeight={600}>Address</Typography>
+                                </TableCell>
+                                <TableCell>
+                                    <Typography fontWeight={600}>Email</Typography>
+                                </TableCell>
+                                <TableCell>
+                                    <Typography fontWeight={600}>Create Date</Typography>
+                                </TableCell>
+                                <TableCell>
+                                    <Typography fontWeight={600}>Action</Typography>
                                 </TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </Box>
+                        </TableHead>
 
-            <Modal open={open && mode === "add"}
-                onClose={closeModal}
-                title="Add Teacher"
-                maxWidth="max-w-xl">
-                {/* form */}
-                <form onSubmit={handleAddTeacher} className="p-6 space-y-4">
+                        <TableBody>
+                            {teachers.map((teacher: any, index: number) => (
+                                <TableRow key={teacher.id}>
+                                    <TableCell>
+                                        <Typography fontWeight={500}>
+                                            {index + 1}
+                                        </Typography>
+                                    </TableCell>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <Input
-                            value={form.fullName}
-                            onChange={(e) => setForm({ ...form, fullName: e.target.value, })}
-                            // label="Full Name"
-                            type="text"
-                            placeholder="Enter full name"
-                        />
-                        <Input
-                            value={form.username}
-                            onChange={(e) => setForm({ ...form, username: e.target.value, })}
-                            // label="Username"
-                            type="text"
-                            placeholder="Enter username"
-                        />
-                    </div>
+                                    <TableCell>
+                                        <Typography fontWeight={600}>
+                                            {teacher.fullName}
+                                        </Typography>
+                                    </TableCell>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <Input
-                            value={form.email}
-                            onChange={(e) => setForm({ ...form, email: e.target.value })}
-                            // label="Email"
-                            type="email"
-                            placeholder="Enter email"
-                        />
+                                    <TableCell>
+                                        <Typography fontWeight={600} color="textSecondary">
+                                            {teacher.username}
+                                        </Typography>
+                                    </TableCell>
 
-                        <Input
-                            value={form.address}
-                            onChange={(e) => setForm({ ...form, address: e.target.value })}
-                            // label="Address"
-                            type="text"
-                            placeholder="Enter address"
-                        />
-                    </div>
+                                    <TableCell>
+                                        <Typography fontWeight={600} color="textSecondary">
+                                            {teacher.address}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Typography fontWeight={600} color="textSecondary">
+                                            {teacher.email}
+                                        </Typography>
+                                    </TableCell>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <Input
-                            value={form.dateOfBirth}
-                            onChange={(e) => setForm({ ...form, dateOfBirth: e.target.value })}
-                            // label="Date of Birth"
-                            type="date"
-                            placeholder="Enter age"
-                        />
-                        <Input
-                            value={form.age}
-                            onChange={(e) => setForm({ ...form, age: e.target.value })}
-                            // label="Age"
-                            type="number"
-                            placeholder="Enter age"
-                        />
-                    </div>
+                                    <TableCell>
+                                        <Typography fontWeight={600} color="textSecondary">
+                                            {new Date(teacher.createdAt).toLocaleDateString('en-US', {
+                                                day: '2-digit',
+                                                month: 'long',
+                                                year: 'numeric',
+                                                minute: '2-digit',
+                                                hour: '2-digit',
+                                            })}
+                                        </Typography>
+                                    </TableCell>
 
-                    <div className="relative w-full">
-                        <Input
-                            className="w-full pr-12"
-                            value={form.password}
-                            onChange={(e) =>
-                                setForm({ ...form, password: e.target.value })
-                            }
-                            type={showPassword ? "text" : "password"}
-                            placeholder="Enter Password"
-                        />
+                                    <TableCell>
+                                        <Stack direction="row" spacing={1}>
+                                            <Link href={`teachers/${teacher.id}/detail`}>
+                                                <Button
+                                                    variant="outlined"
+                                                    size="small"
+                                                    startIcon={<VisibilityIcon />}
+                                                // onClick={() => handleView(student.id)}
+                                                >
+                                                    View
+                                                </Button>
+                                            </Link>
+                                            <Button
+                                                variant="outlined"
+                                                color="error"
+                                                size="small"
+                                                startIcon={<DeleteIcon />}
+                                                onClick={() => openDeleteModal(teacher.id)}
+                                            >
+                                                Delete
+                                            </Button>
+                                        </Stack>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </Box>
 
-                        <span
-                            onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400 hover:text-gray-600"
+                <Dialog open={open && mode === "add"} onClose={closeModal} maxWidth="sm" fullWidth>
+                    <DialogTitle sx={{ m: 0, p: 2 }}>
+                        Add Teacher
+                        <IconButton
+                            aria-label="close"
+                            onClick={closeModal}
+                            sx={{
+                                position: "absolute",
+                                right: 8,
+                                top: 8,
+                                color: (theme) => theme.palette.grey[500],
+                            }}
                         >
-                            <IconEye />
-                        </span>
-                    </div>
+                            <CloseIcon />
+                        </IconButton>
+                    </DialogTitle>
+
+                    <DialogContent dividers>
+                        <form onSubmit={handleAddTeacher} className="p-6 space-y-4">
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <Input
+                                    value={form.fullName}
+                                    onChange={(e) => setForm({ ...form, fullName: e.target.value, })}
+                                    // label="Full Name"
+                                    type="text"
+                                    placeholder="Enter full name"
+                                />
+                                <Input
+                                    value={form.username}
+                                    onChange={(e) => setForm({ ...form, username: e.target.value, })}
+                                    // label="Username"
+                                    type="text"
+                                    placeholder="Enter username"
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <Input
+                                    value={form.email}
+                                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                                    // label="Email"
+                                    type="email"
+                                    placeholder="Enter email"
+                                />
+
+                                <Input
+                                    value={form.address}
+                                    onChange={(e) => setForm({ ...form, address: e.target.value })}
+                                    // label="Address"
+                                    type="text"
+                                    placeholder="Enter address"
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <Input
+                                    value={form.dateOfBirth}
+                                    onChange={(e) => setForm({ ...form, dateOfBirth: e.target.value })}
+                                    // label="Date of Birth"
+                                    type="date"
+                                    placeholder="Enter age"
+                                />
+                                <Input
+                                    value={form.age}
+                                    onChange={(e) => setForm({ ...form, age: e.target.value })}
+                                    // label="Age"
+                                    type="number"
+                                    placeholder="Enter age"
+                                />
+                            </div>
+
+                            <div className="relative w-full">
+                                <Input
+                                    className="w-full pr-12"
+                                    value={form.password}
+                                    onChange={(e) =>
+                                        setForm({ ...form, password: e.target.value })
+                                    }
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="Enter Password"
+                                />
+
+                                <span
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400 hover:text-gray-600"
+                                >
+                                    <IconEye />
+                                </span>
+                            </div>
 
 
-                    <div className="relative w-full">
-                        <Input
-                            className="w-full pr-12"
-                            value={form.password_confirmation}
-                            onChange={(e) =>
-                                setForm({ ...form, password_confirmation: e.target.value })
-                            }
-                            type={showConfirmPassword ? "text" : "password"}
-                            placeholder="Confirm Password"
-                        />
-                        <span
-                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer
+                            <div className="relative w-full">
+                                <Input
+                                    className="w-full pr-12"
+                                    value={form.password_confirmation}
+                                    onChange={(e) =>
+                                        setForm({ ...form, password_confirmation: e.target.value })
+                                    }
+                                    type={showConfirmPassword ? "text" : "password"}
+                                    placeholder="Confirm Password"
+                                />
+                                <span
+                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer
                        text-gray-400 hover:text-gray-600"
-                        >
-                            <IconEye />
-                        </span>
-                    </div>
+                                >
+                                    <IconEye />
+                                </span>
+                            </div>
 
 
-                    <div className="flex items-center justify-end gap-4  pt-6  border-gray-200">
-                        <Button
+                            <div className="flex items-center justify-end gap-4  pt-6  border-gray-200">
+                                <Button
+                                    onClick={closeModal}
+                                    sx={{
+                                        backgroundColor: "#F3F4F6",
+                                        color: "#374151",
+                                        px: 2,
+                                        '&:hover': {
+                                            backgroundColor: "#E5E7EB",
+                                        },
+                                    }}
+                                >
+                                    Cancelled
+                                </Button>
+                                <Button
+                                    type="submit"
+                                    variant="contained"
+                                    color="error"
+                                >
+                                    Add Teacher
+                                </Button>
+                            </div>
+                        </form>
+                    </DialogContent>
+                </Dialog>
+
+                <Dialog open={open && mode === "delete"} onClose={closeModal} maxWidth="sm" fullWidth>
+                    <DialogTitle sx={{ m: 0, p: 2 }}>
+                        Delete Teacher
+                        <IconButton
+                            aria-label="close"
                             onClick={closeModal}
                             sx={{
-                                backgroundColor: "#F3F4F6",
-                                color: "#374151",
-                                px: 2,
-                                '&:hover': {
-                                    backgroundColor: "#E5E7EB",
-                                },
+                                position: "absolute",
+                                right: 8,
+                                top: 8,
+                                color: (theme) => theme.palette.grey[500],
                             }}
                         >
-                            Cancelled
-                        </Button>
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            color="error"
-                        >
-                            Add Teacher
-                        </Button>
-                    </div>
-                </form>
-            </Modal>
+                            <CloseIcon />
+                        </IconButton>
+                    </DialogTitle>
 
-            <Modal open={open && mode === "delete"}
-                onClose={closeModal}
-                title="Delete Data"
-                maxWidth="max-w-md">
-                <div className="p-6">
-                    <p className="mb-6 text-gray-700">Are you sure you want to delete this data?</p>
-                    <div className="flex justify-end gap-3">
-                        <Button
-                            size="small"
-                            onClick={closeModal}
-                            sx={{
-                                backgroundColor: "#F3F4F6",
-                                color: "#374151",
-                                px: 2,
-                                '&:hover': {
-                                    backgroundColor: "#E5E7EB",
-                                },
-                            }}
-                        >
-                            Cancelled
-                        </Button>
+                    <DialogContent dividers>
+                        <div className="p-6">
+                            <p className="mb-6 text-gray-700">Are you sure you want to delete this data?</p>
+                            <div className="flex justify-end gap-3">
+                                <Button
+                                    size="small"
+                                    onClick={closeModal}
+                                    sx={{
+                                        backgroundColor: "#F3F4F6",
+                                        color: "#374151",
+                                        px: 2,
+                                        '&:hover': {
+                                            backgroundColor: "#E5E7EB",
+                                        },
+                                    }}
+                                >
+                                    Cancelled
+                                </Button>
 
-                        <Button
-                            variant="contained"
-                            color="error"
-                            size="small" onClick={() => selectedId && handleDelete(selectedId)}>
-                            Yes, Delete
-                        </Button>
-                    </div>
-                </div>
-            </Modal>
+                                <Button
+                                    variant="contained"
+                                    color="error"
+                                    size="small" onClick={() => selectedId && handleDelete(selectedId)}>
+                                    Yes, Delete
+                                </Button>
+                            </div>
+                        </div>
+                    </DialogContent>
+                </Dialog>
 
-        </DashboardCard>
+
+            </DashboardCard>
+        </PageContainer>
     );
 };
 

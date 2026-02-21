@@ -8,12 +8,12 @@ type Props = {
   title?: string;
 };
 
-const PageContainer = ({ title, description, children }: Props) => (
+const PageContainer = ({ children }: Props) => (
 
   <div>
 
-    <title>{title}</title>
-    <meta name="description" content={description} />
+    <title>SchoolOra | LMS for Schools</title>
+    <meta name="description" content="SchoolOra is a modern learning management system designed for schools to manage classes, students, assignments, and online learning efficiently." />
 
     {children}
   </div>

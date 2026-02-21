@@ -19,6 +19,7 @@ import { useOpenModal } from "@/store/useOpenModal";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import Link from "next/link";
 import { useUserStore } from "@/store/useUserStore";
+import PageContainer from "../../components/container/PageContainer";
 
 const LessonTable = () => {
     useOpenModal()
@@ -86,111 +87,113 @@ const LessonTable = () => {
 
 
     return (
-        <DashboardCard title="Lesson">
-            <Box sx={{ overflow: "auto" }}>
-                <Table sx={{ whiteSpace: "nowrap", mt: 2 }}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>
-                                <Typography fontWeight={600}>No</Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography fontWeight={600}>Title</Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography fontWeight={600}>Description</Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography fontWeight={600}>Classroom</Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography fontWeight={600}>Course</Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography fontWeight={600}>Status</Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography fontWeight={600}>Action</Typography>
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-
-                    <TableBody>
-                        {lessons.map((lesson: any, index: number) => (
-                            <TableRow key={lesson.id}>
+        <PageContainer>
+            <DashboardCard title="Lesson">
+                <Box sx={{ overflow: "auto" }}>
+                    <Table sx={{ whiteSpace: "nowrap", mt: 2 }}>
+                        <TableHead>
+                            <TableRow>
                                 <TableCell>
-                                    <Typography fontWeight={500}>
-                                        {index + 1}
-                                    </Typography>
-                                </TableCell>
-
-                                <TableCell>
-                                    <Typography fontWeight={600}>
-                                        {lesson.title}
-                                    </Typography>
-                                </TableCell>
-
-                                <TableCell>
-                                    <Typography fontWeight={600} color="textSecondary">
-                                        {lesson.description}
-                                    </Typography>
-                                </TableCell>
-
-                                <TableCell>
-                                    <Typography fontWeight={600} color="textSecondary">
-                                        {lesson.classroom.name}
-                                    </Typography>
+                                    <Typography fontWeight={600}>No</Typography>
                                 </TableCell>
                                 <TableCell>
-                                    <Typography fontWeight={600} color="textSecondary">
-                                        {lesson.course.name}
-                                    </Typography>
+                                    <Typography fontWeight={600}>Title</Typography>
                                 </TableCell>
-
                                 <TableCell>
-                                    <Box
-                                        sx={{
-                                            px: 1.5,
-                                            py: 0.5,
-                                            borderRadius: 2,
-                                            display: "inline-block",
-                                            bgcolor:
-                                                lesson.submissions?.length > 0
-                                                    ? "success.light"
-                                                    : "warning.light",
-                                            color:
-                                                lesson.submissions?.length > 0
-                                                    ? "success.main"
-                                                    : "warning.main",
-                                            fontWeight: 600,
-                                            fontSize: 12,
-                                        }}
-                                    >
-                                        {lesson.submissions?.length > 0 ? "Completed" : "Pending"}
-                                    </Box>
+                                    <Typography fontWeight={600}>Description</Typography>
                                 </TableCell>
-
-
                                 <TableCell>
-                                    <Stack direction="row" spacing={1}>
-                                        <Link href={`lesson/${lesson.id}/detail`}>    {/* /tes/admin/students */}
-                                            <Button
-                                                variant="outlined"
-                                                size="small"
-                                                startIcon={<AssignmentIcon />}
-                                            >
-                                                Attempt
-                                            </Button>
-                                        </Link>
-                                    </Stack>
+                                    <Typography fontWeight={600}>Classroom</Typography>
                                 </TableCell>
-
+                                <TableCell>
+                                    <Typography fontWeight={600}>Course</Typography>
+                                </TableCell>
+                                <TableCell>
+                                    <Typography fontWeight={600}>Status</Typography>
+                                </TableCell>
+                                <TableCell>
+                                    <Typography fontWeight={600}>Action</Typography>
+                                </TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </Box>
-        </DashboardCard>
+                        </TableHead>
+
+                        <TableBody>
+                            {lessons.map((lesson: any, index: number) => (
+                                <TableRow key={lesson.id}>
+                                    <TableCell>
+                                        <Typography fontWeight={500}>
+                                            {index + 1}
+                                        </Typography>
+                                    </TableCell>
+
+                                    <TableCell>
+                                        <Typography fontWeight={600}>
+                                            {lesson.title}
+                                        </Typography>
+                                    </TableCell>
+
+                                    <TableCell>
+                                        <Typography fontWeight={600} color="textSecondary">
+                                            {lesson.description}
+                                        </Typography>
+                                    </TableCell>
+
+                                    <TableCell>
+                                        <Typography fontWeight={600} color="textSecondary">
+                                            {lesson.classroom.name}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Typography fontWeight={600} color="textSecondary">
+                                            {lesson.course.name}
+                                        </Typography>
+                                    </TableCell>
+
+                                    <TableCell>
+                                        <Box
+                                            sx={{
+                                                px: 1.5,
+                                                py: 0.5,
+                                                borderRadius: 2,
+                                                display: "inline-block",
+                                                bgcolor:
+                                                    lesson.submissions?.length > 0
+                                                        ? "success.light"
+                                                        : "warning.light",
+                                                color:
+                                                    lesson.submissions?.length > 0
+                                                        ? "success.main"
+                                                        : "warning.main",
+                                                fontWeight: 600,
+                                                fontSize: 12,
+                                            }}
+                                        >
+                                            {lesson.submissions?.length > 0 ? "Completed" : "Pending"}
+                                        </Box>
+                                    </TableCell>
+
+
+                                    <TableCell>
+                                        <Stack direction="row" spacing={1}>
+                                            <Link href={`lesson/${lesson.id}/detail`}>    {/* /tes/admin/students */}
+                                                <Button
+                                                    variant="outlined"
+                                                    size="small"
+                                                    startIcon={<AssignmentIcon />}
+                                                >
+                                                    Attempt
+                                                </Button>
+                                            </Link>
+                                        </Stack>
+                                    </TableCell>
+
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </Box>
+            </DashboardCard>
+        </PageContainer>
     );
 };
 

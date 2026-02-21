@@ -9,7 +9,7 @@ import TeachersList from '../components/dashboard/teacherList';
 
 export default function page() {
   return (
-    <PageContainer title="Dashboard Page" description="this is Dashboard">
+    <PageContainer>
       <Box>
         <Box mb={3}>
           <Typography variant="h4" fontWeight={700}>

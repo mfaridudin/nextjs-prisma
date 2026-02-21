@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { Autocomplete, Box, Button, Chip, Link, Stack, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography } from "@mui/material";
+import { Autocomplete, Box, Button, Chip, Dialog, DialogContent, DialogTitle, IconButton, Link, Stack, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography } from "@mui/material";
 import { IconArrowLeft } from "@tabler/icons-react";
 import { useOpenModal } from "@/store/useOpenModal";
 import DashboardCard from "@/app/dashboard/components/shared/DashboardCard";
 import AddIcon from "@mui/icons-material/Add";
-import Modal from "@/app/dashboard/components/ui/modal";
+import CloseIcon from "@mui/icons-material/Close";
 
 interface Student {
     id: number
@@ -266,61 +266,73 @@ export default function DetailClassroom() {
                 </Box>
             </DashboardCard>
 
-            <Modal
-                open={open && mode === "add"}
-                onClose={closeModal}
-                title="Add Student"
-                maxWidth="max-w-xl"
-            >
-                <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                    <div>
-                        <p className="text-sm font-medium mb-2">Students</p>
+            <Dialog open={open && mode === "add"} onClose={closeModal} maxWidth="sm" fullWidth>
+                <DialogTitle sx={{ m: 0, p: 2 }}>
+                    Add Student
+                    <IconButton
+                        aria-label="close"
+                        onClick={closeModal}
+                        sx={{
+                            position: "absolute",
+                            right: 8,
+                            top: 8,
+                            color: (theme) => theme.palette.grey[500],
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
 
-                        <Autocomplete
-                            multiple
-                            options={students}
-                            getOptionLabel={(option) => option.fullName}
-                            value={students.filter(s => selected.includes(s.id))}
-                            onChange={(event, newValue) => {
-                                setSelected(newValue.map(s => s.id));
-                            }}
-                            renderTags={(value, getTagProps) =>
-                                value.map((option, index) => (
-                                    <Chip
-                                        label={option.fullName}
-                                        {...getTagProps({ index })}
-                                        key={option.id}
-                                    />
-                                ))
-                            }
-                            renderInput={(params) => (
-                                <TextField {...params} placeholder="Select students..." />
-                            )}
-                        />
-                    </div>
+                <DialogContent dividers>
+                    <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                        <div>
+                            <p className="text-sm font-medium mb-2">Students</p>
 
-                    <div className="flex items-center justify-end gap-4 pt-6 border-gray-200">
-                        <Button
-                            onClick={closeModal}
-                            sx={{
-                                backgroundColor: "#F3F4F6",
-                                color: "#374151",
-                                px: 2,
-                                "&:hover": {
-                                    backgroundColor: "#E5E7EB",
-                                },
-                            }}
-                        >
-                            Cancelled
-                        </Button>
+                            <Autocomplete
+                                multiple
+                                options={students}
+                                getOptionLabel={(option) => option.fullName}
+                                value={students.filter(s => selected.includes(s.id))}
+                                onChange={(event, newValue) => {
+                                    setSelected(newValue.map(s => s.id));
+                                }}
+                                renderTags={(value, getTagProps) =>
+                                    value.map((option, index) => (
+                                        <Chip
+                                            label={option.fullName}
+                                            {...getTagProps({ index })}
+                                            key={option.id}
+                                        />
+                                    ))
+                                }
+                                renderInput={(params) => (
+                                    <TextField {...params} placeholder="Select students..." />
+                                )}
+                            />
+                        </div>
 
-                        <Button type="submit" variant="contained" >
-                            Add Student
-                        </Button>
-                    </div>
-                </form>
-            </Modal>
+                        <div className="flex items-center justify-end gap-4 pt-6 border-gray-200">
+                            <Button
+                                onClick={closeModal}
+                                sx={{
+                                    backgroundColor: "#F3F4F6",
+                                    color: "#374151",
+                                    px: 2,
+                                    "&:hover": {
+                                        backgroundColor: "#E5E7EB",
+                                    },
+                                }}
+                            >
+                                Cancelled
+                            </Button>
 
+                            <Button type="submit" variant="contained" >
+                                Add Student
+                            </Button>
+                        </div>
+                    </form>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

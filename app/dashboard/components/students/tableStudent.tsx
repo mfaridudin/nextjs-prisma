@@ -14,12 +14,16 @@ import {
     TableContainer,
     Paper,
     Divider,
+    Dialog,
+    DialogTitle,
+    IconButton,
+    DialogContent,
 } from "@mui/material";
 import DashboardCard from "@/app/dashboard/components/shared/DashboardCard";
+import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import { useEffect, useState } from "react";
 import { useOpenModal } from "@/store/useOpenModal";
-import Modal from "../ui/modal";
 import { IconEye } from "@tabler/icons-react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -27,6 +31,7 @@ import Link from "next/link";
 
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import PageContainer from "../container/PageContainer";
 
 const StudentTable = () => {
     const [showPassword, setShowPassword] = useState(false)
@@ -127,268 +132,301 @@ const StudentTable = () => {
     }
 
     return (
-        <DashboardCard title="Students" action={
-            <Button
-                variant="contained"
-                startIcon={<AddIcon />}
-                size="small"
-                onClick={openAddModal}
-            >
-                Add Student
-            </Button>
-        }>
-            <Box sx={{ overflow: "auto" }}>
-                <Table sx={{ whiteSpace: "nowrap", mt: 2 }}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>
-                                <Typography fontWeight={600} noWrap>No</Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography fontWeight={600} noWrap>Full Name</Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography fontWeight={600} noWrap>Username</Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography fontWeight={600} noWrap>Address</Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography fontWeight={600} noWrap>Email</Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography fontWeight={600} noWrap>Create Date</Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography fontWeight={600} noWrap>Action</Typography>
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-
-                    <TableBody>
-                        {students.map((student: any, index: number) => (
-                            <TableRow key={student.id} hover>
+        <PageContainer>
+            <DashboardCard title="Students" action={
+                <Button
+                    variant="contained"
+                    startIcon={<AddIcon />}
+                    size="small"
+                    onClick={openAddModal}
+                >
+                    Add Student
+                </Button>
+            }>
+                <Box sx={{ overflow: "auto" }}>
+                    <Table sx={{ whiteSpace: "nowrap", mt: 2 }}>
+                        <TableHead>
+                            <TableRow>
                                 <TableCell>
-                                    <Typography variant="subtitle2" fontWeight={500}>{index + 1}</Typography>
+                                    <Typography fontWeight={600} noWrap>No</Typography>
                                 </TableCell>
-
                                 <TableCell>
-                                    <Typography variant="subtitle2" fontWeight={600} noWrap>
-                                        {student.fullName}
-                                    </Typography>
+                                    <Typography fontWeight={600} noWrap>Full Name</Typography>
                                 </TableCell>
-
                                 <TableCell>
-                                    <Typography color="textSecondary" variant="subtitle2" noWrap>
-                                        {student.username}
-                                    </Typography>
+                                    <Typography fontWeight={600} noWrap>Username</Typography>
                                 </TableCell>
-
                                 <TableCell>
-                                    <Typography color="textSecondary" variant="subtitle2" sx={{ minWidth: 150 }}>
-                                        {student.address}
-                                    </Typography>
+                                    <Typography fontWeight={600} noWrap>Address</Typography>
                                 </TableCell>
-
                                 <TableCell>
-                                    <Typography color="textSecondary" variant="subtitle2" noWrap>
-                                        {student.email}
-                                    </Typography>
+                                    <Typography fontWeight={600} noWrap>Email</Typography>
                                 </TableCell>
-
                                 <TableCell>
-                                    <Typography color="textSecondary" variant="subtitle2" noWrap>
-                                        {new Date(student.createdAt).toLocaleDateString('id-ID', {
-                                            day: '2-digit',
-                                            month: 'short',
-                                            year: 'numeric'
-                                        })}
-                                    </Typography>
+                                    <Typography fontWeight={600} noWrap>Create Date</Typography>
                                 </TableCell>
-
                                 <TableCell>
-                                    <Stack direction="row" spacing={1}>
-                                        <Link href={`students/${student.id}/detail`} style={{ textDecoration: 'none' }}>
-                                            <Button
-                                                variant="outlined"
-                                                size="small"
-                                                startIcon={<VisibilityIcon />}
-                                            >
-                                                View
-                                            </Button>
-                                        </Link>
-                                        <Button
-                                            variant="outlined"
-                                            color="error"
-                                            size="small"
-                                            startIcon={<DeleteIcon />}
-                                            onClick={() => openDeleteModal(student.id)}
-                                        >
-                                            Delete
-                                        </Button>
-                                    </Stack>
+                                    <Typography fontWeight={600} noWrap>Action</Typography>
                                 </TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </Box>
+                        </TableHead>
 
-            <Modal open={open && mode === "add"}
-                onClose={closeModal}
-                title="Add Student"
-                maxWidth="max-w-xl">
-                {/* form */}
-                <form onSubmit={handleAddStudent} className="p-6 space-y-4">
+                        <TableBody>
+                            {students.map((student: any, index: number) => (
+                                <TableRow key={student.id} hover>
+                                    <TableCell>
+                                        <Typography variant="subtitle2" fontWeight={500}>{index + 1}</Typography>
+                                    </TableCell>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <Input
-                            value={form.fullName}
-                            onChange={(e) => setForm({ ...form, fullName: e.target.value, })}
-                            // label="Full Name"
-                            type="text"
-                            placeholder="Enter full name"
-                        />
-                        <Input
-                            value={form.username}
-                            onChange={(e) => setForm({ ...form, username: e.target.value, })}
-                            // label="Username"
-                            type="text"
-                            placeholder="Enter username"
-                        />
-                    </div>
+                                    <TableCell>
+                                        <Typography variant="subtitle2" fontWeight={600} noWrap>
+                                            {student.fullName}
+                                        </Typography>
+                                    </TableCell>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <Input
-                            value={form.email}
-                            onChange={(e) => setForm({ ...form, email: e.target.value })}
-                            // label="Email"
-                            type="email"
-                            placeholder="Enter email"
-                        />
+                                    <TableCell>
+                                        <Typography color="textSecondary" variant="subtitle2" noWrap>
+                                            {student.username}
+                                        </Typography>
+                                    </TableCell>
 
-                        <Input
-                            value={form.address}
-                            onChange={(e) => setForm({ ...form, address: e.target.value })}
-                            // label="Address"
-                            type="text"
-                            placeholder="Enter address"
-                        />
-                    </div>
+                                    <TableCell>
+                                        <Typography color="textSecondary" variant="subtitle2" sx={{ minWidth: 150 }}>
+                                            {student.address}
+                                        </Typography>
+                                    </TableCell>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <Input
-                            value={form.dateOfBirth}
-                            onChange={(e) => setForm({ ...form, dateOfBirth: e.target.value })}
-                            // label="Date of Birth"
-                            type="date"
-                            placeholder="Enter age"
-                        />
-                        <Input
-                            value={form.age}
-                            onChange={(e) => setForm({ ...form, age: e.target.value })}
-                            // label="Age"
-                            type="number"
-                            placeholder="Enter age"
-                        />
-                    </div>
+                                    <TableCell>
+                                        <Typography color="textSecondary" variant="subtitle2" noWrap>
+                                            {student.email}
+                                        </Typography>
+                                    </TableCell>
 
-                    <div className="relative w-full">
-                        <Input
-                            className="w-full pr-12"
-                            value={form.password}
-                            onChange={(e) =>
-                                setForm({ ...form, password: e.target.value })
-                            }
-                            type={showPassword ? "text" : "password"}
-                            placeholder="Enter Password"
-                        />
+                                    <TableCell>
+                                        <Typography color="textSecondary" variant="subtitle2" noWrap>
+                                            {new Date(student.createdAt).toLocaleDateString('id-ID', {
+                                                day: '2-digit',
+                                                month: 'short',
+                                                year: 'numeric'
+                                            })}
+                                        </Typography>
+                                    </TableCell>
 
-                        <span
-                            onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400 hover:text-gray-600"
+                                    <TableCell>
+                                        <Stack direction="row" spacing={1}>
+                                            <Link href={`students/${student.id}/detail`} style={{ textDecoration: 'none' }}>
+                                                <Button
+                                                    variant="outlined"
+                                                    size="small"
+                                                    startIcon={<VisibilityIcon />}
+                                                >
+                                                    View
+                                                </Button>
+                                            </Link>
+                                            <Button
+                                                variant="outlined"
+                                                color="error"
+                                                size="small"
+                                                startIcon={<DeleteIcon />}
+                                                onClick={() => openDeleteModal(student.id)}
+                                            >
+                                                Delete
+                                            </Button>
+                                        </Stack>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </Box>
+
+                <Dialog open={open && mode === "add"} onClose={closeModal} maxWidth="sm" fullWidth>
+                    <DialogTitle sx={{ m: 0, p: 2 }}>
+                        Add Student
+
+                        <IconButton
+                            aria-label="close"
+                            onClick={closeModal}
+                            sx={{
+                                position: "absolute",
+                                right: 8,
+                                top: 8,
+                                color: (theme) => theme.palette.grey[500],
+                            }}
                         >
-                            <IconEye />
-                        </span>
-                    </div>
+                            <CloseIcon />
+                        </IconButton>
+                    </DialogTitle>
+
+                    <DialogContent dividers>
+                        <form onSubmit={handleAddStudent} className="p-6 space-y-4">
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <Input
+                                    value={form.fullName}
+                                    onChange={(e) => setForm({ ...form, fullName: e.target.value, })}
+                                    // label="Full Name"
+                                    type="text"
+                                    placeholder="Enter full name"
+                                />
+                                <Input
+                                    value={form.username}
+                                    onChange={(e) => setForm({ ...form, username: e.target.value, })}
+                                    // label="Username"
+                                    type="text"
+                                    placeholder="Enter username"
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <Input
+                                    value={form.email}
+                                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                                    // label="Email"
+                                    type="email"
+                                    placeholder="Enter email"
+                                />
+
+                                <Input
+                                    value={form.address}
+                                    onChange={(e) => setForm({ ...form, address: e.target.value })}
+                                    // label="Address"
+                                    type="text"
+                                    placeholder="Enter address"
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <Input
+                                    value={form.dateOfBirth}
+                                    onChange={(e) => setForm({ ...form, dateOfBirth: e.target.value })}
+                                    // label="Date of Birth"
+                                    type="date"
+                                    placeholder="Enter age"
+                                />
+                                <Input
+                                    value={form.age}
+                                    onChange={(e) => setForm({ ...form, age: e.target.value })}
+                                    // label="Age"
+                                    type="number"
+                                    placeholder="Enter age"
+                                />
+                            </div>
+
+                            <div className="relative w-full">
+                                <Input
+                                    className="w-full pr-12"
+                                    value={form.password}
+                                    onChange={(e) =>
+                                        setForm({ ...form, password: e.target.value })
+                                    }
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="Enter Password"
+                                />
+
+                                <span
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400 hover:text-gray-600"
+                                >
+                                    <IconEye />
+                                </span>
+                            </div>
 
 
-                    <div className="relative w-full">
-                        <Input
-                            className="w-full pr-12"
-                            value={form.password_confirmation}
-                            onChange={(e) =>
-                                setForm({ ...form, password_confirmation: e.target.value })
-                            }
-                            type={showConfirmPassword ? "text" : "password"}
-                            placeholder="Confirm Password"
-                        />
-                        <span
-                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer
+                            <div className="relative w-full">
+                                <Input
+                                    className="w-full pr-12"
+                                    value={form.password_confirmation}
+                                    onChange={(e) =>
+                                        setForm({ ...form, password_confirmation: e.target.value })
+                                    }
+                                    type={showConfirmPassword ? "text" : "password"}
+                                    placeholder="Confirm Password"
+                                />
+                                <span
+                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer
                text-gray-400 hover:text-gray-600"
-                        >
-                            <IconEye />
-                        </span>
-                    </div>
+                                >
+                                    <IconEye />
+                                </span>
+                            </div>
 
 
-                    <div className="flex items-center justify-end gap-4  pt-6  border-gray-200">
-                        <Button
+                            <div className="flex items-center justify-end gap-4  pt-6  border-gray-200">
+                                <Button
+                                    onClick={closeModal}
+                                    sx={{
+                                        backgroundColor: "#F3F4F6",
+                                        color: "#374151",
+                                        px: 2,
+                                        '&:hover': {
+                                            backgroundColor: "#E5E7EB",
+                                        },
+                                    }}
+                                >
+                                    Cancelled
+                                </Button>
+                                <Button
+                                    type="submit"
+                                    variant="contained"
+                                >
+                                    Add Student
+                                </Button>
+                            </div>
+                        </form>
+                    </DialogContent>
+                </Dialog>
+
+                <Dialog open={open && mode === "delete"} onClose={closeModal} maxWidth="sm" fullWidth>
+                    <DialogTitle sx={{ m: 0, p: 2 }}>
+                        Delete Student
+
+                        <IconButton
+                            aria-label="close"
                             onClick={closeModal}
                             sx={{
-                                backgroundColor: "#F3F4F6",
-                                color: "#374151",
-                                px: 2,
-                                '&:hover': {
-                                    backgroundColor: "#E5E7EB",
-                                },
+                                position: "absolute",
+                                right: 8,
+                                top: 8,
+                                color: (theme) => theme.palette.grey[500],
                             }}
                         >
-                            Cancelled
-                        </Button>
-                        <Button
-                            type="submit"
-                            variant="contained"
-                        >
-                            Add Student
-                        </Button>
-                    </div>
-                </form>
-            </Modal>
+                            <CloseIcon />
+                        </IconButton>
+                    </DialogTitle>
 
-            <Modal open={open && mode === "delete"}
-                onClose={closeModal}
-                title="Delete Data"
-                maxWidth="max-w-md">
-                <div className="p-6">
-                    <p className="mb-6 text-gray-700">Are you sure you want to delete this data?</p>
-                    <div className="flex justify-end gap-3">
-                        <Button
-                            size="small"
-                            onClick={closeModal}
-                            sx={{
-                                backgroundColor: "#F3F4F6",
-                                color: "#374151",
-                                px: 2,
-                                '&:hover': {
-                                    backgroundColor: "#E5E7EB",
-                                },
-                            }}
-                        >
-                            Cancelled
-                        </Button>
+                    <DialogContent dividers>
+                        <div className="p-6">
+                            <p className="mb-6 text-gray-700">Are you sure you want to delete this data?</p>
+                            <div className="flex justify-end gap-3">
+                                <Button
+                                    size="small"
+                                    onClick={closeModal}
+                                    sx={{
+                                        backgroundColor: "#F3F4F6",
+                                        color: "#374151",
+                                        px: 2,
+                                        '&:hover': {
+                                            backgroundColor: "#E5E7EB",
+                                        },
+                                    }}
+                                >
+                                    Cancelled
+                                </Button>
 
-                        <Button
-                            variant="contained"
-                            color="error"
-                            size="small" onClick={() => selectedId && handleDelete(selectedId)}>
-                            Yes, Delete
-                        </Button>
-                    </div>
-                </div>
-            </Modal>
-        </DashboardCard>
+                                <Button
+                                    variant="contained"
+                                    color="error"
+                                    size="small" onClick={() => selectedId && handleDelete(selectedId)}>
+                                    Yes, Delete
+                                </Button>
+                            </div>
+                        </div>
+                    </DialogContent>
+                </Dialog>
+            </DashboardCard>
+        </PageContainer>
     );
 };
 
