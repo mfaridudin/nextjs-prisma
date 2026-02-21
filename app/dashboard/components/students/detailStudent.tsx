@@ -7,16 +7,19 @@ import { IconArrowLeft } from "@tabler/icons-react";
 import CloseIcon from "@mui/icons-material/Close";
 import { useOpenModal } from "@/store/useOpenModal";
 import PageContainer from "../container/PageContainer";
+import { supabase } from "@/lib/supabase";
+import { v4 as uuidv4 } from "uuid";
+import { useUserStore } from "@/store/useUserStore";
 
 type Student = {
     Role: any;
     id: number;
     fullName: string;
     username: string;
+    profile: string;
     email: string;
     address: string | null;
     age: number | null;
-    avatar?: string;
     emailVerified: boolean;
     dateOfBirth?: string;
     createdAt: string;
@@ -29,6 +32,13 @@ export default function DetailStudent() {
     const params = useParams();
     const id = params?.id as string;
 
+    const { user } = useUserStore()
+
+    const schoolId = user?.schoolId
+
+    // console.log(schoolId)
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [student, setStudent] = useState<Student | null>(null);
     const { open, mode, selectedId, openEditModal, closeModal } = useOpenModal()
@@ -63,13 +73,22 @@ export default function DetailStudent() {
         }
     }
 
-    async function hadleEditStudent(e: React.FormEvent) {
+    async function handleEditStudent(e: React.FormEvent) {
         e.preventDefault();
-        setLoading(true)
+        setLoading(true);
+
+        let profileUrl = student?.profile;
+
+        if (selectedFile && schoolId) {
+            profileUrl = await uploadProfile(selectedFile, schoolId);
+        }
 
         const payload = {
             ...formEdit,
-            dateOfBirth: formEdit.dateOfBirth ? new Date(formEdit.dateOfBirth).toISOString() : undefined,
+            profile: profileUrl,
+            dateOfBirth: formEdit.dateOfBirth
+                ? new Date(formEdit.dateOfBirth).toISOString()
+                : undefined,
             age: formEdit.age ? Number(formEdit.age) : undefined,
             roleId: 3,
             emailVerified: true,
@@ -82,13 +101,37 @@ export default function DetailStudent() {
         });
 
         if (!response.ok) {
-            const data = await response.json();
-            // setValidation(data.errors || { error: data.error });
-            console.log(data.errors || { error: data.error })
+            console.log(await response.json());
+            setLoading(false);
             return;
         }
-        fetchStudents()
-        closeModal()
+
+        await fetchStudents();
+        setSelectedFile(null);
+        setPreviewUrl(null);
+        closeModal();
+        setLoading(false);
+    }
+
+    async function uploadProfile(file: File, schoolId: number) {
+        const fileExt = file.name.split(".").pop();
+        const fileName = `${uuidv4()}.${fileExt}`;
+        const filePath = `school-${schoolId}/students/${fileName}`;
+
+        const { data, error } = await supabase.storage
+            .from("profile")
+            .upload(filePath, file, {
+                cacheControl: "3600",
+                upsert: false,
+            });
+
+        if (error) throw error;
+
+        const { data: publicUrl } = supabase.storage
+            .from("profile")
+            .getPublicUrl(filePath);
+
+        return publicUrl.publicUrl;
     }
 
     useEffect(() => {
@@ -126,7 +169,11 @@ export default function DetailStudent() {
                 <div style={{ backgroundColor: "#5D87FF" }} className="p-6 bg-[#5D87FF]">
                     <div className="flex items-center gap-4">
                         <img
-                            src={student.avatar}
+                            src={
+                                previewUrl
+                                    ? previewUrl
+                                    : student.profile ?? "/images/profile/profile-default.png"
+                            }
                             alt={student.fullName}
                             className="w-20 h-20 rounded-full border-4 border-white shadow-md"
                         />
@@ -255,7 +302,7 @@ export default function DetailStudent() {
                 </DialogTitle>
 
                 <DialogContent dividers>
-                    <form onSubmit={hadleEditStudent} className="p-6 space-y-4">
+                    <form onSubmit={handleEditStudent} className="p-6 space-y-4">
 
                         <div className="grid grid-cols-2 gap-4">
                             <Input
@@ -308,7 +355,31 @@ export default function DetailStudent() {
                                 placeholder="Enter age"
                             />
                         </div>
+                        <div>
+                            <Input
+                                type="file"
+                                inputProps={{ accept: "image/*" }}
+                                onChange={(e: any) => {
+                                    const file = e.target.files?.[0];
+                                    if (!file) return;
 
+                                    if (!file.type.startsWith("image/")) {
+                                        alert("file not suportd");
+                                        return;
+                                    }
+
+                                    if (file.size > 2 * 1024 * 1024) {
+                                        alert("Max 2MB");
+                                        return;
+                                    }
+
+                                    setSelectedFile(file);
+
+                                    const objectUrl = URL.createObjectURL(file);
+                                    setPreviewUrl(objectUrl);
+                                }}
+                            />
+                        </div>
                         <div className="flex items-center justify-end gap-4  pt-6  border-gray-200">
                             <Button
                                 onClick={closeModal}

@@ -10,6 +10,7 @@ export const createUserSchema = z.object({
     address: z.string().nonempty("Address is required"),
     dateOfBirth: z.string().nonempty("Date of birth is required"),
     age: z.number().min(1),
+    profile: z.string().optional(),
     emailVerified: z.boolean().optional(),
     roleId: z.number().optional(),
 });

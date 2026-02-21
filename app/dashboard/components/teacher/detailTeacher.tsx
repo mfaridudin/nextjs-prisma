@@ -7,6 +7,9 @@ import { IconArrowLeft } from "@tabler/icons-react";
 import { useOpenModal } from "@/store/useOpenModal";
 import CloseIcon from "@mui/icons-material/Close";
 import PageContainer from "../container/PageContainer";
+import { supabase } from "@/lib/supabase";
+import { v4 as uuidv4 } from "uuid";
+import { useUserStore } from "@/store/useUserStore";
 
 type Teacher = {
     Role: any;
@@ -14,6 +17,7 @@ type Teacher = {
     fullName: string;
     username: string;
     email: string;
+    profile: string;
     address: string | null;
     age: number | null;
     avatar?: string;
@@ -28,6 +32,11 @@ type Teacher = {
 export default function TeacherDetailPage() {
     const params = useParams();
     const id = params?.id as string;
+
+    const { user } = useUserStore()
+
+    const schoolId = user?.schoolId
+
     const { open, mode, selectedId, openEditModal, closeModal } = useOpenModal()
     const [teacher, setTeacher] = useState<Teacher | null>(null);
     const [loading, setLoading] = useState(true);
@@ -39,6 +48,8 @@ export default function TeacherDetailPage() {
         age: "",
         dateOfBirth: "",
     });
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
 
     async function fetchTeacher() {
@@ -46,6 +57,7 @@ export default function TeacherDetailPage() {
             const res = await fetch(`/api/teacher/${id}`);
             const data = await res.json();
             setTeacher(data);
+
 
             setFormEdit({
                 fullName: data.fullName ?? "",
@@ -64,12 +76,40 @@ export default function TeacherDetailPage() {
         }
     }
 
+    async function uploadProfile(file: File, schoolId: number) {
+        const fileExt = file.name.split(".").pop();
+        const fileName = `${uuidv4()}.${fileExt}`;
+        const filePath = `school-${schoolId}/teachers/${fileName}`;
+
+        const { data, error } = await supabase.storage
+            .from("profile")
+            .upload(filePath, file, {
+                cacheControl: "3600",
+                upsert: false,
+            });
+
+        if (error) throw error;
+
+        const { data: publicUrl } = supabase.storage
+            .from("profile")
+            .getPublicUrl(filePath);
+
+        return publicUrl.publicUrl;
+    }
+
     async function handleEditTeacher(e: React.FormEvent) {
         e.preventDefault();
         setLoading(true)
 
+        let profileUrl = teacher?.profile;
+
+        if (selectedFile && schoolId) {
+            profileUrl = await uploadProfile(selectedFile, schoolId);
+        }
+
         const payload = {
             ...formEdit,
+            profile: profileUrl,
             dateOfBirth: formEdit.dateOfBirth ? new Date(formEdit.dateOfBirth).toISOString() : undefined,
             age: formEdit.age ? Number(formEdit.age) : undefined,
             roleId: 3,
@@ -126,7 +166,11 @@ export default function TeacherDetailPage() {
                 <div className="p-6" style={{ backgroundColor: "#5D87FF" }}>
                     <div className="flex items-center gap-4">
                         <img
-                            src={teacher.avatar ?? "/default-avatar.png"}
+                            src={
+                                previewUrl
+                                    ? previewUrl
+                                    : teacher.profile ?? "/images/profile/profile-default.png"
+                            }
                             alt={teacher.fullName ?? "Avatar"}
                             className="w-20 h-20 rounded-full border-4 border-white shadow-md"
                         />
@@ -320,6 +364,32 @@ export default function TeacherDetailPage() {
                                 // label="Age"
                                 type="number"
                                 placeholder="Enter age"
+                            />
+                        </div>
+
+                        <div>
+                            <Input
+                                type="file"
+                                inputProps={{ accept: "image/*" }}
+                                onChange={(e: any) => {
+                                    const file = e.target.files?.[0];
+                                    if (!file) return;
+
+                                    if (!file.type.startsWith("image/")) {
+                                        alert("file not suportd");
+                                        return;
+                                    }
+
+                                    if (file.size > 2 * 1024 * 1024) {
+                                        alert("Max 2MB");
+                                        return;
+                                    }
+
+                                    setSelectedFile(file);
+
+                                    const objectUrl = URL.createObjectURL(file);
+                                    setPreviewUrl(objectUrl);
+                                }}
                             />
                         </div>
 
