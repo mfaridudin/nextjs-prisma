@@ -83,9 +83,19 @@ const SidebarItems = () => {
       themeColor={"#5D87FF"}
       themeSecondaryColor={"#49beff"}
     >
-      <Logo img="/images/logos/logo.svg" component={Link} href="/">
+      {/* <Logo img="/images/logos/logo.svg" component={Link} href="/">
         Logo
-      </Logo>
+      </Logo> */}
+
+      <Box sx={{ '& img': { height: 28, width: 'auto' } }}>
+        <Logo
+          img="/images/logos/logo.svg"
+          component={Link}
+          href="/"
+        >
+          Logo
+        </Logo>
+      </Box>
 
       {renderMenuItems(Menuitems, pathname)}
     </MUI_Sidebar>
