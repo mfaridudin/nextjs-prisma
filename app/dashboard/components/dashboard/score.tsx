@@ -78,7 +78,7 @@ export default function ScoreSummary() {
         fetchScore();
     }, []);
 
-    const avg = scores.reduce((a, b) => a + b.score, 0) / scores.length || 0
+    const avg = Math.round(scores.reduce((a, b) => a + b.score, 0) / scores.length || 0)
     const bestScore = Math.max(...scores.map(s => s.score), 0)
     const worstScore = Math.min(...scores.map(s => s.score), 0)
 

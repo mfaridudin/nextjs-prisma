@@ -15,6 +15,7 @@ import {
   FormControlLabel,
   Divider,
   Stack,
+  Chip,
 } from "@mui/material";
 
 export default function StudentLessonPage() {
@@ -82,6 +83,14 @@ export default function StudentLessonPage() {
     }
   }
 
+  const submission = lesson?.submissions?.[0]
+
+  const answerMap = submission
+    ? Object.fromEntries(
+      submission.answers.map((a: any) => [a.questionId, a])
+    )
+    : {}
+
   if (!lesson) return <div>Loading...</div>;
 
   return (
@@ -134,6 +143,65 @@ export default function StudentLessonPage() {
           </Grid>
         </Grid>
       </Card>
+
+      {/* answrs question */}
+      {submitted && submission && (
+        <Card sx={{ p: 3 }}>
+          <Typography variant="h5" fontWeight={700} mb={3}>
+            Questions Review
+          </Typography>
+
+          {lesson.questions.map((q: any, index: number) => {
+            const userAnswer = answerMap[q.id]
+
+            return (
+              <Box key={q.id} mb={3}>
+                <Stack direction="row" spacing={1} mt={1}>
+                  <Typography fontWeight={600} mb={1}>
+                    {index + 1}. {q.question}
+                  </Typography>
+
+                  <Chip
+                    label={userAnswer?.isCorrect ? "Correct" : "Wrong"}
+                    color={userAnswer?.isCorrect ? "success" : "error"}
+                    size="small"
+                  />
+                </Stack>
+
+                <Stack spacing={1} mb={1}>
+                  <RadioGroup value={userAnswer?.answer || ""}>
+                    {["A", "B", "C", "D"].map((opt) => {
+                      const optionText = q[`option${opt}`]
+
+                      return (
+                        <FormControlLabel
+                          key={opt}
+                          value={opt}
+                          disabled
+                          control={
+                            <Radio />
+                          }
+                          label={optionText}
+                        />
+                      )
+                    })}
+                  </RadioGroup>
+                </Stack>
+
+                {!userAnswer?.isCorrect && (
+                  <Chip
+                    label={`Correct Answer: ${q.correct}`}
+                    color="success"
+                    variant="outlined"
+                    size="small"
+                  />
+                )}
+                <Divider sx={{ mt: 2 }} />
+              </Box>
+            )
+          })}
+        </Card>
+      )}
 
       {/* Questions */}
       {!submitted && (

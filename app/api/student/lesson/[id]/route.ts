@@ -40,11 +40,13 @@ export async function GET(request: Request) {
                 optionA,
                 optionB,
                 optionC,
-                optionD
+                optionD,
+                correct
                 ),
                 submissions:LessonSubmission(
                 id,
                 studentId,
+                answers,
                 score
                 )
             `)
