@@ -32,31 +32,6 @@ const RecentSubmissions = () => {
     useEffect(() => {
         fetchSubmissions();
     }, []);
-    // dummy data
-    // const submissions = [
-    //     {
-    //         id: 1,
-    //         student: "Andi",
-    //         lesson: "Variables Quiz",
-    //         score: 90,
-    //         date: "10 Feb 2026",
-    //     },
-    //     {
-    //         id: 2,
-    //         student: "Siti",
-    //         lesson: "Loop Exercise",
-    //         score: 85,
-    //         date: "9 Feb 2026",
-    //     },
-    //     {
-    //         id: 3,
-    //         student: "Budi",
-    //         lesson: "Array Practice",
-    //         score: 88,
-    //         date: "8 Feb 2026",
-    //     },
-    // ];
-
     console.log(submissions)
 
     return (
@@ -97,6 +72,12 @@ const RecentSubmissions = () => {
                         {index !== submissions.length - 1 && <Divider sx={{ mt: 2 }} />}
                     </div>
                 ))}
+
+                {submissions.length === 0 && (
+                    <Typography color="text.secondary">
+                        No submissions yet.
+                    </Typography>
+                )}
             </Stack>
         </DashboardCard>
     );

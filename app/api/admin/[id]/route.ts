@@ -6,9 +6,9 @@ export async function GET(request: Request) {
     const url = new URL(request.url)
     const idString = url.pathname.split("/").pop()
 
-    const teacherId = parseInt(idString || "")
+    const id = parseInt(idString || "")
 
-    if (isNaN(teacherId)) {
+    if (isNaN(id)) {
         return NextResponse.json(
             { error: "Invalid lesson ID" },
             { status: 400 }
@@ -16,22 +16,22 @@ export async function GET(request: Request) {
     }
 
     try {
-        const { data: teacher, error } = await supabase
+        const { data: admin, error } = await supabase
             .from("User")
             .select(`
                 *,
                 Role(name),
                 Course(name)
             `)
-            .eq("id", Number(teacherId))
+            .eq("id", Number(id))
             .single();
 
         if (error) throw error;
-        if (!teacher) return NextResponse.json({ error: "teacher not found" }, { status: 404 });
+        if (!admin) return NextResponse.json({ error: "admin not found" }, { status: 404 });
 
-        return NextResponse.json(teacher, { status: 200 });
+        return NextResponse.json(admin, { status: 200 });
     } catch (error: any) {
-        return NextResponse.json({ error: error.message || "Failed to fetch teacher" }, { status: 500 });
+        return NextResponse.json({ error: error.message || "Failed to fetch admin" }, { status: 500 });
     }
 }
 
@@ -40,9 +40,9 @@ export async function PUT(request: Request) {
     const url = new URL(request.url)
     const idString = url.pathname.split("/").pop()
 
-    const teacherId = parseInt(idString || "")
+    const id = parseInt(idString || "")
 
-    if (isNaN(teacherId)) {
+    if (isNaN(id)) {
         return NextResponse.json(
             { error: "Invalid lesson ID" },
             { status: 400 }
@@ -53,7 +53,7 @@ export async function PUT(request: Request) {
         const body = await request.json();
         const { fullName, username, email, address, dateOfBirth, age, profile } = body;
 
-        const { data: updatedteacher, error } = await supabase
+        const { data: updatedadmin, error } = await supabase
             .from("User")
             .update({
                 fullName,
@@ -65,15 +65,15 @@ export async function PUT(request: Request) {
                 age,
                 updatedAt: new Date().toISOString(),
             })
-            .eq("id", Number(teacherId))
+            .eq("id", Number(id))
             .select()
             .single();
 
         if (error) throw error;
 
-        return NextResponse.json(updatedteacher, { status: 200 });
+        return NextResponse.json(updatedadmin, { status: 200 });
     } catch (error: any) {
-        return NextResponse.json({ error: error.message || "Failed to update teacher" }, { status: 500 });
+        return NextResponse.json({ error: error.message || "Failed to update admin" }, { status: 500 });
     }
 }
 
@@ -81,9 +81,9 @@ export async function DELETE(request: Request) {
     const url = new URL(request.url)
     const idString = url.pathname.split("/").pop()
 
-    const teacherId = parseInt(idString || "")
+    const id = parseInt(idString || "")
 
-    if (isNaN(teacherId)) {
+    if (isNaN(id)) {
         return NextResponse.json(
             { error: "Invalid lesson ID" },
             { status: 400 }
@@ -94,12 +94,12 @@ export async function DELETE(request: Request) {
         const { data, error } = await supabase
             .from("User")
             .delete()
-            .eq("id", Number(teacherId));
+            .eq("id", Number(id));
 
         if (error) throw error;
 
-        return NextResponse.json({ message: "teacher has been successfully deleted" }, { status: 200 });
+        return NextResponse.json({ message: "admin has been successfully deleted" }, { status: 200 });
     } catch (error: any) {
-        return NextResponse.json({ error: error.message || "Failed to delete teacher" }, { status: 500 });
+        return NextResponse.json({ error: error.message || "Failed to delete admin" }, { status: 500 });
     }
 }

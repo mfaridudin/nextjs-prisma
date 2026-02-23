@@ -85,7 +85,7 @@ export default function TeachersList() {
                                 </TableCell>
 
                                 <TableCell>{teacher.username}</TableCell>
-                                <TableCell>{teacher.course?.name}</TableCell>
+                                <TableCell>{teacher.Course?.name ?? "- No Course -"}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

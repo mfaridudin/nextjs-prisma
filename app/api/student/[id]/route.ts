@@ -1,7 +1,6 @@
-import { supabase } from "@/lib/supabase"; // atau prisma kalau masih pakai Prisma
+import { supabase } from "@/lib/supabase";
 import { NextResponse } from "next/server";
 
-// GET /api/users/[id]
 export async function GET(request: Request) {
 
     const url = new URL(request.url)
@@ -21,7 +20,8 @@ export async function GET(request: Request) {
             .from("User")
             .select(`
                 *,
-                Role(name)
+                Role(name),
+                Classroom!User_classroomId_fkey(name)
             `)
             .eq("id", Number(studentId))
             .single();
@@ -35,7 +35,6 @@ export async function GET(request: Request) {
     }
 }
 
-// PUT /api/users/[id]
 export async function PUT(request: Request) {
 
     const url = new URL(request.url)
@@ -78,7 +77,6 @@ export async function PUT(request: Request) {
     }
 }
 
-// DELETE /api/users/[id]
 export async function DELETE(request: Request) {
     const url = new URL(request.url)
     const idString = url.pathname.split("/").pop()

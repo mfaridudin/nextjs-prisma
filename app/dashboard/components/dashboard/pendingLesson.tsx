@@ -72,6 +72,11 @@ export default function PendingLessons() {
                             </Link>
                         </Card>
                     ))}
+                    {lessons.length === 0 && (
+                        <p className="text-sm text-gray-500">
+                            No pending lessons yet.
+                        </p>
+                    )}
                 </Stack>
             </CardContent>
         </Card>

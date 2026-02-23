@@ -27,6 +27,11 @@ const Profile = () => {
 
   const clearUser = useUserStore((state) => state.clearUser)
 
+  const { user } = useUserStore()
+
+  const roleCapitalize = user?.role?.name
+
+  const role = roleCapitalize?.toLowerCase(); 
   return (
     <Box>
       <IconButton
@@ -68,12 +73,14 @@ const Profile = () => {
           },
         }}
       >
-        {/* <MenuItem>
-          <ListItemIcon>
-            <IconUser width={20} />
-          </ListItemIcon>
-          <ListItemText>My Profile</ListItemText>
-        </MenuItem>
+        <Link href={`/dashboard/${role}/profile`}>
+          <MenuItem>
+            <ListItemIcon>
+              <IconUser width={20} />
+            </ListItemIcon>
+            <ListItemText>My Profile</ListItemText>
+          </MenuItem>
+        </Link>
         <MenuItem>
           <ListItemIcon>
             <IconMail width={20} />
@@ -85,7 +92,7 @@ const Profile = () => {
             <IconListCheck width={20} />
           </ListItemIcon>
           <ListItemText>My Tasks</ListItemText>
-        </MenuItem> */}
+        </MenuItem>
         <Box mt={1} py={1} px={2}>
           <Button
             onClick={() => {

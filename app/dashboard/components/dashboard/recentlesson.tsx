@@ -75,6 +75,12 @@ const RecentLessons = () => {
                         </div>
                     </Link>
                 ))}
+
+                {lessons.length === 0 && (
+                    <Typography color="text.secondary">
+                        No lessons yet.
+                    </Typography>
+                )}
             </Stack>
         </DashboardCard>
     );
